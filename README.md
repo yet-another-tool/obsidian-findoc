@@ -4,9 +4,8 @@
 
 <h2>Yet Another Tool - Fin Doc</h2>
 
-<p>Simple plugin to edit a CSV file in Obsidian.</p>
-<p>The goal is to show charts using the CSV file as the data source.</p>
-<p>This is still a POC, I invite you to create PR and Issues with ideas, improvements and etc.</p>
+<p>Obsidian plugin to read and edit a CSV file, then use it as a data source to generate charts.</p>
+<p>I invite you to create PR and Issues with ideas, improvements and etc.</p>
 
 <p align="center">
   <a href="https://github.com/yet-another-tool/obsidian-findoc/issues">Report Bug</a>
@@ -28,6 +27,7 @@
       <a href="#usage">Usage</a>
     </li>
     <li><a href="#changelog">Changelog</a></li>
+    <li><a href="#screenshots">Screenshots</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -59,19 +59,26 @@ Move the `main.js` and `manifest.json` to your plugins directory in a directory 
 
 ### Models
 
--   expenses
--   expensesMonthly
--   portfolio
--   incomeYearly
--   income
--   all
--   mortgage
--   mortgageRate
--   dividend
+-   **expenses**
+-   **expensesMonthly**
+-   **portfolio**
+-   **incomeYearly**
+-   **income**
+-   **all**
+-   **mortgage**
+-   **mortgageRate**
+-   **dividend**
+
+Create a PR to create new One.  
+You can edit those directly in the setting tab.
 
 ### Code Block
 
-You can define this code block by specifying your filename, in this example: `finance.csv` and the model to use, in this case `portfolio`. See above for all available models.
+You can define this code block directly in your notes.  
+In this example:
+the filename is : `finance.csv` and the model to use is :`portfolio`.
+
+> See above for all available models.
 
 <pre>
 ```findoc
@@ -80,11 +87,11 @@ model: portfolio
 ```
 </pre>
 
-Once the code block is defined, the hook will try to generate charts by reading the csv file.
+Once the code block is defined, the hook will try to generate a chart by reading the csv file.
 
 ### The CSV File
 
-The Header is :
+The CSV Header is :
 
 ```csv
 Type,Id,Value,TimeStamp,Extra
@@ -92,13 +99,13 @@ Type,Id,Value,TimeStamp,Extra
 
 Where **Type** is one of:
 
--   Portfolio
--   Income
--   Mortgage
--   Mortgage Rate
--   Cotisation
--   Dividend
--   House Expenses
+-   **Portfolio**
+-   **Income**
+-   **Mortgage**
+-   **Mortgage Rate**
+-   **Cotisation**
+-   **Dividend**
+-   **House Expenses**
 
 The **Id** is preferably _Unique for a group_, otherwise you will have weird behaviour and wrong grouping.
 
@@ -108,11 +115,38 @@ The **Timestamp** is only a _Date_ using this format: `'YYYY-MM-DD'`
 
 The **Extra** is not used.
 
+**Can I use any software and export a CSV File**: Yes.
+
+---
+
+## Screenshots
+
+![Dividend Chart](./docs/DividendChart.png)
+![Income Chart with Missing Datapoints](./docs/IncomeChartMissingData.png)
+![Finance CSV File](./docs/FinanceCSV.png)
+![Income Snippet](./docs/IncomeSnippet.png)
+
 ---
 
 ## Changelog
 
-The [TODO](./TODO)
+### TODO
+
+-   Github Actions and create a release to publish this alpha version to Obsidian repo
+-   Fix the saving system for CSV Files
+-   Improve the setting tab (edit, add and remove colors and models)
+-   Add more functions to process and analyze the data
+-   Write better documentation
+
+### V0.1.0 - Alpha - 2023-04-11
+
+-   Refactor code
+-   Added configuration using Obsidian Settings
+-   Added screenshots
+-   Fix few bugs
+-   Specifying default values and test them
+-   Fix few issues with the inline CSV file. (Backup your file often !)
+-   There still a bug regarding the saving system, I had to find a dirty workaround.
 
 ### V0.0.0 - Alpha - 2023-04-09
 

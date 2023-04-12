@@ -1,18 +1,36 @@
 import {
 	MarkdownPostProcessorContext,
-	MarkdownRenderChild,
 	Plugin,
 	WorkspaceLeaf,
 	parseYaml,
 } from "obsidian";
-import Chart from "chart.js/auto";
+import path from "path";
 
 import { CSVView, VIEW_TYPE_CSV } from "./view";
-import path from "path";
-import processing from "processing";
+import processing from "./processing";
+import { DEFAULT_SETTINGS } from "./defaults";
+import SettingsTab from "./SettingsTab";
+import ChartRenderer from "./ChartRenderer";
 
 export default class FinDocPlugin extends Plugin {
+	settings: IPluginSettings;
+
+	async loadSettings() {
+		this.settings = Object.assign(
+			{},
+			DEFAULT_SETTINGS,
+			await this.loadData()
+		);
+	}
+
+	async saveSettings() {
+		await this.saveData(this.settings);
+	}
+
 	async onload() {
+		await this.loadSettings();
+		this.addSettingTab(new SettingsTab(this.app, this));
+
 		const { vault } = this.app;
 
 		this.registerView(
@@ -42,38 +60,17 @@ export default class FinDocPlugin extends Plugin {
 					const data = await vault.adapter.read(
 						path.join(activeFile.parent.path, content.filename)
 					);
-					const chartData = processing(data, content.model);
+					const chartData = processing(
+						data,
+						content.model,
+						this.settings.models
+					);
 
 					ctx.addChild(
-						new ChartRendered(chartData, content.model, el)
+						new ChartRenderer(chartData, content.model, el)
 					);
 				}
 			}
 		);
-	}
-}
-
-class ChartRendered extends MarkdownRenderChild {
-	private data: any;
-	private model: string;
-	private canvases: { [key: string]: any } = {};
-
-	constructor(data: any, model: string, el: HTMLElement) {
-		super(el);
-		this.data = data;
-		this.model = model;
-	}
-
-	async onload() {
-		if (!this.canvases[this.model]) {
-			this.canvases[this.model] = document.createElement("canvas");
-
-			// Chart
-			new Chart(this.canvases[this.model].getContext("2d"), this.data);
-			this.containerEl.append(
-				(document.createElement("h3").innerText = this.model)
-			);
-			this.containerEl.append(this.canvases[this.model]);
-		}
 	}
 }
