@@ -38,13 +38,16 @@
 ## About
 
 -   Open and Edit CSV Files in Obsidian
--   Generate Charts using the CSV File directly in Obsidian and Custom Code Block
+-   Generate Charts using the CSV File directly in Obsidian and a Custom Code Block
+-   Configurable using Few Settings
 
 ---
 
 ## Installation
 
-It is still a POC, so for now you have to build and move the files manually
+It is still a POC, you can download a release and install it in your local obsidian plugin.
+
+> As soon as the csv aspect is stable, I will open a PR in the Obsidian Plugin registry.
 
 ```bash
 npm install
@@ -74,11 +77,7 @@ You can edit those directly in the setting tab.
 
 ### Code Block
 
-You can define this code block directly in your notes.  
-In this example:
-the filename is : `finance.csv` and the model to use is :`portfolio`.
-
-> See above for all available models.
+You can define this code block directly in your notes.
 
 <pre>
 ```findoc
@@ -86,6 +85,8 @@ filename: finance.csv
 model: portfolio
 ```
 </pre>
+
+> See above for all available models.
 
 Once the code block is defined, the hook will try to generate a chart by reading the csv file.
 
@@ -106,6 +107,7 @@ Where **Type** is one of:
 -   **Cotisation**
 -   **Dividend**
 -   **House Expenses**
+-   **Expenses**
 
 The **Id** is preferably _Unique for a group_, otherwise you will have weird behaviour and wrong grouping.
 
@@ -132,13 +134,27 @@ The **Extra** is not used.
 
 ### TODO
 
--   Github Actions and create a release to publish this alpha version to Obsidian repo
--   Fix the saving system for CSV Files
--   Improve the setting tab (edit, add and remove colors and models)
--   Add more functions to process and analyze the data
--   Write better documentation
+-   [x] Github Actions and create a release to publish this alpha version to Obsidian repo
+-   [-] Fix the saving system for CSV Files (_Testing the new debounce function_)
+-   [] Improve the setting tab (edit, add and remove colors and models)
+-   [] Add more functions to process and analyze the data
+-   [] Write better documentation
+-   [] Add more Chart types, currently only line chart is supported
 
-### V0.1.0 - Alpha - 2023-04-11
+### V0.2.0 - Alpha - 2023-04-13
+
+-   Added new type: `Expenses`
+-   Started to switch the typescript `any` to correct types
+-   Moving code to smaller files
+-   Added Github Action Pipeline
+-   The debounce seems to be better using this implementation (Still backup your file often)
+-   Handle data type to show proper symbol
+-   bug fixes
+-   Handling invalid CSV lines
+-   Handling empty lines
+
+<details>
+  <summary>### V0.1.0 - Alpha - 2023-04-11</summary>
 
 -   Refactor code
 -   Added configuration using Obsidian Settings
@@ -148,11 +164,16 @@ The **Extra** is not used.
 -   Fix few issues with the inline CSV file. (Backup your file often !)
 -   There still a bug regarding the saving system, I had to find a dirty workaround.
 
-### V0.0.0 - Alpha - 2023-04-09
+</details>
+
+<details>
+  <summary>### V0.0.0 - Alpha - 2023-04-09</summary>
 
 -   Open and Edit CSV Files in Obsidian
 -   Generate Charts in Obsidian
 -   Provided few models to see financial progress
+
+</details>
 
 ---
 

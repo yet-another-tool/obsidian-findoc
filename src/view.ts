@@ -1,11 +1,18 @@
-import { Notice, TextFileView } from "obsidian";
+import FinDocPlugin from "main";
+import { Notice, TextFileView, WorkspaceLeaf } from "obsidian";
 import { debounce } from "utils";
 
 export const VIEW_TYPE_CSV = "csv-view";
 
 export class CSVView extends TextFileView {
+	plugin: FinDocPlugin;
 	tableData: string[];
 	div: HTMLElement;
+
+	constructor(leaf: WorkspaceLeaf, plugin: FinDocPlugin) {
+		super(leaf);
+		this.plugin = plugin;
+	}
 
 	getViewData() {
 		return this.tableData.join("\n");
@@ -22,7 +29,7 @@ export class CSVView extends TextFileView {
 	}
 
 	refresh() {
-		this.div.oninput = debounce((ev: any) => {
+		this.div.oninput = debounce((ev: IEvent) => {
 			const csvFormat = ev.target.innerHTML
 				.replaceAll("<br>", "\n")
 				.replaceAll("<div>", "\n")
@@ -34,11 +41,12 @@ export class CSVView extends TextFileView {
 
 			this.requestSave();
 
+			// TODO: Replace this timeout with the proper and recommended way.
 			new Notice("Saving in progress...", 2005);
 			setTimeout(() => {
 				new Notice("File Saved !", 600);
 			}, 2005);
-		}, 500);
+		}, parseInt(this.plugin.settings.debounce));
 	}
 
 	clear() {
@@ -48,13 +56,5 @@ export class CSVView extends TextFileView {
 
 	getViewType() {
 		return VIEW_TYPE_CSV;
-	}
-
-	async onOpen() {
-		this.tableData = [];
-	}
-
-	async onClose() {
-		this.requestSave();
 	}
 }

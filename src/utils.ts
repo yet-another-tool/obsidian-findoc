@@ -1,10 +1,30 @@
 /* UTILS */
-export function debounce(func: any, delay = 250) {
-	let timerId: string | number | NodeJS.Timeout;
-	return (...args: any[]) => {
-		clearTimeout(timerId);
-		timerId = setTimeout(() => {
-			func.apply(this, args);
-		}, delay);
+export const debounce = (func: any, wait = 500) => {
+	let timeout: string | number | NodeJS.Timeout;
+	return function executedFunction(...args: any) {
+		const later = () => {
+			clearTimeout(timeout);
+			func(...args);
+		};
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
 	};
+};
+
+/* Date */
+export function getMonth(d: Date): string | number {
+	if (d.getUTCMonth() + 1 < 10) return "0" + (d.getUTCMonth() + 1);
+	return d.getUTCMonth() + 1;
 }
+
+export function getDate(d: Date): string | number {
+	if (d.getUTCDate() < 10) return "0" + d.getUTCDate();
+	return d.getUTCDate();
+}
+
+/* ChartJS */
+export const skipped = (
+	ctx: IContext,
+	value: string | Array<number>
+): string | Array<number> | undefined =>
+	ctx.p0.skip || ctx.p1.skip ? value : undefined;

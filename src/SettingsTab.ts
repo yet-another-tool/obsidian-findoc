@@ -12,7 +12,6 @@ export default class SettingsTab extends PluginSettingTab {
 
 	display(): void {
 		const { containerEl } = this;
-		console.debug(this.plugin.settings);
 
 		containerEl.empty();
 
@@ -23,6 +22,31 @@ export default class SettingsTab extends PluginSettingTab {
 				"<a style='margin: 0 auto;' href='https://www.buymeacoffee.com/studiowebux'><img width='109px' alt='Buy me a Coffee' src='https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png'/></a>";
 			button.buttonEl.style.boxShadow = "none";
 			button.buttonEl.style.backgroundColor = "transparent";
+		});
+
+		new Setting(containerEl)
+			.setName("CSV Save debounce")
+			.setDesc("Timeout to trigger the CSV saving process")
+			.addText((text) => {
+				text.setValue(this.plugin.settings.debounce.toString());
+				text.onChange(
+					debounce(async (value: string) => {
+						this.plugin.settings.debounce = value;
+						await this.plugin.saveSettings();
+						new Notice("Debounce Updated !");
+					}, 500)
+				);
+			});
+
+		new Setting(containerEl).setName("CSV Separator").addText((text) => {
+			text.setValue(this.plugin.settings.csvSeparator.toString());
+			text.onChange(
+				debounce(async (value: string) => {
+					this.plugin.settings.csvSeparator = value;
+					await this.plugin.saveSettings();
+					new Notice("CSV Separator Updated !");
+				}, 500)
+			);
 		});
 
 		new Setting(containerEl)
@@ -136,10 +160,13 @@ export default class SettingsTab extends PluginSettingTab {
 				.setName(`Color #${key}`)
 				.addColorPicker(async (colorPicker) => {
 					colorPicker.setValue(color);
-					colorPicker.onChange(async (value) => {
-						this.plugin.settings.colors[key] = value;
-						await this.plugin.saveSettings();
-					});
+					colorPicker.onChange(
+						debounce(async (value: string) => {
+							this.plugin.settings.colors[key] = value;
+							await this.plugin.saveSettings();
+							new Notice("Color Updated !");
+						}, 500)
+					);
 				});
 		});
 	}

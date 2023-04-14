@@ -35,7 +35,7 @@ export default class FinDocPlugin extends Plugin {
 
 		this.registerView(
 			VIEW_TYPE_CSV,
-			(leaf: WorkspaceLeaf) => new CSVView(leaf)
+			(leaf: WorkspaceLeaf) => new CSVView(leaf, this)
 		);
 
 		this.registerExtensions(["csv"], VIEW_TYPE_CSV);
@@ -63,7 +63,8 @@ export default class FinDocPlugin extends Plugin {
 					const chartData = processing(
 						data,
 						content.model,
-						this.settings.models
+						this.settings.models,
+						this.settings.csvSeparator
 					);
 
 					ctx.addChild(

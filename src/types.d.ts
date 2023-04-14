@@ -13,10 +13,10 @@ interface IDataset {
 		borderColor: string;
 		fill: boolean;
 		tension: number;
-		data: any;
+		data: number[];
 		segment: {
-			borderColor?: any;
-			borderDash: any;
+			borderColor?: (ctx: IContext) => string | Array<number> | undefined;
+			borderDash: (ctx: IContext) => string | Array<number> | undefined;
 		};
 	}[];
 }
@@ -24,7 +24,7 @@ interface IDataset {
 interface ITooltip {
 	dataset: {
 		label: string;
-		data: any[];
+		data: number[];
 	};
 	parsed: {
 		y: number;
@@ -37,6 +37,8 @@ interface IPluginSettings {
 		[key: string]: IModel;
 	};
 	colors: string[];
+	debounce: string;
+	csvSeparator: string;
 }
 
 interface IModel {
@@ -44,4 +46,38 @@ interface IModel {
 	categories: string[];
 	output: string;
 	beginAtZero: boolean;
+	type: "money" | "percent";
+}
+
+interface IEvent {
+	target: {
+		innerHTML: string;
+	};
+}
+
+interface IChartLine {
+	type: "line";
+	data: IDataset;
+	options: {
+		interaction: {
+			intersect: boolean;
+		};
+		scales: {
+			y: {
+				beginAtZero: boolean;
+			};
+		};
+		plugins: {
+			tooltip: {
+				callbacks: {
+					label: (context: ITooltip) => string;
+				};
+			};
+		};
+	};
+}
+
+interface IContext {
+	p0: { skip: boolean };
+	p1: { skip: boolean };
 }

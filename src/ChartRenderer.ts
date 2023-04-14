@@ -1,12 +1,12 @@
 import { MarkdownRenderChild } from "obsidian";
-import Chart from "chart.js/auto";
+import Chart, { ChartConfiguration } from "chart.js/auto";
 
 export default class ChartRenderer extends MarkdownRenderChild {
-	private data: any;
+	private data: IChartLine;
 	private model: string;
-	private canvases: { [key: string]: any } = {};
+	private canvases: { [key: string]: HTMLCanvasElement } = {};
 
-	constructor(data: any, model: string, el: HTMLElement) {
+	constructor(data: IChartLine, model: string, el: HTMLElement) {
 		super(el);
 		this.data = data;
 		this.model = model;
@@ -17,7 +17,10 @@ export default class ChartRenderer extends MarkdownRenderChild {
 			this.canvases[this.model] = document.createElement("canvas");
 
 			// Chart
-			new Chart(this.canvases[this.model].getContext("2d"), this.data);
+			new Chart(
+				this.canvases[this.model].getContext("2d"),
+				this.data as ChartConfiguration
+			);
 			this.containerEl.append(
 				(document.createElement("h3").innerText = this.model)
 			);
