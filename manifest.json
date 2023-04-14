@@ -1,10 +1,13 @@
 {
 	"id": "findoc",
 	"name": "Financial Doc",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"minAppVersion": "1.00.0",
 	"description": "Financial Documentation and Tracking using CSV format and Chart.js directly in Obsidian",
 	"author": "Studio Webux",
 	"authorUrl": "https://studiowebux.com",
-	"isDesktopOnly": false
+	"isDesktopOnly": false,
+	"fundingUrl": {
+		"Buy Me a Coffee": "https://www.buymeacoffee.com/studiowebux"
+	}
 }

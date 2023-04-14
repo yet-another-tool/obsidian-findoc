@@ -40,6 +40,7 @@
 -   Open and Edit CSV Files in Obsidian
 -   Generate Charts using the CSV File directly in Obsidian and a Custom Code Block
 -   Configurable using Few Settings
+-   Support Desktop and Mobile
 
 ---
 
@@ -147,8 +148,14 @@ The **Extra** is not used.
 -   [] Add more functions to process and analyze the data
 -   [] Write better documentation
 -   [] Add more Chart types, currently only line chart is supported
+-   [x] Support Mobile
 
-### V0.2.0 - Alpha - 2023-04-13
+### V0.3.0 - Alpha - 2023-04-13
+
+-   Added Mobile Support
+
+<details>
+  <summary>### V0.2.0 - Alpha - 2023-04-13</summary>
 
 -   Added new type: `Expenses`
 -   Started to switch the typescript `any` to correct types
@@ -159,6 +166,8 @@ The **Extra** is not used.
 -   bug fixes
 -   Handling invalid CSV lines
 -   Handling empty lines
+
+</details>
 
 <details>
   <summary>### V0.1.0 - Alpha - 2023-04-11</summary>

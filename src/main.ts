@@ -2,9 +2,9 @@ import {
 	MarkdownPostProcessorContext,
 	Plugin,
 	WorkspaceLeaf,
+	normalizePath,
 	parseYaml,
 } from "obsidian";
-import path from "path";
 
 import { CSVView, VIEW_TYPE_CSV } from "./view";
 import processing from "./processing";
@@ -58,7 +58,9 @@ export default class FinDocPlugin extends Plugin {
 
 				if (content.filename) {
 					const data = await vault.adapter.read(
-						path.join(activeFile.parent.path, content.filename)
+						normalizePath(
+							`${activeFile.parent.path}/${content.filename}`
+						)
 					);
 					const chartData = processing(
 						data,
