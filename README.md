@@ -56,6 +56,13 @@ npm run build
 
 Move the `main.js` and `manifest.json` to your plugins directory in a directory named `findoc`.
 
+### Releases and Github Actions
+
+```bash
+git tag -a vX.Y.Z -m "Version X.Y.Z"
+git push origin tags/vX.Y.Z
+```
+
 ---
 
 ## Usage
