@@ -149,10 +149,18 @@ The **Extra** is not used.
 -   [] Write better documentation
 -   [] Add more Chart types, currently only line chart is supported
 -   [x] Support Mobile
+-   [x] Support Windows
 
-### V0.3.0 - Alpha - 2023-04-13
+### V0.3.1 - Alpha - 2023-04-13
+
+-   Added Windows Support
+
+<details>
+  <summary>### V0.3.0 - Alpha - 2023-04-13</summary>
 
 -   Added Mobile Support
+
+</details>
 
 <details>
   <summary>### V0.2.0 - Alpha - 2023-04-13</summary>

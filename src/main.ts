@@ -5,6 +5,7 @@ import {
 	normalizePath,
 	parseYaml,
 } from "obsidian";
+import { sep } from "path";
 
 import { CSVView, VIEW_TYPE_CSV } from "./view";
 import processing from "./processing";
@@ -59,7 +60,9 @@ export default class FinDocPlugin extends Plugin {
 				if (content.filename) {
 					const data = await vault.adapter.read(
 						normalizePath(
-							`${activeFile.parent.path}/${content.filename}`
+							`${
+								activeFile.parent.path
+							}${sep}${content.filename.replace(/[\\/]/g, sep)}`
 						)
 					);
 					const chartData = processing(
