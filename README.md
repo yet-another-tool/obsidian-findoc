@@ -1,6 +1,6 @@
 <div align="center">
 
-<!-- <img src="./docs/vault.png" alt="Project Logo" width="256"> -->
+<img src="./docs/findoc-logo-256.png" alt="Findoc Logo" width="256">
 
 <h2>Yet Another Tool - Fin Doc</h2>
 
