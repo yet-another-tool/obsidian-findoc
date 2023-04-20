@@ -4,7 +4,7 @@
 
 <h2>Yet Another Tool - Fin Doc</h2>
 
-<p>Obsidian plugin to read and edit a CSV file, then use it as a data source to generate charts.</p>
+<p>Obsidian.md plugin to read and edit a CSV file, then use it as a data source to generate charts.</p>
 <p>I invite you to create PR and Issues with ideas, improvements and etc.</p>
 
 <p align="center">
@@ -41,6 +41,8 @@
 -   Generate Charts using the CSV File directly in Obsidian and a Custom Code Block
 -   Configurable using Few Settings
 -   Support Desktop and Mobile
+-   Using [Chart.js](https://www.chartjs.org)
+-   Plugin for [Obsidian.md](https://obsidian.md)
 
 ---
 
@@ -48,7 +50,7 @@
 
 It is still a POC, you can download a release and install it in your local obsidian plugin.
 
-> As soon as the csv aspect is stable, I will open a PR in the Obsidian Plugin registry.
+> As soon as the CSV aspect is stable, I will open a PR in the Obsidian Plugin registry.
 
 ```bash
 npm install
@@ -117,7 +119,7 @@ Where **Type** is one of:
 -   **House Expenses**
 -   **Expenses**
 
-The **Id** is preferably _Unique for a group_, otherwise you will have weird behaviour and wrong grouping.
+The **Id** is preferably _Unique for a group_, otherwise you will have weird behaviour and wrong grouping. Also used in the code as a _category_
 
 The **Value** must be a **Number**
 
@@ -126,6 +128,8 @@ The **Timestamp** is only a _Date_ using this format: `'YYYY-MM-DD'`
 The **Extra** is not used.
 
 **Can I use any software and export a CSV File**: Yes.
+
+**What is a category?**: This is the _Id_, for example, you can have an expense (<-Type) for the house (<-Category)
 
 ---
 
@@ -150,10 +154,21 @@ The **Extra** is not used.
 -   [] Add more Chart types, currently only line chart is supported
 -   [x] Support Mobile
 -   [x] Support Windows
+-   [] Bug with default dropdown values in the settings tab
+-   [] Copy paste is broken while editing a CSV File
 
-### V0.3.1 - Alpha - 2023-04-13
+### V0.3.2 - Alpha - 2023-04-19
+
+-   Added new Methods to prepare the chart
+-   Filter per types instead of categories
+-   ISSUE Found: **Not Fixed**. Saw saving issues while copy pasting row in the CSV File
+
+<details>
+  <summary>### V0.3.1 - Alpha - 2023-04-13</summary>
 
 -   Added Windows Support
+
+</details>
 
 <details>
   <summary>### V0.3.0 - Alpha - 2023-04-13</summary>

@@ -162,4 +162,38 @@ export const functions: { [key: string]: any } = {
 			datasets,
 		};
 	},
+
+	generateDailyDataSetPerTypes: (
+		typeToSelect: string[],
+		input: { [key: string]: IInput[] },
+		labels: string[]
+	): IDataset => {
+		const datasets = typeToSelect.map((type) => {
+			const color = getColor();
+			return {
+				label: type,
+				borderColor: color,
+				fill: false,
+				tension: 0.2,
+				spanGaps: true,
+				segment: {
+					borderColor: (ctx: IContext) => skipped(ctx, color),
+					borderDash: (ctx: IContext) => skipped(ctx, [3, 3]),
+				},
+				data: Object.values(input).map((i) => {
+					return i
+						.filter((entry) => entry.type === type)
+						.reduce((acc, current) => {
+							acc += current.value;
+							return acc;
+						}, 0);
+				}),
+			};
+		});
+
+		return {
+			labels,
+			datasets,
+		};
+	},
 };
