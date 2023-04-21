@@ -66,9 +66,6 @@ export default class SettingsTab extends PluginSettingTab {
 			new Setting(modelSection)
 				.setName(`Data Source for ${key}`)
 				.addDropdown((dropdown) => {
-					dropdown.setValue(
-						this.plugin.settings.models[key].dataSource
-					);
 					dropdown.addOption(
 						"splitDailyDates",
 						"Split By Daily Dates"
@@ -78,6 +75,9 @@ export default class SettingsTab extends PluginSettingTab {
 						"Split By Year & Month"
 					);
 					dropdown.addOption("splitByYear", "Split By Year");
+					dropdown.setValue(
+						this.plugin.settings.models[key].dataSource
+					);
 
 					dropdown.onChange(async (value) => {
 						this.plugin.settings.models[key].dataSource = value;
@@ -88,7 +88,6 @@ export default class SettingsTab extends PluginSettingTab {
 			new Setting(modelSection)
 				.setName(`Output Function for ${key}`)
 				.addDropdown((dropdown) => {
-					dropdown.setValue(this.plugin.settings.models[key].output);
 					dropdown.addOption(
 						"generateSumDataSet",
 						"Generate Sum Dataset"
@@ -101,6 +100,7 @@ export default class SettingsTab extends PluginSettingTab {
 						"generateDailyDataSetPerTypes",
 						"Generate Daily Dataset Per Types"
 					);
+					dropdown.setValue(this.plugin.settings.models[key].output);
 
 					dropdown.onChange(async (value) => {
 						this.plugin.settings.models[key].output = value;

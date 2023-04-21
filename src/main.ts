@@ -1,5 +1,6 @@
 import {
 	MarkdownPostProcessorContext,
+	Notice,
 	Plugin,
 	WorkspaceLeaf,
 	normalizePath,
@@ -29,54 +30,65 @@ export default class FinDocPlugin extends Plugin {
 	}
 
 	async onload() {
-		await this.loadSettings();
-		this.addSettingTab(new SettingsTab(this.app, this));
+		try {
+			await this.loadSettings();
+			this.addSettingTab(new SettingsTab(this.app, this));
 
-		const { vault } = this.app;
+			const { vault } = this.app;
 
-		this.registerView(
-			VIEW_TYPE_CSV,
-			(leaf: WorkspaceLeaf) => new CSVView(leaf, this)
-		);
+			this.registerView(
+				VIEW_TYPE_CSV,
+				(leaf: WorkspaceLeaf) => new CSVView(leaf, this)
+			);
 
-		this.registerExtensions(["csv"], VIEW_TYPE_CSV);
+			this.registerExtensions(["csv"], VIEW_TYPE_CSV);
 
-		this.registerMarkdownCodeBlockProcessor(
-			"findoc",
-			async (
-				src: string,
-				el: HTMLElement,
-				ctx: MarkdownPostProcessorContext
-			) => {
-				const activeFile = this.app.workspace.getActiveFile();
-				if (!activeFile) {
-					return;
+			this.registerMarkdownCodeBlockProcessor(
+				"findoc",
+				async (
+					src: string,
+					el: HTMLElement,
+					ctx: MarkdownPostProcessorContext
+				) => {
+					const activeFile = this.app.workspace.getActiveFile();
+					if (!activeFile) {
+						return;
+					}
+					const content = parseYaml(src);
+					if (!content || !content.filename) {
+						new Notice("No Content or No Filename");
+						return;
+					}
+
+					if (content.filename) {
+						const filename = normalizePath(
+							`${activeFile.parent.path}${
+								sep || "\\"
+							}${content.filename.replace(/[\\/]/g, sep || "\\")}`
+						);
+
+						const data = await vault.adapter.read(filename);
+
+						const chartData = processing(
+							data,
+							content.model,
+							this.settings.models,
+							this.settings.csvSeparator
+						);
+
+						if (chartData) {
+							ctx.addChild(
+								new ChartRenderer(chartData, content.model, el)
+							);
+						} else {
+							new Notice("Unable to generate chart");
+						}
+					}
 				}
-				const content = parseYaml(src);
-				if (!content || !content.filename) {
-					return;
-				}
-
-				if (content.filename) {
-					const data = await vault.adapter.read(
-						normalizePath(
-							`${
-								activeFile.parent.path
-							}${sep}${content.filename.replace(/[\\/]/g, sep)}`
-						)
-					);
-					const chartData = processing(
-						data,
-						content.model,
-						this.settings.models,
-						this.settings.csvSeparator
-					);
-
-					ctx.addChild(
-						new ChartRenderer(chartData, content.model, el)
-					);
-				}
-			}
-		);
+			);
+		} catch (e) {
+			new Notice(e.message, 10000);
+			throw e;
+		}
 	}
 }

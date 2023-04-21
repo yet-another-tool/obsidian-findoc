@@ -62,8 +62,8 @@ Move the `main.js` and `manifest.json` to your plugins directory in a directory 
 ### Releases and Github Actions
 
 ```bash
-git tag -a vX.Y.Z -m "Version X.Y.Z"
-git push origin tags/vX.Y.Z
+git tag -a X.Y.Z -m "Version X.Y.Z"
+git push origin tags/X.Y.Z
 ```
 
 ---
@@ -154,14 +154,22 @@ The **Extra** is not used.
 -   [] Add more Chart types, currently only line chart is supported
 -   [x] Support Mobile
 -   [x] Support Windows
--   [] Bug with default dropdown values in the settings tab
+-   [x] Bug with default dropdown values in the settings tab
 -   [] Copy paste is broken while editing a CSV File
 
-### V0.3.2 - Alpha - 2023-04-19
+### V0.3.3 - Alpha - 2023-04-20
+
+-   Fixed mobile support
+-   Fixed dropdown current value selection
+
+<details>
+  <summary>### V0.3.2 - Alpha - 2023-04-19</summary>
 
 -   Added new Methods to prepare the chart
 -   Filter per types instead of categories
 -   ISSUE Found: **Not Fixed**. Saw saving issues while copy pasting row in the CSV File
+
+</details>
 
 <details>
   <summary>### V0.3.1 - Alpha - 2023-04-13</summary>
