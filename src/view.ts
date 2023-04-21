@@ -1,5 +1,10 @@
 import FinDocPlugin from "main";
-import { Notice, TextFileView, WorkspaceLeaf } from "obsidian";
+import {
+	Notice,
+	TextFileView,
+	WorkspaceLeaf,
+	debounce as _debounce,
+} from "obsidian";
 import { debounce } from "utils";
 
 export const VIEW_TYPE_CSV = "csv-view";
@@ -24,6 +29,8 @@ export class CSVView extends TextFileView {
 		this.div = this.contentEl.createDiv();
 		this.div.contentEditable = "true";
 		this.div.innerText = this.data;
+		// Margin to avoid having the iphone keyboard hide last lines
+		this.div.style.marginBottom = "50px";
 
 		this.refresh();
 	}
@@ -43,7 +50,7 @@ export class CSVView extends TextFileView {
 
 			// TODO: Replace this timeout with the proper and recommended way.
 			new Notice("Saving in progress...", 2005);
-			setTimeout(() => {
+			_debounce(() => {
 				new Notice("File Saved !", 600);
 			}, 2005);
 		}, parseInt(this.plugin.settings.debounce));

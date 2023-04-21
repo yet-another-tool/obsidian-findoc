@@ -50,39 +50,53 @@ export default class FinDocPlugin extends Plugin {
 					el: HTMLElement,
 					ctx: MarkdownPostProcessorContext
 				) => {
-					const activeFile = this.app.workspace.getActiveFile();
-					if (!activeFile) {
-						return;
-					}
-					const content = parseYaml(src);
-					if (!content || !content.filename) {
-						new Notice("No Content or No Filename");
-						return;
-					}
-
-					if (content.filename) {
-						const filename = normalizePath(
-							`${activeFile.parent.path}${
-								sep || "\\"
-							}${content.filename.replace(/[\\/]/g, sep || "\\")}`
-						);
-
-						const data = await vault.adapter.read(filename);
-
-						const chartData = processing(
-							data,
-							content.model,
-							this.settings.models,
-							this.settings.csvSeparator
-						);
-
-						if (chartData) {
-							ctx.addChild(
-								new ChartRenderer(chartData, content.model, el)
-							);
-						} else {
-							new Notice("Unable to generate chart");
+					try {
+						const activeFile = this.app.workspace.getActiveFile();
+						if (!activeFile) {
+							return;
 						}
+						const content = parseYaml(src);
+						if (!content || !content.filename) {
+							new Notice("No Content or No Filename", 10000);
+							return;
+						}
+
+						if (content.filename) {
+							// Handling:
+							// Mobile (iphone)
+							// Linux / macos / windows
+							const filename = normalizePath(
+								`${activeFile.parent.path}${
+									sep || "\\"
+								}${content.filename.replace(
+									/[\\/]/g,
+									sep || "\\"
+								)}`
+							);
+							const data = await vault.adapter.read(filename);
+							const chartData = processing(
+								data,
+								content.model,
+								this.settings.models,
+								this.settings.csvSeparator
+							);
+
+							if (chartData) {
+								ctx.addChild(
+									new ChartRenderer(
+										this.settings.models[content.model],
+										chartData,
+										content.model,
+										el
+									)
+								);
+							} else {
+								new Notice("Unable to generate chart", 10000);
+							}
+						}
+					} catch (e) {
+						new Notice(e.message, 10000);
+						throw e;
 					}
 				}
 			);

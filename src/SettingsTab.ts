@@ -97,8 +97,8 @@ export default class SettingsTab extends PluginSettingTab {
 						"Generate Daily Dataset"
 					);
 					dropdown.addOption(
-						"generateDailyDataSetPerTypes",
-						"Generate Daily Dataset Per Types"
+						"generateSumDataSetPerTypes",
+						"Generate Sum Dataset Per Types"
 					);
 					dropdown.setValue(this.plugin.settings.models[key].output);
 

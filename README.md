@@ -147,7 +147,7 @@ The **Extra** is not used.
 ### TODO
 
 -   [x] Github Actions and create a release to publish this alpha version to Obsidian repo
--   [-] Fix the saving system for CSV Files (_Testing the new debounce function_)
+-   [x] Fix the saving system for CSV Files (Using debounce of at least 1000)
 -   [] Improve the setting tab (edit, add and remove colors and models)
 -   [] Add more functions to process and analyze the data
 -   [] Write better documentation
@@ -155,12 +155,22 @@ The **Extra** is not used.
 -   [x] Support Mobile
 -   [x] Support Windows
 -   [x] Bug with default dropdown values in the settings tab
--   [] Copy paste is broken while editing a CSV File
+-   [-] Copy paste is broken while editing a CSV File (not able to reproduce)
 
-### V0.3.3 - Alpha - 2023-04-20
+### V0.3.4 - Alpha - 2023-04-20
+
+-   Fixed Mobile CSV Edition, adding margin to show all text (Tested on Iphone only)
+-   Improve error handling and user interaction
+-   updated method name to prepare the data
+-   Added chart details in the footer
+
+<details>
+  <summary>### V0.3.3 - Alpha - 2023-04-20</summary>
 
 -   Fixed mobile support
 -   Fixed dropdown current value selection
+
+</details>
 
 <details>
   <summary>### V0.3.2 - Alpha - 2023-04-19</summary>

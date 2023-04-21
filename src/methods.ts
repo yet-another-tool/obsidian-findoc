@@ -163,7 +163,7 @@ export const functions: { [key: string]: any } = {
 		};
 	},
 
-	generateDailyDataSetPerTypes: (
+	generateSumDataSetPerTypes: (
 		typeToSelect: string[],
 		input: { [key: string]: IInput[] },
 		labels: string[]

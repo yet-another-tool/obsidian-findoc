@@ -100,12 +100,12 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 		dividend: {
 			dataSource: "splitByYearMonth",
 			categories: ["Dividend", "Cotisation"],
-			output: "generateSumDataSet",
+			output: "generateSumDataSetPerTypes",
 			beginAtZero: true,
 			type: "money",
 		},
 	},
 	colors: COLORS,
-	debounce: "500",
+	debounce: "1000",
 	csvSeparator: ",",
 };
