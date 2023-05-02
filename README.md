@@ -156,13 +156,28 @@ The **Extra** is not used.
 -   [x] Support Windows
 -   [x] Bug with default dropdown values in the settings tab
 -   [-] Copy paste is broken while editing a CSV File (not able to reproduce)
+-   [] Add settings for CSS and CSV Editor
+-   [] Add reports using pie chart or something like that
+-   [] Add reports in table view
+-   [] Add dropdown to select transaction type (instead of looking in the doc)
 
-### V0.3.4 - Alpha - 2023-04-20
+### V0.4.0 - Beta - 2023-05-02
+
+-   Improved (hopefully) the UI when editing a CSV file, wrapped a table in a div with content editable. This way I think it is the best of both solution.
+-   The saving system should be better since no more handling of csv separator
+
+![Table View](./docs/V0.4.0/table_view.png)
+![Table View Button](./docs/V0.4.0/table_view_btn.png)
+
+<details>
+  <summary>### V0.3.4 - Alpha - 2023-04-20</summary
 
 -   Fixed Mobile CSV Edition, adding margin to show all text (Tested on Iphone only)
 -   Improve error handling and user interaction
 -   updated method name to prepare the data
 -   Added chart details in the footer
+
+</details>
 
 <details>
   <summary>### V0.3.3 - Alpha - 2023-04-20</summary>
