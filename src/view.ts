@@ -5,7 +5,8 @@ import {
 	WorkspaceLeaf,
 	debounce as _debounce,
 } from "obsidian";
-import { debounce } from "utils";
+import { debounce, getToday } from "utils";
+import { options } from "./constants";
 
 export const VIEW_TYPE_CSV = "csv-view";
 
@@ -23,6 +24,28 @@ export class CSVView extends TextFileView {
 
 	getViewData() {
 		return this.tableData.join("\n");
+	}
+
+	dropdown(selected = ""): HTMLElement {
+		const id = new Date().getTime().toString();
+		const dropdown = this.contentEl.createEl("select");
+		dropdown.id = id;
+		dropdown.setAttribute("value", selected);
+
+		dropdown.onchange = () => {
+			dropdown.setAttribute("value", dropdown.value);
+		};
+
+		options.forEach((option: string) => {
+			const opt = this.contentEl.createEl("option");
+			opt.value = option;
+			opt.id = id + option.replace(" ", "_");
+			opt.innerText = option;
+			if (option === selected) opt.selected = true;
+			dropdown.appendChild(opt);
+		});
+
+		return dropdown;
 	}
 
 	createTable(data: string[]) {
@@ -50,14 +73,18 @@ export class CSVView extends TextFileView {
 		//
 		data.slice(1).forEach((line) => {
 			const trContent = this.contentEl.createEl("tr");
-			line.split(this.plugin.settings.csvSeparator).forEach((el) => {
+			line.split(this.plugin.settings.csvSeparator).forEach((el, idx) => {
 				const td = this.contentEl.createEl("td");
 				td.style.borderColor = "white";
 				td.style.border = "1px solid";
 				td.style.padding = "3px";
 				td.style.textAlign = "center";
 				td.style.minWidth = "150px";
-				td.innerText = el;
+				if (idx === 0) {
+					td.appendChild(this.dropdown(el));
+				} else {
+					td.innerText = el;
+				}
 				trContent.appendChild(td);
 			});
 			this.div.appendChild(trContent);
@@ -75,20 +102,18 @@ export class CSVView extends TextFileView {
 		btn.innerText = "Add New Row";
 		btn.onClickEvent(() => {
 			const trContent = this.contentEl.createEl("tr");
-			[
-				"__type__",
-				"__id__",
-				"__value__",
-				"__timestamp__",
-				"__extra__",
-			].forEach((el) => {
+			[options[0], "ID", "0", getToday(), "EXTRA"].forEach((el, idx) => {
 				const td = this.contentEl.createEl("td");
 				td.style.borderColor = "white";
 				td.style.border = "1px solid";
 				td.style.padding = "3px";
 				td.style.textAlign = "center";
 				td.style.minWidth = "150px";
-				td.innerText = el;
+				if (idx === 0) {
+					td.appendChild(this.dropdown(el));
+				} else {
+					td.innerText = el;
+				}
 				trContent.appendChild(td);
 			});
 			this.div.appendChild(trContent);
@@ -108,40 +133,54 @@ export class CSVView extends TextFileView {
 	}
 
 	refresh() {
-		this.div.oninput = debounce((ev: IEvent) => {
-			const rows = ev.target.innerHTML.split(new RegExp(/<tr.*?>/));
-			this.tableData = this.tableData = rows
-				.map((column) =>
-					column
-						.split(new RegExp(/<td.*?>/))
-						.slice(1)
-						.map((i) =>
-							i
+		this.div.oninput = debounce(() => {
+			this.saveData();
+		}, parseInt(this.plugin.settings.debounce));
+	}
+
+	saveData() {
+		const rows = this.div.innerHTML.split(new RegExp(/<tr.*?>/));
+		this.tableData = rows
+			.map((column) =>
+				column
+					.split(new RegExp(/<td.*?>/))
+					.slice(1)
+					.map((i, idx) => {
+						if (idx === 0) {
+							// Select (Dropdown)
+							return (
+								i.split('value="')[1].split('"')[0] ||
+								options[0]
+							);
+						} else {
+							// Input field
+							return i
 								.replaceAll(/<.*?>/g, "")
 								.replaceAll(
 									'&lt;br class="Apple-interchange-newline"&gt',
 									""
-								)
-						)
-						.join(this.plugin.settings.csvSeparator)
-				)
-				.filter((r) => r.length !== 0);
+								);
+						}
+					})
+					.join(this.plugin.settings.csvSeparator)
+			)
+			// Clear empty lines
+			.filter((r) => r.length !== 0);
 
-			this.tableData = [this.tableHeader, ...this.tableData];
-			this.requestSave();
+		this.tableData = [this.tableHeader, ...this.tableData];
+		this.requestSave();
 
-			// TODO: Replace this timeout with the proper and recommended way.
-			new Notice("Saving in progress...", 2005);
-			_debounce(() => {
-				new Notice("File Saved !", 600);
-			}, 2005);
-		}, parseInt(this.plugin.settings.debounce));
+		// TODO: Replace this timeout with the proper and recommended way.
+		new Notice("Saving in progress...", 2005);
+		_debounce(() => {
+			new Notice("File Saved !", 600);
+		}, 2005);
 	}
 
 	clear() {
 		this.tableData = [];
-		this.div.empty();
-		this.parent.empty();
+		if (this.div) this.div.empty();
+		if (this.parent) this.parent.empty();
 		this.contentEl.empty();
 	}
 
