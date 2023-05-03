@@ -137,7 +137,7 @@ The **Extra** is not used.
 
 ![Dividend Chart](./docs/DividendChart.png)
 ![Income Chart with Missing Datapoints](./docs/IncomeChartMissingData.png)
-![Finance CSV File](./docs/FinanceCSV.png)
+![Dropdown Types](./docs/V0.4.1/dropdown.png)
 ![Income Snippet](./docs/IncomeSnippet.png)
 
 ---
@@ -159,9 +159,17 @@ The **Extra** is not used.
 -   [] Add settings for CSS and CSV Editor
 -   [] Add reports using pie chart or something like that
 -   [] Add reports in table view
--   [] Add dropdown to select transaction type (instead of looking in the doc)
+-   [x] Add dropdown to select transaction type (instead of looking in the doc)
 
-### V0.4.0 - Beta - 2023-05-02
+### V0.4.1 - Beta - 2023-05-02
+
+-   Bug fixes
+-   Dropdown to select the transaction type
+
+![Dropdown Types](./docs/V0.4.1/dropdown.png)
+
+<details>
+  <summary>### V0.4.0 - Beta - 2023-05-02</summary>
 
 -   Improved (hopefully) the UI when editing a CSV file, wrapped a table in a div with content editable. This way I think it is the best of both solution.
 -   The saving system should be better since no more handling of csv separator
@@ -169,8 +177,10 @@ The **Extra** is not used.
 ![Table View](./docs/V0.4.0/table_view.png)
 ![Table View Button](./docs/V0.4.0/table_view_btn.png)
 
+</details>
+
 <details>
-  <summary>### V0.3.4 - Alpha - 2023-04-20</summary
+  <summary>### V0.3.4 - Alpha - 2023-04-20</summary>
 
 -   Fixed Mobile CSV Edition, adding margin to show all text (Tested on Iphone only)
 -   Improve error handling and user interaction

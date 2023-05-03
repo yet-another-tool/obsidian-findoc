@@ -22,6 +22,12 @@ export function getDate(d: Date): string | number {
 	return d.getUTCDate();
 }
 
+// In UTC Format.
+export function getToday() {
+	const d = new Date();
+	return `${d.getFullYear()}-${getMonth(d)}-${getDate(d)}`;
+}
+
 /* ChartJS */
 export const skipped = (
 	ctx: IContext,
