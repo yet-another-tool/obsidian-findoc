@@ -6,7 +6,7 @@ import {
 	debounce as _debounce,
 } from "obsidian";
 import { debounce, getToday } from "utils";
-import { options } from "./constants";
+import { types } from "./constants";
 
 export const VIEW_TYPE_CSV = "csv-view";
 
@@ -36,7 +36,7 @@ export class CSVView extends TextFileView {
 			dropdown.setAttribute("value", dropdown.value);
 		};
 
-		options.forEach((option: string) => {
+		types.forEach((option: string) => {
 			const opt = this.contentEl.createEl("option");
 			opt.value = option;
 			opt.id = id + option.replace(" ", "_");
@@ -50,7 +50,6 @@ export class CSVView extends TextFileView {
 
 	createTable(data: string[]) {
 		this.div = this.contentEl.createDiv();
-		this.div.contentEditable = "true";
 		const table = this.contentEl.createEl("table");
 
 		//
@@ -73,8 +72,11 @@ export class CSVView extends TextFileView {
 		//
 		data.slice(1).forEach((line) => {
 			const trContent = this.contentEl.createEl("tr");
-			line.split(this.plugin.settings.csvSeparator).forEach((el, idx) => {
+			const lineData = line.split(this.plugin.settings.csvSeparator);
+			lineData.push("ACTION");
+			lineData.forEach((el, idx) => {
 				const td = this.contentEl.createEl("td");
+				td.id = `data_${idx}`;
 				td.style.borderColor = "white";
 				td.style.border = "1px solid";
 				td.style.padding = "3px";
@@ -82,9 +84,13 @@ export class CSVView extends TextFileView {
 				td.style.minWidth = "150px";
 				if (idx === 0) {
 					td.appendChild(this.dropdown(el));
+				} else if (idx === lineData.length - 1) {
+					td.appendChild(this.createBtnRemoveLine(trContent));
 				} else {
 					td.innerText = el;
+					td.contentEditable = "true";
 				}
+
 				trContent.appendChild(td);
 			});
 			this.div.appendChild(trContent);
@@ -93,16 +99,38 @@ export class CSVView extends TextFileView {
 		table.appendChild(this.div);
 		this.parent.appendChild(table);
 
-		//
-		// Button
-		//
+		this.createBtnAddLine();
+	}
+
+	createBtnRemoveLine(el: HTMLElement): HTMLElement {
+		const btn = this.contentEl.createEl("button");
+		btn.style.marginTop = "10px";
+		btn.id = "deleteRow";
+		btn.innerText = "Delete";
+		btn.onClickEvent(() => {
+			el.empty();
+			this.saveData();
+		});
+
+		return btn;
+	}
+
+	createBtnAddLine() {
 		const btn = this.contentEl.createEl("button");
 		btn.style.marginTop = "10px";
 		btn.id = "newRow";
 		btn.innerText = "Add New Row";
 		btn.onClickEvent(() => {
 			const trContent = this.contentEl.createEl("tr");
-			[options[0], "ID", "0", getToday(), "EXTRA"].forEach((el, idx) => {
+			const lineData = [
+				types[0],
+				"ID",
+				"0",
+				getToday(),
+				"EXTRA",
+				"ACTION",
+			];
+			lineData.forEach((el, idx) => {
 				const td = this.contentEl.createEl("td");
 				td.style.borderColor = "white";
 				td.style.border = "1px solid";
@@ -111,8 +139,11 @@ export class CSVView extends TextFileView {
 				td.style.minWidth = "150px";
 				if (idx === 0) {
 					td.appendChild(this.dropdown(el));
+				} else if (idx === lineData.length - 1) {
+					td.appendChild(this.createBtnRemoveLine(trContent));
 				} else {
 					td.innerText = el;
+					td.contentEditable = "true";
 				}
 				trContent.appendChild(td);
 			});
@@ -145,12 +176,12 @@ export class CSVView extends TextFileView {
 				column
 					.split(new RegExp(/<td.*?>/))
 					.slice(1)
+					.filter((i) => !new RegExp(/<button.*?>.*<.*?>/).test(i))
 					.map((i, idx) => {
 						if (idx === 0) {
 							// Select (Dropdown)
 							return (
-								i.split('value="')[1].split('"')[0] ||
-								options[0]
+								i.split('value="')[1].split('"')[0] || types[0]
 							);
 						} else {
 							// Input field

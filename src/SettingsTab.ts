@@ -1,6 +1,8 @@
 import { App, Notice, PluginSettingTab, Setting } from "obsidian";
 import FinDocPlugin from "main";
-import { debounce } from "utils";
+import { debounce, idToText } from "utils";
+import loadIcons from "loadIcons";
+import { types } from "./constants";
 
 export default class SettingsTab extends PluginSettingTab {
 	plugin: FinDocPlugin;
@@ -8,6 +10,21 @@ export default class SettingsTab extends PluginSettingTab {
 	constructor(app: App, plugin: FinDocPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
+
+		loadIcons();
+	}
+
+	createNewColorBtn(): HTMLElement {
+		const btn = this.containerEl.createEl("button");
+		btn.style.marginBottom = "10px";
+		btn.id = "newColor";
+		btn.innerText = "Add New Color";
+		btn.onClickEvent(() => {
+			this.plugin.settings.colors.unshift("#ffffff");
+			console.debug(this.plugin.settings.colors);
+			this.display();
+		});
+		return btn;
 	}
 
 	display(): void {
@@ -58,13 +75,15 @@ export default class SettingsTab extends PluginSettingTab {
 		div.style.padding = "10px";
 
 		Object.entries(this.plugin.settings.models).forEach(([key, model]) => {
+			const name = idToText(key);
 			const modelSection = div.createDiv();
 			const el = modelSection.createEl("h2");
-			el.innerText = key;
+			el.innerText = name;
 			modelSection.style.padding = "10px";
 			modelSection.style.marginBottom = "20px";
+
 			new Setting(modelSection)
-				.setName(`Data Source for ${key}`)
+				.setName(`Data Source for ${name}`)
 				.addDropdown((dropdown) => {
 					dropdown.addOption(
 						"splitDailyDates",
@@ -86,7 +105,7 @@ export default class SettingsTab extends PluginSettingTab {
 					});
 				});
 			new Setting(modelSection)
-				.setName(`Output Function for ${key}`)
+				.setName(`Output Function for ${name}`)
 				.addDropdown((dropdown) => {
 					dropdown.addOption(
 						"generateSumDataSet",
@@ -110,7 +129,7 @@ export default class SettingsTab extends PluginSettingTab {
 				});
 
 			new Setting(modelSection)
-				.setName(`Begin at Zero for ${key}`)
+				.setName(`Begin at Zero for ${name}`)
 				.addToggle((toggle) => {
 					toggle.setValue(
 						this.plugin.settings.models[key].beginAtZero
@@ -122,41 +141,50 @@ export default class SettingsTab extends PluginSettingTab {
 					});
 				});
 
-			new Setting(modelSection)
-				.setName(`Categories for ${key}`)
-				.setDesc("WIP: need a multi select.")
-				.addTextArea((textArea) => {
-					textArea.inputEl.rows = 3;
-					textArea.inputEl.cols = 40;
-					textArea.setValue(JSON.stringify(model.categories));
-					textArea.onChange(
-						debounce(async (value: string) => {
-							try {
-								if (
-									!value ||
-									typeof value !== "string" ||
-									JSON.parse(value) === null
-								)
-									return;
-								this.plugin.settings.models[key].categories =
-									typeof value === "string"
-										? JSON.parse(value)
-										: value;
-								await this.plugin.saveSettings();
-								new Notice("Categories Updated !");
-							} catch (e) {
-								console.error(e.message);
-								return;
-							}
-						}, 300)
-					);
-				});
+			const h2 = modelSection.createEl("h2");
+			h2.innerText = `Types for ${name}`;
+
+			const wrapper = modelSection.createDiv();
+			wrapper.style.display = "flex";
+			wrapper.style.justifyContent = "end";
+
+			const select = wrapper.createEl("select");
+			select.id = key;
+			select.multiple = true;
+			select.style.minWidth = "200px";
+			select.style.height = "130px";
+
+			select.setAttribute("value", model.types.join(","));
+
+			select.onchange = async () => {
+				const selected = [];
+				// @ts-ignore
+				for (const option of document.getElementById(key).options) {
+					if (option.selected) {
+						selected.push(option.value);
+					}
+				}
+				// select.value = selected.join(",");
+				model.types = selected;
+				await this.plugin.saveSettings();
+				new Notice("Types Updated !");
+			};
+			// select.setAttribute("value", select.value);
+
+			types.forEach((type: string) => {
+				const opt = select.createEl("option");
+				opt.id = type;
+				opt.value = type;
+				opt.innerText = type;
+				opt.selected = model.types.includes(type);
+			});
 
 			modelSection.createEl("hr");
 		});
 
 		new Setting(containerEl).setName("Colors");
 		const colorSection = containerEl.createDiv();
+		colorSection.appendChild(this.createNewColorBtn());
 		colorSection.style.padding = "10px";
 
 		this.plugin.settings.colors.forEach((color, key) => {
@@ -171,6 +199,16 @@ export default class SettingsTab extends PluginSettingTab {
 							new Notice("Color Updated !");
 						}, 500)
 					);
+				})
+				.addExtraButton((btn) => {
+					btn.setTooltip("Delete Color");
+					btn.setIcon("trash");
+					btn.onClick(async () => {
+						this.plugin.settings.colors.splice(key, 1);
+						await this.plugin.saveSettings();
+						new Notice("Color Deleted !");
+						this.display();
+					});
 				});
 		});
 	}

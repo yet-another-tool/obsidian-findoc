@@ -1,5 +1,6 @@
 import { MarkdownRenderChild } from "obsidian";
 import Chart, { ChartConfiguration } from "chart.js/auto";
+import { idToText } from "utils";
 
 export default class ChartRenderer extends MarkdownRenderChild {
 	private data: IChartLine;
@@ -32,10 +33,16 @@ export default class ChartRenderer extends MarkdownRenderChild {
 
 			this.containerEl.append(this.canvases[this.model]);
 			this.containerEl.createEl("p", {
-				text: `Data Source: ${this.modelInfo.dataSource}`,
+				text: `Data Source: ${idToText(this.modelInfo.dataSource)}`,
 			});
 			this.containerEl.createEl("p", {
-				text: `Output: ${this.modelInfo.output}`,
+				text: `Output: ${idToText(this.modelInfo.output)}`,
+			});
+			this.containerEl.createEl("p", {
+				text: `Found: ${this.data.data.datasets.reduce(
+					(a, b) => (a += b.data.length),
+					0
+				)} data point(s)`,
 			});
 		} else {
 			console.debug("Canvas already loaded");

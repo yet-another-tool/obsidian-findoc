@@ -47,12 +47,12 @@ export const functions: { [key: string]: any } = {
 		typeToSelect: string[],
 		input: { [key: string]: IInput[] },
 		labels: string[],
-		categories: string[]
+		types: string[]
 	): IDataset => {
-		const datasets = categories.map((category) => {
+		const datasets = types.map((type) => {
 			const color = getColor();
 			return {
-				label: category,
+				label: type,
 				borderColor: color,
 				fill: false,
 				tension: 0.2,
@@ -69,22 +69,22 @@ export const functions: { [key: string]: any } = {
 							)
 							.reduce(
 								(
-									categories: { [key: string]: number },
+									types: { [key: string]: number },
 									current: IInput
 								) => {
-									if (!categories[current.id])
-										categories[current.id] = 0;
-									categories[current.id] += current.value;
-									return categories;
+									if (!types[current.id])
+										types[current.id] = 0;
+									types[current.id] += current.value;
+									return types;
 								},
 								{}
 							);
 					})
-					.reduce((categorySum, current) => {
-						if (current[category])
-							categorySum.push(current[category]);
-						else categorySum.push(0);
-						return categorySum;
+					.reduce((typeSum, current) => {
+						if (current[type])
+							typeSum.push(current[type]);
+						else typeSum.push(0);
+						return typeSum;
 					}, []),
 			};
 		});
@@ -98,13 +98,13 @@ export const functions: { [key: string]: any } = {
 		typeToSelect: string[],
 		input: { [key: string]: IInput[] },
 		labels: string[],
-		categories: string[]
+		types: string[]
 	): IDataset => {
 		const nonEmptyLabels: string[] = [];
-		const datasets = categories.map((category) => {
+		const datasets = types.map((type) => {
 			const color = getColor();
 			return {
-				label: category,
+				label: type,
 				borderColor: color,
 				fill: false,
 				tension: 0.2,
@@ -115,29 +115,29 @@ export const functions: { [key: string]: any } = {
 				},
 				data: labels
 					.map((label: string) => {
-						const categoriesFound = input[label]
+						const typesFound = input[label]
 							.filter((i: IInput) =>
 								typeToSelect.includes(i.type)
 							)
 							.reduce(
 								(
-									categories: { [key: string]: number },
+									types: { [key: string]: number },
 									current: IInput
 								) => {
-									if (!categories[current.id])
-										categories[current.id] = 0;
-									categories[current.id] = current.value;
-									return categories;
+									if (!types[current.id])
+										types[current.id] = 0;
+									types[current.id] = current.value;
+									return types;
 								},
 								{}
 							);
 						if (
-							Object.keys(categoriesFound).length > 0 &&
+							Object.keys(typesFound).length > 0 &&
 							!nonEmptyLabels.includes(label)
 						)
 							nonEmptyLabels.push(label);
 
-						return categoriesFound;
+						return typesFound;
 					})
 					.filter((current) => {
 						let total = 0;
@@ -148,11 +148,11 @@ export const functions: { [key: string]: any } = {
 						if (total === 0) return null;
 						return current;
 					})
-					.reduce((categorySum, current) => {
-						if (current[category])
-							categorySum.push(current[category]);
-						else categorySum.push(NaN);
-						return categorySum;
+					.reduce((typeSum, current) => {
+						if (current[type])
+							typeSum.push(current[type]);
+						else typeSum.push(NaN);
+						return typeSum;
 					}, []),
 			};
 		});

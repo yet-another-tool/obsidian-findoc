@@ -43,7 +43,7 @@ interface IPluginSettings {
 
 interface IModel {
 	dataSource: string;
-	categories: string[];
+	types: string[];
 	output: string;
 	beginAtZero: boolean;
 	type: "money" | "percent";

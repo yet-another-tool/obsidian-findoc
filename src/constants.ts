@@ -1,4 +1,4 @@
-export const options: string[] = [
+export const types: string[] = [
 	"Portfolio",
 	"Income",
 	"Mortgage",

@@ -34,3 +34,10 @@ export const skipped = (
 	value: string | Array<number>
 ): string | Array<number> | undefined =>
 	ctx.p0.skip || ctx.p1.skip ? value : undefined;
+
+// Convert id Camel Case to text
+export const idToText = (id: string): string => {
+	return `${id.charAt(0).toUpperCase()}${id
+		.slice(1)
+		.replace(/([A-Z])/g, " $1")}`;
+};

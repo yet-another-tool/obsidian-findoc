@@ -40,7 +40,7 @@
 -   Open and Edit CSV Files in Obsidian
 -   Generate Charts using the CSV File directly in Obsidian and a Custom Code Block
 -   Configurable using Few Settings
--   Support Desktop and Mobile
+-   Support Desktop and Mobile (tested on Windows, MacOS and Iphone)
 -   Using [Chart.js](https://www.chartjs.org)
 -   Plugin for [Obsidian.md](https://obsidian.md)
 
@@ -48,7 +48,7 @@
 
 ## Installation
 
-It is still a POC, you can download a release and install it in your local obsidian plugin.
+It is now in Beta, you can download a release and install it in your local obsidian plugin.
 
 > As soon as the CSV aspect is stable, I will open a PR in the Obsidian Plugin registry.
 
@@ -82,7 +82,7 @@ git push origin tags/X.Y.Z
 -   **mortgageRate**
 -   **dividend**
 
-Create a PR to create new One.  
+Create a PR to create new one.  
 You can edit those directly in the setting tab.
 
 ### Code Block
@@ -119,7 +119,7 @@ Where **Type** is one of:
 -   **House Expenses**
 -   **Expenses**
 
-The **Id** is preferably _Unique for a group_, otherwise you will have weird behaviour and wrong grouping. Also used in the code as a _category_
+The **Id** is preferably _Unique for a group_, otherwise you will have weird behaviour and wrong grouping.
 
 The **Value** must be a **Number**
 
@@ -129,7 +129,7 @@ The **Extra** is not used.
 
 **Can I use any software and export a CSV File**: Yes.
 
-**What is a category?**: This is the _Id_, for example, you can have an expense (<-Type) for the house (<-Category)
+**What is a category?**: This is the _Id_, for example, you can have an `House Expenses` (<-Type) about the `Tax` (<-Category)
 
 ---
 
@@ -137,8 +137,9 @@ The **Extra** is not used.
 
 ![Dividend Chart](./docs/DividendChart.png)
 ![Income Chart with Missing Datapoints](./docs/IncomeChartMissingData.png)
-![Dropdown Types](./docs/V0.4.1/dropdown.png)
 ![Income Snippet](./docs/IncomeSnippet.png)
+![Delete Row](./docs/V0.5.0/delete-row.png)
+![Select Categories in Settings](./docs/V0.5.0/categories-settings.png)
 
 ---
 
@@ -148,25 +149,43 @@ The **Extra** is not used.
 
 -   [x] Github Actions and create a release to publish this alpha version to Obsidian repo
 -   [x] Fix the saving system for CSV Files (Using debounce of at least 1000)
--   [] Improve the setting tab (edit, add and remove colors and models)
--   [] Add more functions to process and analyze the data
--   [] Write better documentation
--   [] Add more Chart types, currently only line chart is supported
+-   [x] Improve the setting tab (edit, add and remove colors)
 -   [x] Support Mobile
 -   [x] Support Windows
 -   [x] Bug with default dropdown values in the settings tab
+-   [x] Add dropdown to select transaction type (instead of looking in the doc)
 -   [-] Copy paste is broken while editing a CSV File (not able to reproduce)
+-   [] Improve the setting tab (edit, add and remove models)
+-   [] Add more functions to process and analyze the data
+-   [] Write better documentation
+-   [] Add more Chart types, currently only line chart is supported
 -   [] Add settings for CSS and CSV Editor
 -   [] Add reports using pie chart or something like that
 -   [] Add reports in table view
--   [x] Add dropdown to select transaction type (instead of looking in the doc)
 
-### V0.4.1 - Beta - 2023-05-02
+### V0.5.0 - Beta - 2023-05-03
+
+-   Bug fixes and refactor
+-   Content editable is more intuitive, no risk to break everything
+-   You can use tab to navigate the table
+-   Added delete row button
+-   Add, Edit and remove color
+-   Improved Categories selection in settings tab
+-   UI and Information addition
+
+![Delete Row](./docs/V0.5.0/delete-row.png)
+![Edit and Delete color](./docs/V0.5.0/colors.png)
+![Select Categories in Settings](./docs/V0.5.0/categories-settings.png)
+
+<details>
+  <summary>### V0.4.1 - Beta - 2023-05-02</summary>
 
 -   Bug fixes
 -   Dropdown to select the transaction type
 
 ![Dropdown Types](./docs/V0.4.1/dropdown.png)
+
+</details>
 
 <details>
   <summary>### V0.4.0 - Beta - 2023-05-02</summary>

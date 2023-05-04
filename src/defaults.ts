@@ -34,42 +34,42 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 	models: {
 		expenses: {
 			dataSource: "splitDailyDates",
-			categories: ["Income", "House Expenses", "Expenses"],
+			types: ["Income", "House Expenses", "Expenses"],
 			output: "generateDailyDataSet",
 			beginAtZero: true,
 			type: "money",
 		},
 		expensesMonthly: {
 			dataSource: "splitByYearMonth",
-			categories: ["Income", "House Expenses", "Expenses"],
+			types: ["Income", "House Expenses", "Expenses"],
 			output: "generateSumDataSet",
 			beginAtZero: true,
 			type: "money",
 		},
 		portfolio: {
 			dataSource: "splitDailyDates",
-			categories: ["Portfolio"],
+			types: ["Portfolio"],
 			output: "generateDailyDataSet",
 			beginAtZero: false,
 			type: "money",
 		},
 		incomeYearly: {
 			dataSource: "splitByYear",
-			categories: ["Income"],
+			types: ["Income"],
 			output: "generateSumDataSet",
 			beginAtZero: true,
 			type: "money",
 		},
 		income: {
 			dataSource: "splitDailyDates",
-			categories: ["Income"],
+			types: ["Income"],
 			output: "generateDailyDataSet",
 			beginAtZero: true,
 			type: "money",
 		},
 		all: {
 			dataSource: "splitDailyDates",
-			categories: [
+			types: [
 				"Portfolio",
 				"Income",
 				"Mortgage",
@@ -85,21 +85,21 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 		},
 		mortgage: {
 			dataSource: "splitDailyDates",
-			categories: ["Mortgage"],
+			types: ["Mortgage"],
 			output: "generateDailyDataSet",
 			beginAtZero: false,
 			type: "money",
 		},
 		mortgageRate: {
 			dataSource: "splitDailyDates",
-			categories: ["Mortgage Rate"],
+			types: ["Mortgage Rate"],
 			output: "generateDailyDataSet",
 			beginAtZero: true,
 			type: "percent",
 		},
 		dividend: {
 			dataSource: "splitByYearMonth",
-			categories: ["Dividend", "Cotisation"],
+			types: ["Dividend", "Cotisation"],
 			output: "generateSumDataSetPerTypes",
 			beginAtZero: true,
 			type: "money",
