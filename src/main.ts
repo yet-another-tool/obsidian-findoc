@@ -70,6 +70,7 @@ export default class FinDocPlugin extends Plugin {
 								data,
 								content.model,
 								this.settings.models,
+								this.settings.colors,
 								this.settings.csvSeparator
 							);
 
