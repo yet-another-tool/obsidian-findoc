@@ -1,6 +1,6 @@
-import { App, Notice, PluginSettingTab, Setting } from "obsidian";
+import { App, Notice, PluginSettingTab, Setting, debounce } from "obsidian";
 import FinDocPlugin from "main";
-import { debounce, idToText } from "utils";
+import { idToText } from "utils";
 import loadIcons from "loadIcons";
 import { types } from "./constants";
 
@@ -43,11 +43,21 @@ export default class SettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("CSV Save debounce")
-			.setDesc("Timeout to trigger the CSV saving process")
+			.setDesc(
+				"Timeout to trigger the CSV saving process (Value must be greater than 500 and less than 5000)"
+			)
 			.addText((text) => {
 				text.setValue(this.plugin.settings.debounce.toString());
 				text.onChange(
 					debounce(async (value: string) => {
+						if (
+							isNaN(parseInt(value)) ||
+							parseInt(value) < 500 ||
+							parseInt(value) > 5000
+						) {
+							new Notice("Invalid debounce value !");
+							return;
+						}
 						this.plugin.settings.debounce = value;
 						await this.plugin.saveSettings();
 						new Notice("Debounce Updated !");

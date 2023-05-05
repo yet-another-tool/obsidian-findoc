@@ -165,8 +165,8 @@ The **Extra** is not used.
 
 ### V0.5.1 - Beta - 2023-05-03
 
-- Removed nodejs path dependency (tested on windows, macos and Iphone)
-- 
+-   Removed nodejs path dependency (tested on windows, macos and Iphone)
+-   Removed Custom debounce function, validate debounce input in settings, default value is not valid.
 
 ### V0.5.0 - Beta - 2023-05-03
 

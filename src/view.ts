@@ -1,11 +1,6 @@
 import FinDocPlugin from "main";
-import {
-	Notice,
-	TextFileView,
-	WorkspaceLeaf,
-	debounce as _debounce,
-} from "obsidian";
-import { debounce, getToday } from "utils";
+import { Notice, TextFileView, WorkspaceLeaf, debounce } from "obsidian";
+import { getToday } from "utils";
 import { types } from "./constants";
 
 export const VIEW_TYPE_CSV = "csv-view";
@@ -166,7 +161,7 @@ export class CSVView extends TextFileView {
 	refresh() {
 		this.div.oninput = debounce(() => {
 			this.saveData();
-		}, parseInt(this.plugin.settings.debounce));
+		}, parseInt(this.plugin.settings.debounce) || 1000);
 	}
 
 	saveData() {
@@ -203,7 +198,7 @@ export class CSVView extends TextFileView {
 
 		// TODO: Replace this timeout with the proper and recommended way.
 		new Notice("Saving in progress...", 2005);
-		_debounce(() => {
+		debounce(() => {
 			new Notice("File Saved !", 600);
 		}, 2005);
 	}
