@@ -163,6 +163,11 @@ The **Extra** is not used.
 -   [] Add reports using pie chart or something like that
 -   [] Add reports in table view
 
+### V0.5.1 - Beta - 2023-05-03
+
+- Removed nodejs path dependency (tested on windows, macos and Iphone)
+- 
+
 ### V0.5.0 - Beta - 2023-05-03
 
 -   Bug fixes and refactor
