@@ -16,7 +16,7 @@ export default class SettingsTab extends PluginSettingTab {
 
 	createNewColorBtn(): HTMLElement {
 		const btn = this.containerEl.createEl("button");
-		btn.style.marginBottom = "10px";
+		btn.classList.add("findoc-btn-margin-bottom");
 		btn.id = "newColor";
 		btn.innerText = "Add New Color";
 		btn.onClickEvent(() => {
@@ -37,8 +37,7 @@ export default class SettingsTab extends PluginSettingTab {
 		new Setting(containerEl).setName("Support").addButton((button) => {
 			button.buttonEl.innerHTML =
 				"<a style='margin: 0 auto;' href='https://www.buymeacoffee.com/studiowebux'><img width='109px' alt='Buy me a Coffee' src='https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png'/></a>";
-			button.buttonEl.style.boxShadow = "none";
-			button.buttonEl.style.backgroundColor = "transparent";
+			button.buttonEl.classList.add("findoc-support-btn");
 		});
 
 		new Setting(containerEl)
@@ -80,17 +79,14 @@ export default class SettingsTab extends PluginSettingTab {
 			.setName("Models")
 			.setDesc("Models available (It must be a JSON.stringify version)");
 		const div = containerEl.createDiv();
-		div.style.border = "2px solid grey";
-		div.style.borderRadius = "5px";
-		div.style.padding = "10px";
+		div.classList.add("findoc-models-container");
 
 		Object.entries(this.plugin.settings.models).forEach(([key, model]) => {
 			const name = idToText(key);
 			const modelSection = div.createDiv();
 			const el = modelSection.createEl("h2");
 			el.innerText = name;
-			modelSection.style.padding = "10px";
-			modelSection.style.marginBottom = "20px";
+			modelSection.classList.add("findoc-model-section");
 
 			new Setting(modelSection)
 				.setName(`Data Source for ${name}`)
@@ -155,14 +151,12 @@ export default class SettingsTab extends PluginSettingTab {
 			h2.innerText = `Types for ${name}`;
 
 			const wrapper = modelSection.createDiv();
-			wrapper.style.display = "flex";
-			wrapper.style.justifyContent = "end";
+			wrapper.classList.add("findoc-model-section-wrapper");
 
 			const select = wrapper.createEl("select");
 			select.id = key;
 			select.multiple = true;
-			select.style.minWidth = "200px";
-			select.style.height = "130px";
+			select.classList.add("findoc-select");
 
 			select.setAttribute("value", model.types.join(","));
 
@@ -179,7 +173,6 @@ export default class SettingsTab extends PluginSettingTab {
 				await this.plugin.saveSettings();
 				new Notice("Types Updated !");
 			};
-			// select.setAttribute("value", select.value);
 
 			types.forEach((type: string) => {
 				const opt = select.createEl("option");
@@ -195,7 +188,7 @@ export default class SettingsTab extends PluginSettingTab {
 		new Setting(containerEl).setName("Colors");
 		const colorSection = containerEl.createDiv();
 		colorSection.appendChild(this.createNewColorBtn());
-		colorSection.style.padding = "10px";
+		colorSection.classList.add("findoc-color-section")
 
 		this.plugin.settings.colors.forEach((color, key) => {
 			new Setting(colorSection)
