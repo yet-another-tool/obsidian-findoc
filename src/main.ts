@@ -6,7 +6,6 @@ import {
 	normalizePath,
 	parseYaml,
 } from "obsidian";
-import { sep } from "path";
 
 import { CSVView, VIEW_TYPE_CSV } from "./view";
 import processing from "./processing";
@@ -62,22 +61,16 @@ export default class FinDocPlugin extends Plugin {
 						}
 
 						if (content.filename) {
-							// Handling:
-							// Mobile (iphone)
-							// Linux / macos / windows
 							const filename = normalizePath(
-								`${activeFile.parent.path}${
-									sep || "\\"
-								}${content.filename.replace(
-									/[\\/]/g,
-									sep || "\\"
-								)}`
+								`${activeFile.parent.path}/${content.filename}`
 							);
+
 							const data = await vault.adapter.read(filename);
 							const chartData = processing(
 								data,
 								content.model,
 								this.settings.models,
+								this.settings.colors,
 								this.settings.csvSeparator
 							);
 

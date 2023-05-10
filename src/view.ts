@@ -1,11 +1,6 @@
 import FinDocPlugin from "main";
-import {
-	Notice,
-	TextFileView,
-	WorkspaceLeaf,
-	debounce as _debounce,
-} from "obsidian";
-import { debounce, getToday } from "utils";
+import { Notice, TextFileView, WorkspaceLeaf, debounce } from "obsidian";
+import { getToday } from "utils";
 import { types } from "./constants";
 
 export const VIEW_TYPE_CSV = "csv-view";
@@ -31,7 +26,6 @@ export class CSVView extends TextFileView {
 		const dropdown = this.contentEl.createEl("select");
 		dropdown.id = id;
 		dropdown.setAttribute("value", selected);
-
 		dropdown.onchange = () => {
 			dropdown.setAttribute("value", dropdown.value);
 		};
@@ -77,11 +71,7 @@ export class CSVView extends TextFileView {
 			lineData.forEach((el, idx) => {
 				const td = this.contentEl.createEl("td");
 				td.id = `data_${idx}`;
-				td.style.borderColor = "white";
-				td.style.border = "1px solid";
-				td.style.padding = "3px";
-				td.style.textAlign = "center";
-				td.style.minWidth = "150px";
+				td.classList.add("findoc-line-data");
 				if (idx === 0) {
 					td.appendChild(this.dropdown(el));
 				} else if (idx === lineData.length - 1) {
@@ -104,7 +94,8 @@ export class CSVView extends TextFileView {
 
 	createBtnRemoveLine(el: HTMLElement): HTMLElement {
 		const btn = this.contentEl.createEl("button");
-		btn.style.marginTop = "10px";
+
+		btn.classList.add("findoc-btn-margin-top");
 		btn.id = "deleteRow";
 		btn.innerText = "Delete";
 		btn.onClickEvent(() => {
@@ -117,7 +108,7 @@ export class CSVView extends TextFileView {
 
 	createBtnAddLine() {
 		const btn = this.contentEl.createEl("button");
-		btn.style.marginTop = "10px";
+		btn.classList.add("findoc-btn-margin-top");
 		btn.id = "newRow";
 		btn.innerText = "Add New Row";
 		btn.onClickEvent(() => {
@@ -132,11 +123,7 @@ export class CSVView extends TextFileView {
 			];
 			lineData.forEach((el, idx) => {
 				const td = this.contentEl.createEl("td");
-				td.style.borderColor = "white";
-				td.style.border = "1px solid";
-				td.style.padding = "3px";
-				td.style.textAlign = "center";
-				td.style.minWidth = "150px";
+				td.classList.add("findoc-line-data");
 				if (idx === 0) {
 					td.appendChild(this.dropdown(el));
 				} else if (idx === lineData.length - 1) {
@@ -159,14 +146,14 @@ export class CSVView extends TextFileView {
 		this.createTable(this.tableData);
 
 		// Margin to avoid having the iphone keyboard hide last lines
-		this.parent.style.marginBottom = "50px";
+		this.parent.classList.add("findoc-csv-parent");
 		this.refresh();
 	}
 
 	refresh() {
 		this.div.oninput = debounce(() => {
 			this.saveData();
-		}, parseInt(this.plugin.settings.debounce));
+		}, parseInt(this.plugin.settings.debounce) || 1000);
 	}
 
 	saveData() {
@@ -203,7 +190,7 @@ export class CSVView extends TextFileView {
 
 		// TODO: Replace this timeout with the proper and recommended way.
 		new Notice("Saving in progress...", 2005);
-		_debounce(() => {
+		debounce(() => {
 			new Notice("File Saved !", 600);
 		}, 2005);
 	}

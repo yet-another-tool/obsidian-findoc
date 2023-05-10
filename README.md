@@ -154,16 +154,24 @@ The **Extra** is not used.
 -   [x] Support Windows
 -   [x] Bug with default dropdown values in the settings tab
 -   [x] Add dropdown to select transaction type (instead of looking in the doc)
+-   [x] Add settings for CSS and CSV Editor
 -   [-] Copy paste is broken while editing a CSV File (not able to reproduce)
 -   [] Improve the setting tab (edit, add and remove models)
 -   [] Add more functions to process and analyze the data
 -   [] Write better documentation
 -   [] Add more Chart types, currently only line chart is supported
--   [] Add settings for CSS and CSV Editor
 -   [] Add reports using pie chart or something like that
 -   [] Add reports in table view
 
-### V0.5.0 - Beta - 2023-05-03
+### V0.5.1 - Beta - 2023-05-05
+
+-   Removed nodejs path dependency (tested on windows, macos and Iphone)
+-   Removed Custom debounce function, validate debounce input in settings, default value is not valid.
+-   Moved all inline styles to styles.css
+-   Reworked the colors assignation, injecting colors, replace the way the params are pass into the functions.
+
+<details>
+  <summary>### V0.5.0 - Beta - 2023-05-03</summary>
 
 -   Bug fixes and refactor
 -   Content editable is more intuitive, no risk to break everything
@@ -177,6 +185,7 @@ The **Extra** is not used.
 ![Edit and Delete color](./docs/V0.5.0/colors.png)
 ![Select Categories in Settings](./docs/V0.5.0/categories-settings.png)
 
+</details>
 <details>
   <summary>### V0.4.1 - Beta - 2023-05-02</summary>
 

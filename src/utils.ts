@@ -1,16 +1,3 @@
-/* UTILS */
-export const debounce = (func: any, wait = 500) => {
-	let timeout: string | number | NodeJS.Timeout;
-	return function executedFunction(...args: any) {
-		const later = () => {
-			clearTimeout(timeout);
-			func(...args);
-		};
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-	};
-};
-
 /* Date */
 export function getMonth(d: Date): string | number {
 	if (d.getUTCMonth() + 1 < 10) return "0" + (d.getUTCMonth() + 1);

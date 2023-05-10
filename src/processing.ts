@@ -1,5 +1,4 @@
 import { chartLine } from "chart";
-import { resetColors } from "colors";
 import { getData } from "csv";
 import { functions } from "methods";
 
@@ -18,21 +17,21 @@ function processing(
 	models: {
 		[key: string]: IModel;
 	},
+	colors: string[],
 	separator = ","
 ) {
-	// Put back all colors in the array
-	resetColors();
 	const json = getData(csvRawData, separator);
 	const model = models[modelToGenerate];
 
 	const labels = Object.keys(functions[model.dataSource](json));
 	const types = getTypes(model.types, json);
-	const output: IDataset = functions[model.output](
-		model.types,
-		functions[model.dataSource](json),
+	const output: IDataset = functions[model.output]({
+		typeToSelect: model.types,
+		input: functions[model.dataSource](json),
 		labels,
-		types
-	);
+		types,
+		colors,
+	});
 
 	return chartLine(output, model.type, model.beginAtZero);
 }

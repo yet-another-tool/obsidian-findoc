@@ -2,11 +2,11 @@
  *	Functions to process the data
  */
 
-import { getColor } from "colors";
 import { getDate, getMonth, skipped } from "utils";
 
 export const functions: { [key: string]: any } = {
 	splitByYear: (input: Array<IInput | any>) => {
+		console.log(input);
 		return input.reduce((acc, current) => {
 			const d = new Date(current.timestamp);
 			if (!acc[`${d.getUTCFullYear()}`]) {
@@ -43,14 +43,24 @@ export const functions: { [key: string]: any } = {
 		}, {});
 	},
 
-	generateSumDataSet: (
-		typeToSelect: string[],
-		input: { [key: string]: IInput[] },
-		labels: string[],
-		types: string[]
-	): IDataset => {
+	generateSumDataSet: ({
+		typeToSelect,
+		input,
+		labels,
+		types,
+		colors,
+	}: {
+		typeToSelect: string[];
+		input: { [key: string]: IInput[] };
+		labels: string[];
+		types: string[];
+		colors: string[];
+	}): IDataset => {
+		const usableColors = [...colors];
 		const datasets = types.map((type) => {
-			const color = getColor();
+			const color = usableColors[0];
+			usableColors.shift();
+			console.log(color);
 			return {
 				label: type,
 				borderColor: color,
@@ -81,8 +91,7 @@ export const functions: { [key: string]: any } = {
 							);
 					})
 					.reduce((typeSum, current) => {
-						if (current[type])
-							typeSum.push(current[type]);
+						if (current[type]) typeSum.push(current[type]);
 						else typeSum.push(0);
 						return typeSum;
 					}, []),
@@ -94,15 +103,24 @@ export const functions: { [key: string]: any } = {
 		};
 	},
 
-	generateDailyDataSet: (
-		typeToSelect: string[],
-		input: { [key: string]: IInput[] },
-		labels: string[],
-		types: string[]
-	): IDataset => {
+	generateDailyDataSet: ({
+		typeToSelect,
+		input,
+		labels,
+		types,
+		colors,
+	}: {
+		typeToSelect: string[];
+		input: { [key: string]: IInput[] };
+		labels: string[];
+		types: string[];
+		colors: string[];
+	}): IDataset => {
 		const nonEmptyLabels: string[] = [];
+		const usableColors = [...colors];
 		const datasets = types.map((type) => {
-			const color = getColor();
+			const color = usableColors[0];
+			usableColors.shift();
 			return {
 				label: type,
 				borderColor: color,
@@ -149,8 +167,7 @@ export const functions: { [key: string]: any } = {
 						return current;
 					})
 					.reduce((typeSum, current) => {
-						if (current[type])
-							typeSum.push(current[type]);
+						if (current[type]) typeSum.push(current[type]);
 						else typeSum.push(NaN);
 						return typeSum;
 					}, []),
@@ -163,13 +180,22 @@ export const functions: { [key: string]: any } = {
 		};
 	},
 
-	generateSumDataSetPerTypes: (
-		typeToSelect: string[],
-		input: { [key: string]: IInput[] },
-		labels: string[]
-	): IDataset => {
+	generateSumDataSetPerTypes: ({
+		typeToSelect,
+		input,
+		labels,
+		colors,
+	}: {
+		typeToSelect: string[];
+		input: { [key: string]: IInput[] };
+		labels: string[];
+		colors: string[];
+	}): IDataset => {
+		const usableColors = [...colors];
 		const datasets = typeToSelect.map((type) => {
-			const color = getColor();
+			const color = usableColors[0];
+			usableColors.shift();
+			console.log(color);
 			return {
 				label: type,
 				borderColor: color,
