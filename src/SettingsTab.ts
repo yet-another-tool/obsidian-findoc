@@ -125,6 +125,11 @@ export default class SettingsTab extends PluginSettingTab {
 						"generateSumDataSetPerTypes",
 						"Generate Sum Dataset Per Types"
 					);
+
+					dropdown.addOption(
+						"getLastValuePerTypeForCurrentMonth",
+						"Get Last Value Per Type For Current Month"
+					);
 					dropdown.setValue(this.plugin.settings.models[key].output);
 
 					dropdown.onChange(async (value) => {
@@ -188,7 +193,7 @@ export default class SettingsTab extends PluginSettingTab {
 		new Setting(containerEl).setName("Colors");
 		const colorSection = containerEl.createDiv();
 		colorSection.appendChild(this.createNewColorBtn());
-		colorSection.classList.add("findoc-color-section")
+		colorSection.classList.add("findoc-color-section");
 
 		this.plugin.settings.colors.forEach((color, key) => {
 			new Setting(colorSection)

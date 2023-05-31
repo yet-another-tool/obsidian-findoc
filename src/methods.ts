@@ -195,7 +195,6 @@ export const functions: { [key: string]: any } = {
 		const datasets = typeToSelect.map((type) => {
 			const color = usableColors[0];
 			usableColors.shift();
-			console.log(color);
 			return {
 				label: type,
 				borderColor: color,
@@ -219,6 +218,51 @@ export const functions: { [key: string]: any } = {
 
 		return {
 			labels,
+			datasets,
+		};
+	},
+
+	getLastValuePerTypeForCurrentMonth: ({
+		typeToSelect,
+		input,
+		date = undefined,
+	}: {
+		typeToSelect: string[];
+		input: { [key: string]: IInput[] };
+		date: string | undefined;
+	}): IReportData => {
+		// TODO: at some point this Date must be configurable.
+		let d = new Date();
+		if (date) d = new Date(date);
+
+		// Select current month dataset
+		const lastInput = input[`${d.getUTCFullYear()}-${getMonth(d)}`];
+		// TECH. DEBT !
+		// Keeping only last reference for a month.
+		// When this is : Portfolio type.
+		let _lastInput: IInput[] = [];
+		lastInput.reverse().forEach((li) => {
+			if (li.type !== "Portfolio") _lastInput.push(li);
+			if (_lastInput.every((_li) => _li.id !== li.id))
+				_lastInput.push(li);
+		});
+
+		const datasets = typeToSelect.map((type) => {
+			// Get Last item from our input array
+			return {
+				label: type,
+				// Get the sum of all data for the specified type
+				data: _lastInput
+					.filter((entry) => entry.type === type)
+					.reduce((acc, current) => {
+						acc += current.value;
+						return acc;
+					}, 0),
+				date: `${d.getUTCFullYear()}-${getMonth(d)}`,
+			};
+		});
+
+		return {
 			datasets,
 		};
 	},
