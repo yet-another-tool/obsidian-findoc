@@ -47,6 +47,7 @@ interface IModel {
 	output: string;
 	beginAtZero: boolean;
 	type: "money" | "percent";
+	date?: string;
 }
 
 interface IEvent {
@@ -80,4 +81,14 @@ interface IChartLine {
 interface IContext {
 	p0: { skip: boolean };
 	p1: { skip: boolean };
+}
+
+interface IReportData {
+	datasets: IReportEntry[];
+}
+
+interface IReportEntry {
+	label: string;
+	data: number;
+	date: string;
 }

@@ -93,12 +93,22 @@ You can define this code block directly in your notes.
 ```findoc
 filename: finance.csv
 model: portfolio
+type: chart OR report
+date: YYYY-MM-DD (Only used when type is set to report)
 ```
 </pre>
+
+> When you do not specify the `type`, it will generate a chart by default.
+> When you do specify the `type`, you can set the `date` to gather the data for a specific month. (This feature is still a proof of concept)
 
 > See above for all available models.
 
 Once the code block is defined, the hook will try to generate a chart by reading the csv file.
+
+### Types (For the code block section only)
+
+-   **chart**: Generate a chartJS
+-   **report**: Generate simple HTML Output (Proof of concept)
 
 ### The CSV File
 
@@ -161,14 +171,38 @@ The **Extra** is not used.
 -   [] Write better documentation
 -   [] Add more Chart types, currently only line chart is supported
 -   [] Add reports using pie chart or something like that
--   [] Add reports in table view
+-   [POC] Add reports in table view
 
-### V0.5.1 - Beta - 2023-05-05
+### V0.5.2 - Beta POC - 2023-05-31
+
+-   Requires to update your configuration to add the new findoc snippet.
+-   Added PoC for the reports, currently it is a simple example
+-   It does only work with the current setting, see default values.
+
+```findoc
+filename: ./finance.csv
+model: portfolioReport
+type: report
+date: 2023-05-01
+```
+
+```findoc
+filename: ./finance.csv
+model: portfolioReport
+type: report
+date: 2023-04-01
+```
+
+![Output](./docs/v0.5.2/0.5.2-report-poc.png)
+
+<details>
+  <summary>### V0.5.1 - Beta - 2023-05-05</summary>
 
 -   Removed nodejs path dependency (tested on windows, macos and Iphone)
 -   Removed Custom debounce function, validate debounce input in settings, default value is not valid.
 -   Moved all inline styles to styles.css
 -   Reworked the colors assignation, injecting colors, replace the way the params are pass into the functions.
+</details>
 
 <details>
   <summary>### V0.5.0 - Beta - 2023-05-03</summary>
@@ -186,6 +220,7 @@ The **Extra** is not used.
 ![Select Categories in Settings](./docs/V0.5.0/categories-settings.png)
 
 </details>
+
 <details>
   <summary>### V0.4.1 - Beta - 2023-05-02</summary>
 

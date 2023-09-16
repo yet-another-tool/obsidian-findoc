@@ -12,6 +12,8 @@ import processing from "./processing";
 import { DEFAULT_SETTINGS } from "./defaults";
 import SettingsTab from "./SettingsTab";
 import ChartRenderer from "./ChartRenderer";
+import ReportRenderer from "ReportRenderer";
+import reporting from "reporting";
 
 export default class FinDocPlugin extends Plugin {
 	settings: IPluginSettings;
@@ -66,20 +68,36 @@ export default class FinDocPlugin extends Plugin {
 							);
 
 							const data = await vault.adapter.read(filename);
-							const chartData = processing(
-								data,
-								content.model,
-								this.settings.models,
-								this.settings.colors,
-								this.settings.csvSeparator
-							);
 
-							if (chartData) {
+							if (content.type === "chart" || !content.type) {
+								const chartData = processing(
+									data,
+									content.model,
+									this.settings.models,
+									this.settings.colors,
+									this.settings.csvSeparator
+								);
+								if (chartData)
+									ctx.addChild(
+										new ChartRenderer(
+											this.settings.models[content.model],
+											chartData,
+											content.model,
+											el
+										)
+									);
+							} else if (content.type === "report") {
+								const reportData: IReportData = reporting(
+									data,
+									content.model,
+									content.date || undefined,
+									this.settings.models,
+									this.settings.csvSeparator
+								);
 								ctx.addChild(
-									new ChartRenderer(
+									new ReportRenderer(
 										this.settings.models[content.model],
-										chartData,
-										content.model,
+										reportData,
 										el
 									)
 								);
