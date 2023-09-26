@@ -95,6 +95,7 @@ filename: finance.csv
 model: portfolio
 type: chart OR report
 date: YYYY-MM-DD (Only used when type is set to report)
+title: Chart Title
 ```
 </pre>
 
