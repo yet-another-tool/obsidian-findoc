@@ -14,6 +14,7 @@ import SettingsTab from "./SettingsTab";
 import ChartRenderer from "./ChartRenderer";
 import ReportRenderer from "ReportRenderer";
 import reporting from "reporting";
+import { loadCSVData } from "data";
 
 export default class FinDocPlugin extends Plugin {
 	settings: IPluginSettings;
@@ -62,12 +63,18 @@ export default class FinDocPlugin extends Plugin {
 							return;
 						}
 
-						if (content.filename) {
-							const filename = normalizePath(
-								`${activeFile.parent.path}/${content.filename}`
+						const filenames: string[] = content.filename
+							.split(",")
+							.map((filename: string) =>
+								normalizePath(
+									`${
+										activeFile.parent.path
+									}/${filename.trim()}`
+								)
 							);
 
-							const data = await vault.adapter.read(filename);
+						if (filenames && filenames.length > 0) {
+							const data = await loadCSVData(vault, filenames);
 
 							if (content.type === "chart" || !content.type) {
 								const chartData = processing(
@@ -84,6 +91,7 @@ export default class FinDocPlugin extends Plugin {
 											chartData,
 											content.model,
 											content.title,
+											filenames,
 											el
 										)
 									);

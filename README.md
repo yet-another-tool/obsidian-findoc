@@ -91,7 +91,7 @@ You can define this code block directly in your notes.
 
 <pre>
 ```findoc
-filename: finance.csv
+filename: finance.csv, finance_2.csv
 model: portfolio
 type: chart OR report
 date: YYYY-MM-DD (Only used when type is set to report)
@@ -101,6 +101,11 @@ title: Chart Title
 
 > When you do not specify the `type`, it will generate a chart by default.
 > When you do specify the `type`, you can set the `date` to gather the data for a specific month. (This feature is still a proof of concept)
+
+**Information**
+
+-   **_Filename_**: it can be a single file, or multiple. You must use a comma `,` to split each file, the data will be loaded in the same order.
+-   **_Title_**: Optional, by default it uses the `model` name.
 
 > See above for all available models.
 
