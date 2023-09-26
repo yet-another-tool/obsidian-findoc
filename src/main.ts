@@ -83,6 +83,7 @@ export default class FinDocPlugin extends Plugin {
 											this.settings.models[content.model],
 											chartData,
 											content.model,
+											content.title,
 											el
 										)
 									);
