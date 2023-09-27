@@ -81,6 +81,7 @@ git push origin tags/X.Y.Z
 -   **mortgage**
 -   **mortgageRate**
 -   **dividend**
+-   **cumulativeSum**
 
 Create a PR to create new one.  
 You can edit those directly in the setting tab.
