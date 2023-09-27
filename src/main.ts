@@ -76,6 +76,8 @@ export default class FinDocPlugin extends Plugin {
 						if (filenames && filenames.length > 0) {
 							const data = await loadCSVData(vault, filenames);
 
+							console.debug(data)
+
 							if (content.type === "chart" || !content.type) {
 								const chartData = processing(
 									data,

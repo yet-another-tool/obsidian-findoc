@@ -82,6 +82,7 @@ git push origin tags/X.Y.Z
 -   **mortgageRate**
 -   **dividend**
 -   **cumulativeSum**
+-   **cumulativeSumPerTypes**
 
 Create a PR to create new one.  
 You can edit those directly in the setting tab.
@@ -164,14 +165,6 @@ The **Extra** is not used.
 
 ### TODO
 
--   [x] Github Actions and create a release to publish this alpha version to Obsidian repo
--   [x] Fix the saving system for CSV Files (Using debounce of at least 1000)
--   [x] Improve the setting tab (edit, add and remove colors)
--   [x] Support Mobile
--   [x] Support Windows
--   [x] Bug with default dropdown values in the settings tab
--   [x] Add dropdown to select transaction type (instead of looking in the doc)
--   [x] Add settings for CSS and CSV Editor
 -   [-] Copy paste is broken while editing a CSV File (not able to reproduce)
 -   [] Improve the setting tab (edit, add and remove models)
 -   [] Add more functions to process and analyze the data
@@ -180,152 +173,34 @@ The **Extra** is not used.
 -   [] Add reports using pie chart or something like that
 -   [POC] Add reports in table view
 
-### V0.5.2 - Beta POC - 2023-05-31
+### V0.5.3 - Beta POC - 2023-09-27
 
--   Requires to update your configuration to add the new findoc snippet.
--   Added PoC for the reports, currently it is a simple example
--   It does only work with the current setting, see default values.
+-   Optional Title for Charts
+-   Load multiple CSV Files
+-   Added icons
+-   Reorder rows
+-   New model to chart cumulative sum (per types and/or id)
 
 ```findoc
-filename: ./finance.csv
-model: portfolioReport
-type: report
-date: 2023-05-01
+filename: finance.csv, finance_2.csv
+model: cumulativeSum
+type: chart
+title: Chart Title
 ```
 
 ```findoc
-filename: ./finance.csv
-model: portfolioReport
-type: report
-date: 2023-04-01
+filename: finance.csv
+model: cumulativeSumPerTypes
+type: chart
+title: Chart Title
 ```
 
-![Output](./docs/v0.5.2/0.5.2-report-poc.png)
+![Cumulative Sum](./docs/v0.5.3/cumulsum.png)
+![Cumulative Sum Per Types](./docs/v0.5.3/cumulsumpertypes.png)
+![Cumulative Sum Per Types with Multiple Inputs](./docs/v0.5.3/cumulsummulti.png)
+![Reordering Rows](./docs/v0.5.3/rows.png)
 
-<details>
-  <summary>### V0.5.1 - Beta - 2023-05-05</summary>
-
--   Removed nodejs path dependency (tested on windows, macos and Iphone)
--   Removed Custom debounce function, validate debounce input in settings, default value is not valid.
--   Moved all inline styles to styles.css
--   Reworked the colors assignation, injecting colors, replace the way the params are pass into the functions.
-</details>
-
-<details>
-  <summary>### V0.5.0 - Beta - 2023-05-03</summary>
-
--   Bug fixes and refactor
--   Content editable is more intuitive, no risk to break everything
--   You can use tab to navigate the table
--   Added delete row button
--   Add, Edit and remove color
--   Improved Categories selection in settings tab
--   UI and Information addition
-
-![Delete Row](./docs/V0.5.0/delete-row.png)
-![Edit and Delete color](./docs/V0.5.0/colors.png)
-![Select Categories in Settings](./docs/V0.5.0/categories-settings.png)
-
-</details>
-
-<details>
-  <summary>### V0.4.1 - Beta - 2023-05-02</summary>
-
--   Bug fixes
--   Dropdown to select the transaction type
-
-![Dropdown Types](./docs/V0.4.1/dropdown.png)
-
-</details>
-
-<details>
-  <summary>### V0.4.0 - Beta - 2023-05-02</summary>
-
--   Improved (hopefully) the UI when editing a CSV file, wrapped a table in a div with content editable. This way I think it is the best of both solution.
--   The saving system should be better since no more handling of csv separator
-
-![Table View](./docs/V0.4.0/table_view.png)
-![Table View Button](./docs/V0.4.0/table_view_btn.png)
-
-</details>
-
-<details>
-  <summary>### V0.3.4 - Alpha - 2023-04-20</summary>
-
--   Fixed Mobile CSV Edition, adding margin to show all text (Tested on Iphone only)
--   Improve error handling and user interaction
--   updated method name to prepare the data
--   Added chart details in the footer
-
-</details>
-
-<details>
-  <summary>### V0.3.3 - Alpha - 2023-04-20</summary>
-
--   Fixed mobile support
--   Fixed dropdown current value selection
-
-</details>
-
-<details>
-  <summary>### V0.3.2 - Alpha - 2023-04-19</summary>
-
--   Added new Methods to prepare the chart
--   Filter per types instead of categories
--   ISSUE Found: **Not Fixed**. Saw saving issues while copy pasting row in the CSV File
-
-</details>
-
-<details>
-  <summary>### V0.3.1 - Alpha - 2023-04-13</summary>
-
--   Added Windows Support
-
-</details>
-
-<details>
-  <summary>### V0.3.0 - Alpha - 2023-04-13</summary>
-
--   Added Mobile Support
-
-</details>
-
-<details>
-  <summary>### V0.2.0 - Alpha - 2023-04-13</summary>
-
--   Added new type: `Expenses`
--   Started to switch the typescript `any` to correct types
--   Moving code to smaller files
--   Added Github Action Pipeline
--   The debounce seems to be better using this implementation (Still backup your file often)
--   Handle data type to show proper symbol
--   bug fixes
--   Handling invalid CSV lines
--   Handling empty lines
-
-</details>
-
-<details>
-  <summary>### V0.1.0 - Alpha - 2023-04-11</summary>
-
--   Refactor code
--   Added configuration using Obsidian Settings
--   Added screenshots
--   Fix few bugs
--   Specifying default values and test them
--   Fix few issues with the inline CSV file. (Backup your file often !)
--   There still a bug regarding the saving system, I had to find a dirty workaround.
-
-</details>
-
-<details>
-  <summary>### V0.0.0 - Alpha - 2023-04-09</summary>
-
--   Open and Edit CSV Files in Obsidian
--   Generate Charts in Obsidian
--   Provided few models to see financial progress
-
-</details>
+See [CHANGELOG](./CHANGELOG)
 
 ---
 
