@@ -2,6 +2,9 @@ import FinDocPlugin from "main";
 import { Notice, TextFileView, WorkspaceLeaf, debounce } from "obsidian";
 import { getToday } from "utils";
 import { types } from "./constants";
+import up from "icons/up";
+import down from "icons/down";
+import remove from "icons/remove";
 
 export const VIEW_TYPE_CSV = "csv-view";
 
@@ -11,6 +14,7 @@ export class CSVView extends TextFileView {
 	tableHeader: string;
 	div: HTMLElement;
 	parent: HTMLElement;
+	table: HTMLElement;
 
 	constructor(leaf: WorkspaceLeaf, plugin: FinDocPlugin) {
 		super(leaf);
@@ -44,7 +48,7 @@ export class CSVView extends TextFileView {
 
 	createTable(data: string[]) {
 		this.div = this.contentEl.createDiv();
-		const table = this.contentEl.createEl("table");
+		this.table = this.div.createEl("table");
 
 		//
 		// Table Header
@@ -59,13 +63,14 @@ export class CSVView extends TextFileView {
 			th.innerText = header;
 			trHeaders.appendChild(th);
 		});
-		this.div.appendChild(trHeaders);
+		this.table.appendChild(trHeaders);
 
 		//
 		// Table Content
 		//
 		data.slice(1).forEach((line) => {
 			const trContent = this.contentEl.createEl("tr");
+
 			const lineData = line.split(this.plugin.settings.csvSeparator);
 			lineData.push("ACTION");
 			lineData.forEach((el, idx) => {
@@ -76,6 +81,8 @@ export class CSVView extends TextFileView {
 					td.appendChild(this.dropdown(el));
 				} else if (idx === lineData.length - 1) {
 					td.appendChild(this.createBtnRemoveLine(trContent));
+					td.appendChild(this.createBtnMoveUp(trContent));
+					td.appendChild(this.createBtnMoveDown(trContent));
 				} else {
 					td.innerText = el;
 					td.contentEditable = "true";
@@ -83,11 +90,11 @@ export class CSVView extends TextFileView {
 
 				trContent.appendChild(td);
 			});
-			this.div.appendChild(trContent);
+			this.table.appendChild(trContent);
 		});
 
-		table.appendChild(this.div);
-		this.parent.appendChild(table);
+		this.div.appendChild(this.table);
+		this.parent.appendChild(this.table);
 
 		this.createBtnAddLine();
 	}
@@ -97,9 +104,45 @@ export class CSVView extends TextFileView {
 
 		btn.classList.add("findoc-btn-margin-top");
 		btn.id = "deleteRow";
-		btn.innerText = "Delete";
+		btn.innerHTML = remove();
 		btn.onClickEvent(() => {
 			el.empty();
+			this.saveData();
+		});
+
+		return btn;
+	}
+
+	createBtnMoveUp(el: HTMLElement): HTMLElement {
+		const btn = this.contentEl.createEl("button");
+
+		btn.classList.add("findoc-btn-margin-top");
+		btn.id = "moveUpRow";
+		btn.innerHTML = up();
+		btn.onClickEvent(() => {
+			const children = Array.from(this.table.children);
+			const idx = children.indexOf(el);
+			if (idx - 1 === 0) return;
+			else this.table.insertBefore(children[idx], children[idx - 1]);
+
+			this.saveData();
+		});
+
+		return btn;
+	}
+
+	createBtnMoveDown(el: HTMLElement): HTMLElement {
+		const btn = this.contentEl.createEl("button");
+
+		btn.classList.add("findoc-btn-margin-top");
+		btn.id = "moveDownRow";
+		btn.innerHTML = down();
+		btn.onClickEvent(() => {
+			const children = Array.from(this.table.children);
+			const idx = children.indexOf(el);
+			if (idx + 1 >= children.length) return;
+			else this.table.insertAfter(children[idx], children[idx + 1]);
+
 			this.saveData();
 		});
 
@@ -113,6 +156,7 @@ export class CSVView extends TextFileView {
 		btn.innerText = "Add New Row";
 		btn.onClickEvent(() => {
 			const trContent = this.contentEl.createEl("tr");
+
 			const lineData = [
 				types[0],
 				"ID",
@@ -128,13 +172,15 @@ export class CSVView extends TextFileView {
 					td.appendChild(this.dropdown(el));
 				} else if (idx === lineData.length - 1) {
 					td.appendChild(this.createBtnRemoveLine(trContent));
+					td.appendChild(this.createBtnMoveUp(trContent));
+					td.appendChild(this.createBtnMoveDown(trContent));
 				} else {
 					td.innerText = el;
 					td.contentEditable = "true";
 				}
 				trContent.appendChild(td);
 			});
-			this.div.appendChild(trContent);
+			this.table.appendChild(trContent);
 		});
 		this.parent.appendChild(btn);
 	}
@@ -151,13 +197,13 @@ export class CSVView extends TextFileView {
 	}
 
 	refresh() {
-		this.div.oninput = debounce(() => {
+		this.table.oninput = debounce(() => {
 			this.saveData();
 		}, parseInt(this.plugin.settings.debounce) || 1000);
 	}
 
 	saveData() {
-		const rows = this.div.innerHTML.split(new RegExp(/<tr.*?>/));
+		const rows = this.table.innerHTML.split(new RegExp(/<tr.*?>/));
 		this.tableData = rows
 			.map((column) =>
 				column
