@@ -336,4 +336,55 @@ export const functions: { [key: string]: any } = {
 			datasets,
 		};
 	},
+
+	generateCumulativeSumDataSetPerTypes: ({
+		typeToSelect,
+		input,
+		labels,
+		colors,
+	}: {
+		typeToSelect: string[];
+		input: { [key: string]: IInput[] };
+		labels: string[];
+		colors: string[];
+	}): IDataset => {
+		const usableColors = [...colors];
+		const datasets = typeToSelect.map((type) => {
+			const color = usableColors[0];
+			usableColors.shift();
+			return {
+				label: type,
+				borderColor: color,
+				fill: false,
+				tension: 0.2,
+				spanGaps: true,
+				segment: {
+					borderColor: (ctx: IContext) => skipped(ctx, color),
+					borderDash: (ctx: IContext) => skipped(ctx, [3, 3]),
+				},
+				data: Object.values(input)
+					.map((i) => {
+						return i
+							.filter((entry) => entry.type === type)
+							.reduce((acc, current) => {
+								acc += current.value;
+								return acc;
+							}, 0);
+					})
+					// Cumulative Sum
+					.map(
+						(value, index, array) =>
+							value +
+							array
+								.slice(0, index) // take previous value
+								.reduce((acc, v) => (acc += v), 0) // sum all of them
+					),
+			};
+		});
+
+		return {
+			labels,
+			datasets,
+		};
+	},
 };

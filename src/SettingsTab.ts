@@ -129,6 +129,11 @@ export default class SettingsTab extends PluginSettingTab {
 						"generateCumulativeSumDataSet",
 						"Generate Cumulative Sum Dataset"
 					);
+					dropdown.addOption(
+						"generateCumulativeSumDataSetPerTypes",
+						"Generate Cumulative Sum Dataset Per Types"
+					);
+					
 
 					dropdown.addOption(
 						"getLastValuePerTypeForCurrentMonth",
