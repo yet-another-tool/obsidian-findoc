@@ -47,3 +47,12 @@
 .findoc-color-section {
 	padding: 10px;
 }
+
+/* SVG */
+.w-2 {
+	width: 20px;
+}
+
+.h-2 {
+	height: 20px;
+}
