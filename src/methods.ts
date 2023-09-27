@@ -60,7 +60,7 @@ export const functions: { [key: string]: any } = {
 		const datasets = types.map((type) => {
 			const color = usableColors[0];
 			usableColors.shift();
-			console.log(color);
+
 			return {
 				label: type,
 				borderColor: color,
@@ -240,7 +240,7 @@ export const functions: { [key: string]: any } = {
 		// TECH. DEBT !
 		// Keeping only last reference for a month.
 		// When this is : Portfolio type.
-		let _lastInput: IInput[] = [];
+		const _lastInput: IInput[] = [];
 		lastInput.reverse().forEach((li) => {
 			if (li.type !== "Portfolio") _lastInput.push(li);
 			if (_lastInput.every((_li) => _li.id !== li.id))
@@ -263,6 +263,76 @@ export const functions: { [key: string]: any } = {
 		});
 
 		return {
+			datasets,
+		};
+	},
+
+	generateCumulativeSumDataSet: ({
+		typeToSelect,
+		input,
+		labels,
+		types,
+		colors,
+	}: {
+		typeToSelect: string[];
+		input: { [key: string]: IInput[] };
+		labels: string[];
+		types: string[];
+		colors: string[];
+	}): IDataset => {
+		const usableColors = [...colors];
+		const datasets = types.map((type) => {
+			const color = usableColors[0];
+			usableColors.shift();
+
+			console.debug(labels);
+
+			return {
+				label: type,
+				borderColor: color,
+				fill: false,
+				tension: 0.2,
+				spanGaps: true,
+				segment: {
+					borderColor: (ctx: IContext) => skipped(ctx, color),
+					borderDash: (ctx: IContext) => skipped(ctx, [3, 3]),
+				},
+				data: labels
+					.map((label: string) => {
+						return input[label]
+							.filter((i: IInput) =>
+								typeToSelect.includes(i.type)
+							)
+							.reduce(
+								(
+									types: { [key: string]: number },
+									current: IInput
+								) => {
+									if (!types[current.id])
+										types[current.id] = 0;
+									types[current.id] += current.value;
+									return types;
+								},
+								{}
+							);
+					})
+					.reduce((typeSum, current) => {
+						if (current[type]) typeSum.push(current[type]);
+						else typeSum.push(0);
+						return typeSum;
+					}, [])
+					// Cumulative Sum
+					.map(
+						(value, index, array) =>
+							value +
+							array
+								.slice(0, index) // take previous value
+								.reduce((acc, v) => (acc += v), 0) // sum all of them
+					),
+			};
+		});
+		return {
+			labels,
 			datasets,
 		};
 	},

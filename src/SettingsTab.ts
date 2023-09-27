@@ -125,11 +125,16 @@ export default class SettingsTab extends PluginSettingTab {
 						"generateSumDataSetPerTypes",
 						"Generate Sum Dataset Per Types"
 					);
+					dropdown.addOption(
+						"generateCumulativeSumDataSet",
+						"Generate Cumulative Sum Dataset"
+					);
 
 					dropdown.addOption(
 						"getLastValuePerTypeForCurrentMonth",
 						"Get Last Value Per Type For Current Month"
 					);
+
 					dropdown.setValue(this.plugin.settings.models[key].output);
 
 					dropdown.onChange(async (value) => {
