@@ -39,6 +39,7 @@ interface IPluginSettings {
 	colors: string[];
 	debounce: string;
 	csvSeparator: string;
+	useLastElementAsTemplate: boolean;
 }
 
 interface IModel {

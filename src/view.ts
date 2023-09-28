@@ -181,7 +181,7 @@ export class CSVView extends TextFileView {
 		btn.id = "deleteRow";
 		btn.innerHTML = remove();
 		btn.onClickEvent(() => {
-			el.empty();
+			el.remove();
 			this.saveData();
 		});
 
@@ -231,15 +231,7 @@ export class CSVView extends TextFileView {
 		btn.id = "duplicateRow";
 		btn.innerHTML = duplicate();
 		btn.onClickEvent(() => {
-			this.addLine([
-				(el.children.item(0).firstChild as HTMLSelectElement).value,
-				(el.children.item(1) as HTMLElement).innerText,
-				(el.children.item(2) as HTMLElement).innerText,
-				(el.children.item(3) as HTMLElement).innerText,
-				(el.children.item(4) as HTMLElement).innerText,
-				"ACTION",
-			]);
-
+			this.addLine(this.getLine(el as HTMLTableRowElement));
 			this.saveData();
 		});
 
@@ -252,9 +244,26 @@ export class CSVView extends TextFileView {
 		btn.id = "newRow";
 		btn.innerText = "Add New Row";
 		btn.onClickEvent(() => {
-			this.addLine([types[0], "ID", "0", getToday(), "EXTRA", "ACTION"]);
+			if (this.plugin.settings.useLastElementAsTemplate) {
+				this.addLine(
+					this.getLine(this.table.lastChild as HTMLTableRowElement)
+				);
+			} else {
+				this.addLine([types[0], "", "0", getToday(), "", "ACTION"]);
+			}
 		});
 		this.parent.appendChild(btn);
+	}
+
+	getLine(tr: HTMLTableRowElement) {
+		return [
+			(tr.children.item(0).firstChild as HTMLSelectElement).value,
+			(tr.children.item(1) as HTMLElement).innerText,
+			(tr.children.item(2) as HTMLElement).innerText,
+			(tr.children.item(3) as HTMLElement).innerText,
+			(tr.children.item(4) as HTMLElement).innerText,
+			"ACTION",
+		];
 	}
 
 	addLine(lineData: string[]) {
