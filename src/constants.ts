@@ -8,3 +8,5 @@ export const types: string[] = [
 	"House Expenses",
 	"Expenses",
 ];
+
+export const MIN_CHARS_TO_MATCH = 0;

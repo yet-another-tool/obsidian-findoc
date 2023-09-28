@@ -31,6 +31,7 @@ export const COLORS: string[] = [
 ];
 
 export const DEFAULT_SETTINGS: IPluginSettings = {
+	useLastElementAsTemplate: true,
 	models: {
 		expenses: {
 			dataSource: "splitDailyDates",

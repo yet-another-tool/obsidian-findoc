@@ -156,8 +156,9 @@ The **Extra** is not used.
 ![Dividend Chart](./docs/DividendChart.png)
 ![Income Chart with Missing Datapoints](./docs/IncomeChartMissingData.png)
 ![Income Snippet](./docs/IncomeSnippet.png)
-![Delete Row](./docs/V0.5.0/delete-row.png)
 ![Select Categories in Settings](./docs/V0.5.0/categories-settings.png)
+![New Interface](./docs/v0.5.4/new-interface.png)
+![Auto complete](./docs/v0.5.4/autocomplete.png)
 
 ---
 
@@ -172,33 +173,17 @@ The **Extra** is not used.
 -   [] Add more Chart types, currently only line chart is supported
 -   [] Add reports using pie chart or something like that
 -   [POC] Add reports in table view
+-   [] configurable autocomplete (toggle on/off)
 
-### V0.5.3 - Beta POC - 2023-09-27
+### V0.5.4 - Beta - 2023-09-28
 
--   Optional Title for Charts
--   Load multiple CSV Files
--   Added icons
--   Reorder rows
--   New model to chart cumulative sum (per types and/or id)
+-   Added autocomplete for IDs (auto fill the type and the id when clicked)
+-   Allow to use the last row as a template when clicking Add New Row
+-   Added configuration to enable/disable the add new row template
+-   Added Button to duplicate an entry (it is appended at the end of the table)
 
-```findoc
-filename: finance.csv, finance_2.csv
-model: cumulativeSum
-type: chart
-title: Chart Title
-```
-
-```findoc
-filename: finance.csv
-model: cumulativeSumPerTypes
-type: chart
-title: Chart Title
-```
-
-![Cumulative Sum](./docs/v0.5.3/cumulsum.png)
-![Cumulative Sum Per Types](./docs/v0.5.3/cumulsumpertypes.png)
-![Cumulative Sum Per Types with Multiple Inputs](./docs/v0.5.3/cumulsummulti.png)
-![Reordering Rows](./docs/v0.5.3/rows.png)
+![New Interface](./docs/v0.5.4/new-interface.png)
+![Auto complete](./docs/v0.5.4/autocomplete.png)
 
 See [CHANGELOG](./CHANGELOG)
 

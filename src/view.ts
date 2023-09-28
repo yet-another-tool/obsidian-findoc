@@ -1,10 +1,11 @@
 import FinDocPlugin from "main";
 import { Notice, TextFileView, WorkspaceLeaf, debounce } from "obsidian";
 import { getToday } from "utils";
-import { types } from "./constants";
+import { MIN_CHARS_TO_MATCH, types } from "./constants";
 import up from "icons/up";
 import down from "icons/down";
 import remove from "icons/remove";
+import duplicate from "icons/duplicate";
 
 export const VIEW_TYPE_CSV = "csv-view";
 
@@ -15,6 +16,8 @@ export class CSVView extends TextFileView {
 	div: HTMLElement;
 	parent: HTMLElement;
 	table: HTMLElement;
+
+	autocompleteData: { type: string; id: string }[]; // store entries for local autocomplete
 
 	constructor(leaf: WorkspaceLeaf, plugin: FinDocPlugin) {
 		super(leaf);
@@ -44,6 +47,70 @@ export class CSVView extends TextFileView {
 		});
 
 		return dropdown;
+	}
+
+	match(
+		term: string,
+		inputs: { type: string; id: string }[]
+	): { type: string; id: string }[] {
+		return inputs.filter((input: { type: string; id: string }) =>
+			input.id.toLowerCase().includes(term.toLowerCase())
+		);
+	}
+
+	autocomplete(el: string, tr: HTMLTableRowElement): HTMLElement {
+		const id = new Date().getTime().toString();
+		const container = this.contentEl.createEl("div");
+		container.id = `container-${id}`;
+		container.addClasses(["findoc-autocomplete-container"]);
+
+		const ul = container.createEl("ul");
+		ul.id = `results-${id}`;
+		ul.addClasses(["findoc-autocomplete-list"]);
+
+		const input = container.createEl("div");
+		input.contentEditable = "true";
+		input.innerText = el;
+
+		input.onkeyup = (ev: KeyboardEvent) => {
+			ul.empty();
+			const val = (ev.target as HTMLElement).innerText;
+
+			if (val.length > MIN_CHARS_TO_MATCH) {
+				const list = this.match(val, this.autocompleteData);
+
+				if (list?.length > 0) {
+					ul.addClasses(["findoc-autocomplete-list-opened"]);
+				} else {
+					ul.empty();
+					ul.removeClasses(["findoc-autocomplete-list-opened"]);
+				}
+
+				list.forEach((listItem) => {
+					const li = ul.createEl("li");
+					li.innerText = `${listItem.id} (${listItem.type})`;
+					li.onClickEvent((ev: MouseEvent) => {
+						input.innerText = listItem.id;
+						this.updateSelectValue(tr, listItem.type);
+						ul.empty();
+						ul.removeClasses(["findoc-autocomplete-list-opened"]);
+						this.saveData();
+						return;
+					});
+				});
+			}
+		};
+
+		// FIXME: Not super clean.
+		input.onblur = (ev: FocusEvent) => {
+			if (!ev.relatedTarget) return;
+			ul.empty();
+			ul.removeClasses(["findoc-autocomplete-list-opened"]);
+			this.saveData();
+			return;
+		};
+
+		return container;
 	}
 
 	createTable(data: string[]) {
@@ -78,12 +145,19 @@ export class CSVView extends TextFileView {
 				td.id = `data_${idx}`;
 				td.classList.add("findoc-line-data");
 				if (idx === 0) {
+					// DROPDOWN Column
 					td.appendChild(this.dropdown(el));
+				} else if (idx === 1) {
+					// AUTOCOMPLETE Column
+					td.appendChild(this.autocomplete(el, trContent));
 				} else if (idx === lineData.length - 1) {
+					// ACTIONS Column
 					td.appendChild(this.createBtnRemoveLine(trContent));
 					td.appendChild(this.createBtnMoveUp(trContent));
 					td.appendChild(this.createBtnMoveDown(trContent));
+					td.appendChild(this.createBtnDuplicate(trContent));
 				} else {
+					//
 					td.innerText = el;
 					td.contentEditable = "true";
 				}
@@ -97,6 +171,7 @@ export class CSVView extends TextFileView {
 		this.parent.appendChild(this.table);
 
 		this.createBtnAddLine();
+		this.createBtnRefreshAutocomplete();
 	}
 
 	createBtnRemoveLine(el: HTMLElement): HTMLElement {
@@ -106,7 +181,7 @@ export class CSVView extends TextFileView {
 		btn.id = "deleteRow";
 		btn.innerHTML = remove();
 		btn.onClickEvent(() => {
-			el.empty();
+			el.remove();
 			this.saveData();
 		});
 
@@ -124,7 +199,6 @@ export class CSVView extends TextFileView {
 			const idx = children.indexOf(el);
 			if (idx - 1 === 0) return;
 			else this.table.insertBefore(children[idx], children[idx - 1]);
-
 			this.saveData();
 		});
 
@@ -142,7 +216,20 @@ export class CSVView extends TextFileView {
 			const idx = children.indexOf(el);
 			if (idx + 1 >= children.length) return;
 			else this.table.insertAfter(children[idx], children[idx + 1]);
+			this.saveData();
+		});
 
+		return btn;
+	}
+
+	createBtnDuplicate(el: HTMLElement): HTMLElement {
+		const btn = this.contentEl.createEl("button");
+
+		btn.classList.add("findoc-btn-margin-top");
+		btn.id = "duplicateRow";
+		btn.innerHTML = duplicate();
+		btn.onClickEvent(() => {
+			this.addLine(this.getLine(el as HTMLTableRowElement));
 			this.saveData();
 		});
 
@@ -155,39 +242,113 @@ export class CSVView extends TextFileView {
 		btn.id = "newRow";
 		btn.innerText = "Add New Row";
 		btn.onClickEvent(() => {
-			const trContent = this.contentEl.createEl("tr");
-
-			const lineData = [
-				types[0],
-				"ID",
-				"0",
-				getToday(),
-				"EXTRA",
-				"ACTION",
-			];
-			lineData.forEach((el, idx) => {
-				const td = this.contentEl.createEl("td");
-				td.classList.add("findoc-line-data");
-				if (idx === 0) {
-					td.appendChild(this.dropdown(el));
-				} else if (idx === lineData.length - 1) {
-					td.appendChild(this.createBtnRemoveLine(trContent));
-					td.appendChild(this.createBtnMoveUp(trContent));
-					td.appendChild(this.createBtnMoveDown(trContent));
-				} else {
-					td.innerText = el;
-					td.contentEditable = "true";
-				}
-				trContent.appendChild(td);
-			});
-			this.table.appendChild(trContent);
+			if (this.plugin.settings.useLastElementAsTemplate) {
+				this.addLine(
+					this.getLine(this.table.lastChild as HTMLTableRowElement)
+				);
+			} else {
+				this.addLine([types[0], "", "0", getToday(), "", "ACTION"]);
+			}
 		});
 		this.parent.appendChild(btn);
+	}
+
+	createBtnRefreshAutocomplete() {
+		const btn = this.contentEl.createEl("button");
+		btn.classList.add("findoc-btn-margin-top");
+		btn.id = "refreshAutocompleteFieldsRow";
+		btn.innerText = "Refresh Autocomplete fields";
+		btn.onclick = () => {
+			this.refreshAutocomplete();
+			new Notice("Autocomplete refreshed !", 2005);
+		};
+		this.parent.appendChild(btn);
+	}
+
+	refreshAutocomplete() {
+		this.autocompleteData = [
+			...new Map(
+				this.tableData
+					.map((id) => ({
+						type: id.split(this.plugin.settings.csvSeparator)[0],
+						id: id.split(this.plugin.settings.csvSeparator)[1],
+					}))
+					.map((item: { id: string; type: string }) => [
+						item["id"],
+						item,
+					])
+			).values(),
+		];
+	}
+
+	getSelectValue(tr: HTMLTableRowElement) {
+		return (tr.children.item(0).firstChild as HTMLSelectElement).value;
+	}
+
+	// FIXME: Not sure for that one.
+	updateSelectValue(tr: HTMLTableRowElement, newValue: string) {
+		(tr.children.item(0).firstChild as HTMLSelectElement).setAttribute(
+			"value",
+			newValue
+		);
+		(tr.children.item(0).firstChild as HTMLSelectElement).value = newValue;
+	}
+
+	getLine(tr: HTMLTableRowElement) {
+		return [
+			(tr.children.item(0).firstChild as HTMLSelectElement).value, // we want the current value of the select element.
+			(tr.children.item(1) as HTMLElement).innerText,
+			(tr.children.item(2) as HTMLElement).innerText,
+			(tr.children.item(3) as HTMLElement).innerText,
+			(tr.children.item(4) as HTMLElement).innerText,
+			"ACTION",
+		];
+	}
+
+	addLine(lineData: string[]) {
+		const trContent = this.contentEl.createEl("tr");
+
+		lineData.forEach((el, idx) => {
+			const td = this.contentEl.createEl("td");
+			td.classList.add("findoc-line-data");
+			if (idx === 0) {
+				// DROPDOWN Column
+				td.appendChild(this.dropdown(el));
+			} else if (idx === 1) {
+				// AUTOCOMPLETE Column
+				td.appendChild(this.autocomplete(el, trContent));
+			} else if (idx === lineData.length - 1) {
+				td.appendChild(this.createBtnRemoveLine(trContent));
+				td.appendChild(this.createBtnMoveUp(trContent));
+				td.appendChild(this.createBtnMoveDown(trContent));
+				td.appendChild(this.createBtnDuplicate(trContent));
+			} else {
+				td.innerText = el;
+				td.contentEditable = "true";
+			}
+			trContent.appendChild(td);
+		});
+		this.table.appendChild(trContent);
 	}
 
 	setViewData(data: string, clear: boolean) {
 		if (clear) this.clear();
 		this.tableData = data.split("\n");
+		// Extract Autocomplete Data
+		this.autocompleteData = [
+			...new Map(
+				data
+					.split("\n")
+					.map((id) => ({
+						type: id.split(this.plugin.settings.csvSeparator)[0],
+						id: id.split(this.plugin.settings.csvSeparator)[1],
+					}))
+					.map((item: { id: string; type: string }) => [
+						item["id"],
+						item,
+					])
+			).values(),
+		];
 		this.parent = this.contentEl.createDiv();
 		this.createTable(this.tableData);
 
@@ -216,6 +377,16 @@ export class CSVView extends TextFileView {
 							return (
 								i.split('value="')[1].split('"')[0] || types[0]
 							);
+						} else if (idx === 1) {
+							// autocomplete
+							return i
+								.split(/<div/)[2]
+								.replaceAll(/<.*?>/g, "")
+								.replaceAll(/(.*?)>/g, "") // unclosed html tag, due to the split
+								.replaceAll(
+									'&lt;br class="Apple-interchange-newline"&gt',
+									""
+								);
 						} else {
 							// Input field
 							return i
@@ -236,6 +407,7 @@ export class CSVView extends TextFileView {
 
 		// TODO: Replace this timeout with the proper and recommended way.
 		new Notice("Saving in progress...", 2005);
+		this.refreshAutocomplete();
 		debounce(() => {
 			new Notice("File Saved !", 600);
 		}, 2005);

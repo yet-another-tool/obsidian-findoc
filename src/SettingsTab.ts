@@ -34,11 +34,19 @@ export default class SettingsTab extends PluginSettingTab {
 
 		containerEl.createEl("h2", { text: "Settings" });
 
+		//
+		// SUPPORT
+		//
+
 		new Setting(containerEl).setName("Support").addButton((button) => {
 			button.buttonEl.innerHTML =
 				"<a style='margin: 0 auto;' href='https://www.buymeacoffee.com/studiowebux'><img width='109px' alt='Buy me a Coffee' src='https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png'/></a>";
 			button.buttonEl.classList.add("findoc-support-btn");
 		});
+
+		//
+		// CSV SAVE DEBOUNCE
+		//
 
 		new Setting(containerEl)
 			.setName("CSV Save debounce")
@@ -64,6 +72,10 @@ export default class SettingsTab extends PluginSettingTab {
 				);
 			});
 
+		//
+		// CSV SEPARATOR
+		//
+
 		new Setting(containerEl).setName("CSV Separator").addText((text) => {
 			text.setValue(this.plugin.settings.csvSeparator.toString());
 			text.onChange(
@@ -74,6 +86,27 @@ export default class SettingsTab extends PluginSettingTab {
 				}, 500)
 			);
 		});
+
+		//
+		// USE LAST ELEMENT AS TEMPLATE
+		//
+
+		new Setting(containerEl)
+			.setName("Use Last Element as Template")
+			.addToggle((toggle) => {
+				toggle.setValue(this.plugin.settings.useLastElementAsTemplate);
+				toggle.onChange(
+					debounce(async (value: boolean) => {
+						this.plugin.settings.useLastElementAsTemplate = value;
+						await this.plugin.saveSettings();
+						new Notice("Use Last Element as Template Updated !");
+					}, 500)
+				);
+			});
+
+		//
+		// MODELS
+		//
 
 		new Setting(containerEl)
 			.setName("Models")
@@ -133,7 +166,6 @@ export default class SettingsTab extends PluginSettingTab {
 						"generateCumulativeSumDataSetPerTypes",
 						"Generate Cumulative Sum Dataset Per Types"
 					);
-					
 
 					dropdown.addOption(
 						"getLastValuePerTypeForCurrentMonth",
@@ -199,6 +231,10 @@ export default class SettingsTab extends PluginSettingTab {
 
 			modelSection.createEl("hr");
 		});
+
+		//
+		//  COLORS
+		//
 
 		new Setting(containerEl).setName("Colors");
 		const colorSection = containerEl.createDiv();
