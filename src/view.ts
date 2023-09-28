@@ -17,7 +17,7 @@ export class CSVView extends TextFileView {
 	parent: HTMLElement;
 	table: HTMLElement;
 
-	ids: string[]; // store ids for local autocomplete
+	autocompleteData: { type: string; id: string }[]; // store entries for local autocomplete
 
 	constructor(leaf: WorkspaceLeaf, plugin: FinDocPlugin) {
 		super(leaf);
@@ -49,13 +49,16 @@ export class CSVView extends TextFileView {
 		return dropdown;
 	}
 
-	match(term: string, inputs: string[]): string[] {
-		return inputs.filter((input: string) =>
-			input.toLowerCase().includes(term.toLowerCase())
+	match(
+		term: string,
+		inputs: { type: string; id: string }[]
+	): { type: string; id: string }[] {
+		return inputs.filter((input: { type: string; id: string }) =>
+			input.id.toLowerCase().includes(term.toLowerCase())
 		);
 	}
 
-	autocomplete(el: string): HTMLElement {
+	autocomplete(el: string, tr: HTMLTableRowElement): HTMLElement {
 		const id = new Date().getTime().toString();
 		const container = this.contentEl.createEl("div");
 		container.id = `container-${id}`;
@@ -74,7 +77,7 @@ export class CSVView extends TextFileView {
 			const val = (ev.target as HTMLElement).innerText;
 
 			if (val.length > MIN_CHARS_TO_MATCH) {
-				const list = this.match(val, this.ids);
+				const list = this.match(val, this.autocompleteData);
 
 				if (list?.length > 0) {
 					ul.addClasses(["findoc-autocomplete-list-opened"]);
@@ -83,12 +86,12 @@ export class CSVView extends TextFileView {
 					ul.removeClasses(["findoc-autocomplete-list-opened"]);
 				}
 
-				list.forEach((id) => {
+				list.forEach((listItem) => {
 					const li = ul.createEl("li");
-					li.innerText = id;
+					li.innerText = `${listItem.id} (${listItem.type})`;
 					li.onClickEvent((ev: MouseEvent) => {
-						const text = (ev.target as HTMLElement).innerText;
-						input.innerText = text;
+						input.innerText = listItem.id;
+						this.updateSelectValue(tr, listItem.type);
 						ul.empty();
 						ul.removeClasses(["findoc-autocomplete-list-opened"]);
 						this.saveData();
@@ -98,23 +101,19 @@ export class CSVView extends TextFileView {
 			}
 		};
 
+		// FIXME: Not super clean.
 		input.onblur = (ev: FocusEvent) => {
 			if (!ev.relatedTarget) return;
 			ul.empty();
 			ul.removeClasses(["findoc-autocomplete-list-opened"]);
-			// Save current value in the id list, because it is probably new.
-			this.ids = [
-				...new Set([...this.ids, (ev.target as HTMLElement).innerText]),
-			];
 			this.saveData();
-
 			return;
 		};
 
 		return container;
 	}
 
-	createTable(data: string[], inputs: string[] = []) {
+	createTable(data: string[]) {
 		this.div = this.contentEl.createDiv();
 		this.table = this.div.createEl("table");
 
@@ -150,7 +149,7 @@ export class CSVView extends TextFileView {
 					td.appendChild(this.dropdown(el));
 				} else if (idx === 1) {
 					// AUTOCOMPLETE Column
-					td.appendChild(this.autocomplete(el));
+					td.appendChild(this.autocomplete(el, trContent));
 				} else if (idx === lineData.length - 1) {
 					// ACTIONS Column
 					td.appendChild(this.createBtnRemoveLine(trContent));
@@ -172,6 +171,7 @@ export class CSVView extends TextFileView {
 		this.parent.appendChild(this.table);
 
 		this.createBtnAddLine();
+		this.createBtnRefreshAutocomplete();
 	}
 
 	createBtnRemoveLine(el: HTMLElement): HTMLElement {
@@ -199,7 +199,6 @@ export class CSVView extends TextFileView {
 			const idx = children.indexOf(el);
 			if (idx - 1 === 0) return;
 			else this.table.insertBefore(children[idx], children[idx - 1]);
-
 			this.saveData();
 		});
 
@@ -217,7 +216,6 @@ export class CSVView extends TextFileView {
 			const idx = children.indexOf(el);
 			if (idx + 1 >= children.length) return;
 			else this.table.insertAfter(children[idx], children[idx + 1]);
-
 			this.saveData();
 		});
 
@@ -255,9 +253,50 @@ export class CSVView extends TextFileView {
 		this.parent.appendChild(btn);
 	}
 
+	createBtnRefreshAutocomplete() {
+		const btn = this.contentEl.createEl("button");
+		btn.classList.add("findoc-btn-margin-top");
+		btn.id = "refreshAutocompleteFieldsRow";
+		btn.innerText = "Refresh Autocomplete fields";
+		btn.onclick = () => {
+			this.refreshAutocomplete();
+			new Notice("Autocomplete refreshed !", 2005);
+		};
+		this.parent.appendChild(btn);
+	}
+
+	refreshAutocomplete() {
+		this.autocompleteData = [
+			...new Map(
+				this.tableData
+					.map((id) => ({
+						type: id.split(this.plugin.settings.csvSeparator)[0],
+						id: id.split(this.plugin.settings.csvSeparator)[1],
+					}))
+					.map((item: { id: string; type: string }) => [
+						item["id"],
+						item,
+					])
+			).values(),
+		];
+	}
+
+	getSelectValue(tr: HTMLTableRowElement) {
+		return (tr.children.item(0).firstChild as HTMLSelectElement).value;
+	}
+
+	// FIXME: Not sure for that one.
+	updateSelectValue(tr: HTMLTableRowElement, newValue: string) {
+		(tr.children.item(0).firstChild as HTMLSelectElement).setAttribute(
+			"value",
+			newValue
+		);
+		(tr.children.item(0).firstChild as HTMLSelectElement).value = newValue;
+	}
+
 	getLine(tr: HTMLTableRowElement) {
 		return [
-			(tr.children.item(0).firstChild as HTMLSelectElement).value,
+			(tr.children.item(0).firstChild as HTMLSelectElement).value, // we want the current value of the select element.
 			(tr.children.item(1) as HTMLElement).innerText,
 			(tr.children.item(2) as HTMLElement).innerText,
 			(tr.children.item(3) as HTMLElement).innerText,
@@ -277,7 +316,7 @@ export class CSVView extends TextFileView {
 				td.appendChild(this.dropdown(el));
 			} else if (idx === 1) {
 				// AUTOCOMPLETE Column
-				td.appendChild(this.autocomplete(el));
+				td.appendChild(this.autocomplete(el, trContent));
 			} else if (idx === lineData.length - 1) {
 				td.appendChild(this.createBtnRemoveLine(trContent));
 				td.appendChild(this.createBtnMoveUp(trContent));
@@ -295,15 +334,23 @@ export class CSVView extends TextFileView {
 	setViewData(data: string, clear: boolean) {
 		if (clear) this.clear();
 		this.tableData = data.split("\n");
-		this.ids = [
-			...new Set(
+		// Extract Autocomplete Data
+		this.autocompleteData = [
+			...new Map(
 				data
 					.split("\n")
-					.map((id) => id.split(this.plugin.settings.csvSeparator)[1])
-			),
+					.map((id) => ({
+						type: id.split(this.plugin.settings.csvSeparator)[0],
+						id: id.split(this.plugin.settings.csvSeparator)[1],
+					}))
+					.map((item: { id: string; type: string }) => [
+						item["id"],
+						item,
+					])
+			).values(),
 		];
 		this.parent = this.contentEl.createDiv();
-		this.createTable(this.tableData, this.ids);
+		this.createTable(this.tableData);
 
 		// Margin to avoid having the iphone keyboard hide last lines
 		this.parent.classList.add("findoc-csv-parent");
@@ -360,6 +407,7 @@ export class CSVView extends TextFileView {
 
 		// TODO: Replace this timeout with the proper and recommended way.
 		new Notice("Saving in progress...", 2005);
+		this.refreshAutocomplete();
 		debounce(() => {
 			new Notice("File Saved !", 600);
 		}, 2005);

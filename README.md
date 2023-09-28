@@ -172,6 +172,7 @@ The **Extra** is not used.
 -   [] Add more Chart types, currently only line chart is supported
 -   [] Add reports using pie chart or something like that
 -   [POC] Add reports in table view
+-   [] configurable autocomplete (toggle on/off)
 
 ### V0.5.3 - Beta POC - 2023-09-27
 
