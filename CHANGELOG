@@ -1,3 +1,30 @@
+### V0.5.3 - Beta POC - 2023-09-27
+
+-   Optional Title for Charts
+-   Load multiple CSV Files
+-   Added icons
+-   Reorder rows
+-   New model to chart cumulative sum (per types and/or id)
+
+```findoc
+filename: finance.csv, finance_2.csv
+model: cumulativeSum
+type: chart
+title: Chart Title
+```
+
+```findoc
+filename: finance.csv
+model: cumulativeSumPerTypes
+type: chart
+title: Chart Title
+```
+
+![Cumulative Sum](./docs/v0.5.3/cumulsum.png)
+![Cumulative Sum Per Types](./docs/v0.5.3/cumulsumpertypes.png)
+![Cumulative Sum Per Types with Multiple Inputs](./docs/v0.5.3/cumulsummulti.png)
+![Reordering Rows](./docs/v0.5.3/rows.png)
+
 <details>
   <summary>### V0.5.2 - Beta POC - 2023-05-31</summary>
 
