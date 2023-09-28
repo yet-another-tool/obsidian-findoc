@@ -1,7 +1,7 @@
 import FinDocPlugin from "main";
 import { Notice, TextFileView, WorkspaceLeaf, debounce } from "obsidian";
 import { getToday } from "utils";
-import { MIN_CHARS_TO_MATCH, types } from "./constants";
+import { MIN_CHARS_TO_MATCH } from "./constants";
 import up from "icons/up";
 import down from "icons/down";
 import remove from "icons/remove";
@@ -37,7 +37,7 @@ export class CSVView extends TextFileView {
 			dropdown.setAttribute("value", dropdown.value);
 		};
 
-		types.forEach((option: string) => {
+		this.plugin.settings.types.forEach((option: string) => {
 			const opt = this.contentEl.createEl("option");
 			opt.value = option;
 			opt.id = id + option.replace(" ", "_");
@@ -247,7 +247,14 @@ export class CSVView extends TextFileView {
 					this.getLine(this.table.lastChild as HTMLTableRowElement)
 				);
 			} else {
-				this.addLine([types[0], "", "0", getToday(), "", "ACTION"]);
+				this.addLine([
+					this.plugin.settings.types[0],
+					"",
+					"0",
+					getToday(),
+					"",
+					"ACTION",
+				]);
 			}
 		});
 		this.parent.appendChild(btn);
@@ -375,7 +382,8 @@ export class CSVView extends TextFileView {
 						if (idx === 0) {
 							// Select (Dropdown)
 							return (
-								i.split('value="')[1].split('"')[0] || types[0]
+								i.split('value="')[1].split('"')[0] ||
+								this.plugin.settings.types[0]
 							);
 						} else if (idx === 1) {
 							// autocomplete

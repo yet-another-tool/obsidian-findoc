@@ -2,7 +2,6 @@ import { App, Notice, PluginSettingTab, Setting, debounce } from "obsidian";
 import FinDocPlugin from "main";
 import { idToText } from "utils";
 import loadIcons from "loadIcons";
-import { types } from "./constants";
 
 export default class SettingsTab extends PluginSettingTab {
 	plugin: FinDocPlugin;
@@ -25,6 +24,22 @@ export default class SettingsTab extends PluginSettingTab {
 			this.display();
 		});
 		return btn;
+	}
+
+	createNewTypeBtn(): HTMLElement {
+		const btn = this.containerEl.createEl("button");
+		btn.classList.add("findoc-btn-margin-bottom");
+		btn.id = "newType";
+		btn.innerText = "Add New Type";
+		btn.onClickEvent(() => {
+			this.plugin.settings.types.unshift("");
+			this.display();
+		});
+		return btn;
+	}
+
+	getType() {
+		return this.plugin.settings.types;
 	}
 
 	display(): void {
@@ -103,6 +118,50 @@ export default class SettingsTab extends PluginSettingTab {
 					}, 500)
 				);
 			});
+
+		//
+		//  TYPES
+		//
+
+		new Setting(containerEl)
+			.setName("Types")
+			.setDesc(
+				"Deleting Existing Type might break the workflow, be sure to dissociate the type from everywhere."
+			);
+		const typesSection = containerEl.createDiv();
+		typesSection.appendChild(this.createNewTypeBtn());
+		typesSection.classList.add("findoc-type-section");
+
+		this.plugin.settings.types.forEach((type, key) => {
+			new Setting(typesSection)
+				.setName(`Type`)
+				.addText(async (text) => {
+					text.setValue(type);
+					text.onChange(
+						debounce(async (value: string) => {
+							this.plugin.settings.types = Object.assign(
+								this.plugin.settings.types,
+								{ [key]: value }
+							);
+							await this.plugin.saveSettings();
+							new Notice("Type Updated !");
+						}, 1000)
+					);
+					text.inputEl.onblur = () => {
+						this.display(); // Force refresh.
+					};
+				})
+				.addExtraButton((btn) => {
+					btn.setTooltip("Delete Type");
+					btn.setIcon("trash");
+					btn.onClick(async () => {
+						this.plugin.settings.types.splice(key, 1);
+						await this.plugin.saveSettings();
+						new Notice("Type Deleted !");
+						this.display();
+					});
+				});
+		});
 
 		//
 		// MODELS
@@ -221,7 +280,7 @@ export default class SettingsTab extends PluginSettingTab {
 				new Notice("Types Updated !");
 			};
 
-			types.forEach((type: string) => {
+			this.getType().forEach((type: string) => {
 				const opt = select.createEl("option");
 				opt.id = type;
 				opt.value = type;

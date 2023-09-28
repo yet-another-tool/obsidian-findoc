@@ -31,6 +31,17 @@ export const COLORS: string[] = [
 ];
 
 export const DEFAULT_SETTINGS: IPluginSettings = {
+	types: [
+		"Portfolio",
+		"Income",
+		"Mortgage",
+		"Mortgage Rate",
+		"Cotisation",
+		"Dividend",
+		"House Expenses",
+		"Expenses",
+		"Generic",
+	],
 	useLastElementAsTemplate: true,
 	models: {
 		expenses: {

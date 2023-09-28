@@ -40,6 +40,7 @@ interface IPluginSettings {
 	debounce: string;
 	csvSeparator: string;
 	useLastElementAsTemplate: boolean;
+	types: string[];
 }
 
 interface IModel {
