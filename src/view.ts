@@ -101,7 +101,7 @@ export class CSVView extends TextFileView {
 			}
 		};
 
-		// FIXME: Not super clean.
+		// FIXME: Not super clean. need to detect if at least a changes as been made.
 		input.onblur = (ev: FocusEvent) => {
 			if (!ev.relatedTarget) return;
 			ul.empty();
@@ -147,7 +147,7 @@ export class CSVView extends TextFileView {
 				if (idx === 0) {
 					// DROPDOWN Column
 					td.appendChild(this.dropdown(el));
-				} else if (idx === 1) {
+				} else if (idx === 1 && this.plugin.settings.useAutocomplete) {
 					// AUTOCOMPLETE Column
 					td.appendChild(this.autocomplete(el, trContent));
 				} else if (idx === lineData.length - 1) {
@@ -171,7 +171,9 @@ export class CSVView extends TextFileView {
 		this.parent.appendChild(this.table);
 
 		this.createBtnAddLine();
-		this.createBtnRefreshAutocomplete();
+		if (this.plugin.settings.useAutocomplete) {
+			this.createBtnRefreshAutocomplete();
+		}
 	}
 
 	createBtnRemoveLine(el: HTMLElement): HTMLElement {
@@ -321,7 +323,7 @@ export class CSVView extends TextFileView {
 			if (idx === 0) {
 				// DROPDOWN Column
 				td.appendChild(this.dropdown(el));
-			} else if (idx === 1) {
+			} else if (idx === 1 && this.plugin.settings.useAutocomplete) {
 				// AUTOCOMPLETE Column
 				td.appendChild(this.autocomplete(el, trContent));
 			} else if (idx === lineData.length - 1) {
@@ -341,21 +343,26 @@ export class CSVView extends TextFileView {
 	setViewData(data: string, clear: boolean) {
 		if (clear) this.clear();
 		this.tableData = data.split("\n");
-		// Extract Autocomplete Data
-		this.autocompleteData = [
-			...new Map(
-				data
-					.split("\n")
-					.map((id) => ({
-						type: id.split(this.plugin.settings.csvSeparator)[0],
-						id: id.split(this.plugin.settings.csvSeparator)[1],
-					}))
-					.map((item: { id: string; type: string }) => [
-						item["id"],
-						item,
-					])
-			).values(),
-		];
+
+		if (this.plugin.settings.useAutocomplete) {
+			// Extract Autocomplete Data
+			this.autocompleteData = [
+				...new Map(
+					data
+						.split("\n")
+						.map((id) => ({
+							type: id.split(
+								this.plugin.settings.csvSeparator
+							)[0],
+							id: id.split(this.plugin.settings.csvSeparator)[1],
+						}))
+						.map((item: { id: string; type: string }) => [
+							item["id"],
+							item,
+						])
+				).values(),
+			];
+		}
 		this.parent = this.contentEl.createDiv();
 		this.createTable(this.tableData);
 
@@ -385,7 +392,10 @@ export class CSVView extends TextFileView {
 								i.split('value="')[1].split('"')[0] ||
 								this.plugin.settings.types[0]
 							);
-						} else if (idx === 1) {
+						} else if (
+							idx === 1 &&
+							this.plugin.settings.useAutocomplete
+						) {
 							// autocomplete
 							return i
 								.split(/<div/)[2]

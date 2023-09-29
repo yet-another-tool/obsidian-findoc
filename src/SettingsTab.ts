@@ -120,6 +120,23 @@ export default class SettingsTab extends PluginSettingTab {
 			});
 
 		//
+		// TOGGLE AUTOCOMPLETE
+		//
+
+		new Setting(containerEl)
+			.setName("Use Autocomplete")
+			.addToggle((toggle) => {
+				toggle.setValue(this.plugin.settings.useAutocomplete);
+				toggle.onChange(
+					debounce(async (value: boolean) => {
+						this.plugin.settings.useAutocomplete = value;
+						await this.plugin.saveSettings();
+						new Notice("Use autocomplete Updated !");
+					}, 500)
+				);
+			});
+
+		//
 		//  TYPES
 		//
 

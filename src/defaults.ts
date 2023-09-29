@@ -31,6 +31,7 @@ export const COLORS: string[] = [
 ];
 
 export const DEFAULT_SETTINGS: IPluginSettings = {
+	useAutocomplete: true,
 	types: [
 		"Portfolio",
 		"Income",
