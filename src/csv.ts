@@ -1,3 +1,5 @@
+import { IInput } from "types";
+
 export function getData(csv: string, separator = ","): Array<IInput> {
 	return csv
 		.split("\n")

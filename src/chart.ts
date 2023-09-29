@@ -1,6 +1,9 @@
+import { IChartLine, IDataset, ITooltip } from "types";
+
 export function chartLine(
 	data: IDataset,
-	type: "money" | "percent",
+	type: "money" | "percent" | "generic" | "custom",
+	suffix = "",
 	beginAtZero = true
 ): IChartLine {
 	return {
@@ -36,6 +39,10 @@ export function chartLine(
 									}).format(context.parsed.y);
 								else if (type === "percent")
 									label += `${context.parsed.y}%`;
+								else if (type === "generic")
+									label += `${context.parsed.y}`;
+								else if (type === "custom")
+									label += `${context.parsed.y}${suffix}`;
 							}
 
 							const currentValue: number = context.parsed.y;

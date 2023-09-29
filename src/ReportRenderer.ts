@@ -1,4 +1,5 @@
 import { MarkdownRenderChild } from "obsidian";
+import { IReportData, IModel, IReportEntry } from "types";
 import { idToText } from "utils";
 
 export default class ReportRenderer extends MarkdownRenderChild {
@@ -28,6 +29,7 @@ export default class ReportRenderer extends MarkdownRenderChild {
 		this.data.datasets.forEach((entry: IReportEntry) => {
 			const type = this.containerEl.createEl("div");
 
+			// TODO: implement chart label types as well.
 			type.createEl("span", {
 				text: `${entry.label}: ${entry.data.toLocaleString("en-US", {
 					style: "currency",

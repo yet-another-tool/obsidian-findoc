@@ -2,6 +2,7 @@
  *	Functions to process the data
  */
 
+import { IInput, IDataset, IContext, IReportData } from "types";
 import { getDate, getMonth, skipped } from "utils";
 
 export const functions: { [key: string]: any } = {

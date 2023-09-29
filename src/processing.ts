@@ -1,6 +1,7 @@
 import { chartLine } from "chart";
 import { getData } from "csv";
 import { functions } from "methods";
+import { IInput, IModel, IDataset } from "types";
 
 function getTypes(typesToSelect: string[], input: Array<IInput>) {
 	return Object.values(input)
@@ -20,8 +21,8 @@ function processing(
 	colors: string[],
 	separator = ","
 ) {
-	const json = getData(csvRawData, separator);
-	const model = models[modelToGenerate];
+	const json: IInput[] = getData(csvRawData, separator);
+	const model: IModel = models[modelToGenerate];
 
 	const labels = Object.keys(functions[model.dataSource](json));
 	const types = getTypes(model.types, json);
@@ -33,7 +34,12 @@ function processing(
 		colors,
 	});
 
-	return chartLine(output, model.type, model.beginAtZero);
+	return chartLine(
+		output,
+		model.chartLabelType,
+		model.suffix,
+		model.beginAtZero
+	);
 }
 
 export default processing;

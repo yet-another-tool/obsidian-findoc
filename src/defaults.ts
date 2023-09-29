@@ -1,3 +1,5 @@
+import { IPluginSettings } from "types";
+
 export const COLORS: string[] = [
 	"#1ac18f",
 	"#EAE2B7",
@@ -31,6 +33,7 @@ export const COLORS: string[] = [
 ];
 
 export const DEFAULT_SETTINGS: IPluginSettings = {
+	chartLabelTypes: ["money", "percent", "generic", "custom"],
 	minCharsToMatch: 1,
 	useAutocomplete: true,
 	types: [
@@ -51,35 +54,35 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			types: ["Income", "House Expenses", "Expenses"],
 			output: "generateDailyDataSet",
 			beginAtZero: true,
-			type: "money",
+			chartLabelType: "money",
 		},
 		expensesMonthly: {
 			dataSource: "splitByYearMonth",
 			types: ["Income", "House Expenses", "Expenses"],
 			output: "generateSumDataSet",
 			beginAtZero: true,
-			type: "money",
+			chartLabelType: "money",
 		},
 		portfolio: {
 			dataSource: "splitDailyDates",
 			types: ["Portfolio"],
 			output: "generateDailyDataSet",
 			beginAtZero: false,
-			type: "money",
+			chartLabelType: "money",
 		},
 		incomeYearly: {
 			dataSource: "splitByYear",
 			types: ["Income"],
 			output: "generateSumDataSet",
 			beginAtZero: true,
-			type: "money",
+			chartLabelType: "money",
 		},
 		income: {
 			dataSource: "splitDailyDates",
 			types: ["Income"],
 			output: "generateDailyDataSet",
 			beginAtZero: true,
-			type: "money",
+			chartLabelType: "money",
 		},
 		all: {
 			dataSource: "splitDailyDates",
@@ -95,28 +98,28 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			],
 			output: "generateDailyDataSet",
 			beginAtZero: true,
-			type: "money",
+			chartLabelType: "money",
 		},
 		mortgage: {
 			dataSource: "splitDailyDates",
 			types: ["Mortgage"],
 			output: "generateDailyDataSet",
 			beginAtZero: false,
-			type: "money",
+			chartLabelType: "money",
 		},
 		mortgageRate: {
 			dataSource: "splitDailyDates",
 			types: ["Mortgage Rate"],
 			output: "generateDailyDataSet",
 			beginAtZero: true,
-			type: "percent",
+			chartLabelType: "percent",
 		},
 		dividend: {
 			dataSource: "splitByYearMonth",
 			types: ["Dividend", "Cotisation"],
 			output: "generateSumDataSetPerTypes",
 			beginAtZero: true,
-			type: "money",
+			chartLabelType: "money",
 		},
 		portfolioReport: {
 			dataSource: "splitByYearMonth",
@@ -130,7 +133,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			],
 			output: "getLastValuePerTypeForCurrentMonth",
 			beginAtZero: false,
-			type: "money",
+			chartLabelType: "money",
 		},
 		cumulativeSum: {
 			dataSource: "splitByYearMonth",
@@ -144,7 +147,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			],
 			output: "generateCumulativeSumDataSet",
 			beginAtZero: true,
-			type: "money",
+			chartLabelType: "money",
 		},
 		cumulativeSumPerTypes: {
 			dataSource: "splitByYearMonth",
@@ -158,7 +161,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			],
 			output: "generateCumulativeSumDataSetPerTypes",
 			beginAtZero: true,
-			type: "money",
+			chartLabelType: "money",
 		},
 	},
 	colors: COLORS,

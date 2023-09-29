@@ -1,5 +1,6 @@
 import { getData } from "csv";
 import { functions } from "methods";
+import { IModel, IReportData } from "types";
 
 function reporting(
 	csvRawData: string,

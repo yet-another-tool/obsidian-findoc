@@ -20,7 +20,6 @@ export default class SettingsTab extends PluginSettingTab {
 		btn.innerText = "Add New Color";
 		btn.onClickEvent(() => {
 			this.plugin.settings.colors.unshift("#ffffff");
-			console.debug(this.plugin.settings.colors);
 			this.display();
 		});
 		return btn;
@@ -168,7 +167,7 @@ export default class SettingsTab extends PluginSettingTab {
 			});
 
 		//
-		//  TYPES
+		//  TYPES / AKA Categories
 		//
 
 		new Setting(containerEl)
@@ -288,6 +287,9 @@ export default class SettingsTab extends PluginSettingTab {
 					});
 				});
 
+			//
+			// BEGIN AT ZERO
+			//
 			new Setting(modelSection)
 				.setName(`Begin at Zero for ${name}`)
 				.addToggle((toggle) => {
@@ -301,6 +303,69 @@ export default class SettingsTab extends PluginSettingTab {
 					});
 				});
 
+			//
+			// CHART LABEL TYPES MONEY, PERCENT, GENERIC, CUSTOM
+			//
+			const h2ChartType = modelSection.createEl("h2");
+			h2ChartType.innerText = `Chart Label Type for ${name}`;
+
+			const wrapperChartType = modelSection.createDiv();
+			wrapperChartType.classList.add("findoc-model-section-wrapper");
+
+			const chartLabelType = wrapperChartType.createEl("select");
+			chartLabelType.id = `chart-label-type-${key}`;
+			chartLabelType.multiple = false;
+			chartLabelType.classList.add("findoc-select-one");
+
+			chartLabelType.setAttribute("value", model.chartLabelType);
+			chartLabelType.onchange = async () => {
+				const selected = [];
+				for (const option of (
+					document.getElementById(
+						`chart-label-type-${key}`
+					) as HTMLSelectElement
+				).options as any) {
+					if (option.selected) {
+						selected.push(option.value);
+					}
+				}
+				model.chartLabelType = selected[0];
+				await this.plugin.saveSettings();
+				new Notice("Label Type Updated !");
+			};
+			this.plugin.settings.chartLabelTypes.forEach(
+				(labelType: string) => {
+					const opt = chartLabelType.createEl("option");
+					opt.id = labelType;
+					opt.value = labelType;
+					opt.innerText = labelType;
+					opt.selected = model.chartLabelType === labelType;
+				}
+			);
+
+			//
+			// SUFFIX
+			//
+			new Setting(modelSection)
+				.setDisabled(model.chartLabelType !== "custom")
+				.setName("Suffix")
+				.setDesc(
+					`Optional Suffix, only used when the type is set to "custom"`
+				)
+				.addText((text) => {
+					text.setValue(model.suffix);
+					text.onChange(
+						debounce(async (value: string) => {
+							model.suffix = value || "";
+							await this.plugin.saveSettings();
+							new Notice("Suffix Updated !");
+						}, 500)
+					);
+				});
+
+			//
+			// TYPES
+			//
 			const h2 = modelSection.createEl("h2");
 			h2.innerText = `Types for ${name}`;
 
@@ -313,7 +378,6 @@ export default class SettingsTab extends PluginSettingTab {
 			select.classList.add("findoc-select");
 
 			select.setAttribute("value", model.types.join(","));
-
 			select.onchange = async () => {
 				const selected = [];
 				// @ts-ignore
@@ -322,7 +386,6 @@ export default class SettingsTab extends PluginSettingTab {
 						selected.push(option.value);
 					}
 				}
-				// select.value = selected.join(",");
 				model.types = selected;
 				await this.plugin.saveSettings();
 				new Notice("Types Updated !");

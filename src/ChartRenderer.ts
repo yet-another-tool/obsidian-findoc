@@ -1,6 +1,7 @@
 import { MarkdownRenderChild } from "obsidian";
 import Chart, { ChartConfiguration } from "chart.js/auto";
 import { idToText } from "utils";
+import { IChartLine, IModel } from "types";
 
 export default class ChartRenderer extends MarkdownRenderChild {
 	private data: IChartLine;

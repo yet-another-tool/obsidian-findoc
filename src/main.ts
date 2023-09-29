@@ -15,6 +15,7 @@ import ChartRenderer from "./ChartRenderer";
 import ReportRenderer from "ReportRenderer";
 import reporting from "reporting";
 import { loadCSVData } from "data";
+import { IPluginSettings, IReportData } from "types";
 
 export default class FinDocPlugin extends Plugin {
 	settings: IPluginSettings;
@@ -75,8 +76,6 @@ export default class FinDocPlugin extends Plugin {
 
 						if (filenames && filenames.length > 0) {
 							const data = await loadCSVData(vault, filenames);
-
-							console.debug(data)
 
 							if (content.type === "chart" || !content.type) {
 								const chartData = processing(
