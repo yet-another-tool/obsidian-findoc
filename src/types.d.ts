@@ -41,6 +41,7 @@ interface IPluginSettings {
 	csvSeparator: string;
 	useLastElementAsTemplate: boolean;
 	useAutocomplete: boolean;
+	minCharsToMatch: number;
 	types: string[];
 }
 

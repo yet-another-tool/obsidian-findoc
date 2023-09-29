@@ -1,7 +1,6 @@
 import FinDocPlugin from "main";
 import { Notice, TextFileView, WorkspaceLeaf, debounce } from "obsidian";
 import { getToday } from "utils";
-import { MIN_CHARS_TO_MATCH } from "./constants";
 import up from "icons/up";
 import down from "icons/down";
 import remove from "icons/remove";
@@ -76,7 +75,7 @@ export class CSVView extends TextFileView {
 			ul.empty();
 			const val = (ev.target as HTMLElement).innerText;
 
-			if (val.length > MIN_CHARS_TO_MATCH) {
+			if (val.length >= this.plugin.settings.minCharsToMatch) {
 				const list = this.match(val, this.autocompleteData);
 
 				if (list?.length > 0) {

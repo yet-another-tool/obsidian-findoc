@@ -137,6 +137,37 @@ export default class SettingsTab extends PluginSettingTab {
 			});
 
 		//
+		// MIN CHARS TO MATCH
+		//
+
+		new Setting(containerEl)
+			.setName("Minimum characters to Match")
+			.setDesc(
+				"The minimum amount of characters to open the autocomplete window"
+			)
+			.addText((text) => {
+				text.setValue(this.plugin.settings.minCharsToMatch.toString());
+				text.onChange(
+					debounce(async (value: string) => {
+						if (!value || value === "") return;
+						if (
+							isNaN(parseInt(value)) ||
+							parseInt(value) < 1 ||
+							parseInt(value) >= 10
+						) {
+							new Notice(
+								"Invalid amount, must be between 1 and 9"
+							);
+							return;
+						}
+						this.plugin.settings.minCharsToMatch = parseInt(value);
+						await this.plugin.saveSettings();
+						new Notice("Minimum characters to Match Updated !");
+					}, 500)
+				);
+			});
+
+		//
 		//  TYPES
 		//
 
