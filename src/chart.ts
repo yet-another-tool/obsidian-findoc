@@ -1,8 +1,26 @@
-import { IChartLine, IDataset, ITooltip } from "types";
+import { IChartLabelTypes, IChartLine, IDataset, ITooltip } from "types";
+
+function getLabel(
+	type: IChartLabelTypes,
+	label: string,
+	value: number,
+	suffix: string
+) {
+	let updatedLabel = label;
+	if (type === "money")
+		updatedLabel += new Intl.NumberFormat("en-US", {
+			style: "currency",
+			currency: "USD",
+		}).format(value);
+	else if (type === "percent") updatedLabel += `${value}%`;
+	else if (type === "generic") updatedLabel += `${value}`;
+	else if (type === "custom") updatedLabel += `${value}${suffix}`;
+	return updatedLabel;
+}
 
 export function chartLine(
 	data: IDataset,
-	type: "money" | "percent" | "generic" | "custom",
+	type: IChartLabelTypes,
 	suffix = "",
 	beginAtZero = true
 ): IChartLine {
@@ -32,17 +50,12 @@ export function chartLine(
 								label += ": ";
 							}
 							if (context.parsed.y !== null) {
-								if (type === "money")
-									label += new Intl.NumberFormat("en-US", {
-										style: "currency",
-										currency: "USD",
-									}).format(context.parsed.y);
-								else if (type === "percent")
-									label += `${context.parsed.y}%`;
-								else if (type === "generic")
-									label += `${context.parsed.y}`;
-								else if (type === "custom")
-									label += `${context.parsed.y}${suffix}`;
+								label = getLabel(
+									type,
+									label,
+									context.parsed.y,
+									suffix
+								);
 							}
 
 							const currentValue: number = context.parsed.y;

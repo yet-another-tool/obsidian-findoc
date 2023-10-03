@@ -3,6 +3,11 @@ import Chart, { ChartConfiguration } from "chart.js/auto";
 import { idToText } from "utils";
 import { IChartLine, IModel } from "types";
 
+const generateId = () => {
+	const array = new Uint32Array(10);
+	return `id-${window.crypto.getRandomValues(array)[0].toString()}`;
+};
+
 export default class ChartRenderer extends MarkdownRenderChild {
 	private data: IChartLine;
 	private modelInfo: IModel;
@@ -48,8 +53,27 @@ export default class ChartRenderer extends MarkdownRenderChild {
 			this.containerEl.append(this.canvases[this.model]);
 
 			// Footer
-			// TODO: Collapse Footer with a button
+			/// Button to toggle footer
+			const id = generateId();
+			const btn = this.containerEl.createEl("button");
+			btn.addClasses(["findoc-btn"]);
+			btn.setAttribute("data-toggle", "collapse");
+			btn.setAttribute("data-target", `.collapse.${id}`);
+			btn.setAttribute("data-text", "Collapse");
+			btn.textContent = "Toggle Chart Information";
+			btn.onclick = (ev: MouseEvent) => {
+				const containers = Array.from(
+					document.querySelectorAll(btn.getAttribute("data-target"))
+				);
+				containers.forEach((target) => {
+					target.classList.toggle("show");
+				});
+			};
+
+			/// Footer content
 			const containerInfo = this.containerEl.createEl("div");
+			containerInfo.addClasses(["collapse", id]);
+
 			containerInfo.createEl("p", {
 				text: `Data Source: ${idToText(this.modelInfo.dataSource)}`,
 			});

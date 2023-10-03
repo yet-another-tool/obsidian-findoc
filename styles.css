@@ -94,3 +94,16 @@
 	position: relative;
 	width: 100%;
 }
+
+/* COLLAPSE */
+.collapse {
+	display: block;
+	max-height: 0px;
+	overflow: hidden;
+	transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+}
+
+.collapse.show {
+	max-height: 99em;
+	transition: max-height 0.5s ease-in-out;
+}
