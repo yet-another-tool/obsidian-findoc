@@ -42,7 +42,7 @@ export type IPluginSettings = {
 	useLastElementAsTemplate: boolean;
 	useAutocomplete: boolean;
 	minCharsToMatch: number;
-	types: string[];
+	categories: string[];
 	chartLabelTypes: string[];
 };
 
@@ -50,7 +50,7 @@ export type IChartLabelTypes = "money" | "percent" | "generic" | "custom";
 
 export type IModel = {
 	dataSource: string;
-	types: string[];
+	categories: string[];
 	output: string;
 	beginAtZero: boolean;
 	chartLabelType: IChartLabelTypes;

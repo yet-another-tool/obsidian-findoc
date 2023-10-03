@@ -3,12 +3,12 @@ import { getData } from "csv";
 import { functions } from "methods";
 import { IInput, IModel, IDataset } from "types";
 
-function getTypes(typesToSelect: string[], input: Array<IInput>) {
+function getCategories(categoriesToSelect: string[], input: Array<IInput>) {
 	return Object.values(input)
-		.filter((line) => typesToSelect.includes(line.type))
-		.reduce((types, current) => {
-			if (!types.includes(current.id)) types.push(current.id);
-			return types;
+		.filter((line) => categoriesToSelect.includes(line.type))
+		.reduce((categories, current) => {
+			if (!categories.includes(current.id)) categories.push(current.id);
+			return categories;
 		}, []);
 }
 
@@ -25,12 +25,12 @@ function processing(
 	const model: IModel = models[modelToGenerate];
 
 	const labels = Object.keys(functions[model.dataSource](json));
-	const types = getTypes(model.types, json);
+	const categories = getCategories(model.categories, json);
 	const output: IDataset = functions[model.output]({
-		typeToSelect: model.types,
+		typeToSelect: model.categories,
 		input: functions[model.dataSource](json),
 		labels,
-		types,
+		categories,
 		colors,
 	});
 

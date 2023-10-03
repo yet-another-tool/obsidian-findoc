@@ -31,14 +31,14 @@ export default class SettingsTab extends PluginSettingTab {
 		btn.id = "newType";
 		btn.innerText = "Add New Type";
 		btn.onClickEvent(() => {
-			this.plugin.settings.types.unshift("");
+			this.plugin.settings.categories.unshift("");
 			this.display();
 		});
 		return btn;
 	}
 
 	getType() {
-		return this.plugin.settings.types;
+		return this.plugin.settings.categories;
 	}
 
 	display(): void {
@@ -167,11 +167,11 @@ export default class SettingsTab extends PluginSettingTab {
 			});
 
 		//
-		//  TYPES / AKA Categories
+		//  categories / AKA Categories
 		//
 
 		new Setting(containerEl)
-			.setName("Types")
+			.setName("categories")
 			.setDesc(
 				"Deleting Existing Type might break the workflow, be sure to dissociate the type from everywhere."
 			);
@@ -179,15 +179,15 @@ export default class SettingsTab extends PluginSettingTab {
 		typesSection.appendChild(this.createNewTypeBtn());
 		typesSection.classList.add("findoc-type-section");
 
-		this.plugin.settings.types.forEach((type, key) => {
+		this.plugin.settings.categories.forEach((type, key) => {
 			new Setting(typesSection)
 				.setName(`Type`)
 				.addText(async (text) => {
 					text.setValue(type);
 					text.onChange(
 						debounce(async (value: string) => {
-							this.plugin.settings.types = Object.assign(
-								this.plugin.settings.types,
+							this.plugin.settings.categories = Object.assign(
+								this.plugin.settings.categories,
 								{ [key]: value }
 							);
 							await this.plugin.saveSettings();
@@ -202,7 +202,7 @@ export default class SettingsTab extends PluginSettingTab {
 					btn.setTooltip("Delete Type");
 					btn.setIcon("trash");
 					btn.onClick(async () => {
-						this.plugin.settings.types.splice(key, 1);
+						this.plugin.settings.categories.splice(key, 1);
 						await this.plugin.saveSettings();
 						new Notice("Type Deleted !");
 						this.display();
@@ -262,7 +262,7 @@ export default class SettingsTab extends PluginSettingTab {
 					);
 					dropdown.addOption(
 						"generateSumDataSetPerTypes",
-						"Generate Sum Dataset Per Types"
+						"Generate Sum Dataset Per categories"
 					);
 					dropdown.addOption(
 						"generateCumulativeSumDataSet",
@@ -270,7 +270,7 @@ export default class SettingsTab extends PluginSettingTab {
 					);
 					dropdown.addOption(
 						"generateCumulativeSumDataSetPerTypes",
-						"Generate Cumulative Sum Dataset Per Types"
+						"Generate Cumulative Sum Dataset Per categories"
 					);
 
 					dropdown.addOption(
@@ -364,10 +364,10 @@ export default class SettingsTab extends PluginSettingTab {
 				});
 
 			//
-			// TYPES
+			// categories
 			//
 			const h2 = modelSection.createEl("h2");
-			h2.innerText = `Types for ${name}`;
+			h2.innerText = `categories for ${name}`;
 
 			const wrapper = modelSection.createDiv();
 			wrapper.classList.add("findoc-model-section-wrapper");
@@ -377,7 +377,7 @@ export default class SettingsTab extends PluginSettingTab {
 			select.multiple = true;
 			select.classList.add("findoc-select");
 
-			select.setAttribute("value", model.types.join(","));
+			select.setAttribute("value", model.categories.join(","));
 			select.onchange = async () => {
 				const selected = [];
 				// @ts-ignore
@@ -386,9 +386,9 @@ export default class SettingsTab extends PluginSettingTab {
 						selected.push(option.value);
 					}
 				}
-				model.types = selected;
+				model.categories = selected;
 				await this.plugin.saveSettings();
-				new Notice("Types Updated !");
+				new Notice("categories Updated !");
 			};
 
 			this.getType().forEach((type: string) => {
@@ -396,7 +396,7 @@ export default class SettingsTab extends PluginSettingTab {
 				opt.id = type;
 				opt.value = type;
 				opt.innerText = type;
-				opt.selected = model.types.includes(type);
+				opt.selected = model.categories.includes(type);
 			});
 
 			modelSection.createEl("hr");

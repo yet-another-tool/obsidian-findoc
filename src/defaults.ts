@@ -36,7 +36,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 	chartLabelTypes: ["money", "percent", "generic", "custom"],
 	minCharsToMatch: 1,
 	useAutocomplete: true,
-	types: [
+	categories: [
 		"Portfolio",
 		"Income",
 		"Mortgage",
@@ -51,42 +51,42 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 	models: {
 		expenses: {
 			dataSource: "splitDailyDates",
-			types: ["Income", "House Expenses", "Expenses"],
+			categories: ["Income", "House Expenses", "Expenses"],
 			output: "generateDailyDataSet",
 			beginAtZero: true,
 			chartLabelType: "money",
 		},
 		expensesMonthly: {
 			dataSource: "splitByYearMonth",
-			types: ["Income", "House Expenses", "Expenses"],
+			categories: ["Income", "House Expenses", "Expenses"],
 			output: "generateSumDataSet",
 			beginAtZero: true,
 			chartLabelType: "money",
 		},
 		portfolio: {
 			dataSource: "splitDailyDates",
-			types: ["Portfolio"],
+			categories: ["Portfolio"],
 			output: "generateDailyDataSet",
 			beginAtZero: false,
 			chartLabelType: "money",
 		},
 		incomeYearly: {
 			dataSource: "splitByYear",
-			types: ["Income"],
+			categories: ["Income"],
 			output: "generateSumDataSet",
 			beginAtZero: true,
 			chartLabelType: "money",
 		},
 		income: {
 			dataSource: "splitDailyDates",
-			types: ["Income"],
+			categories: ["Income"],
 			output: "generateDailyDataSet",
 			beginAtZero: true,
 			chartLabelType: "money",
 		},
 		all: {
 			dataSource: "splitDailyDates",
-			types: [
+			categories: [
 				"Portfolio",
 				"Income",
 				"Mortgage",
@@ -102,28 +102,28 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 		},
 		mortgage: {
 			dataSource: "splitDailyDates",
-			types: ["Mortgage"],
+			categories: ["Mortgage"],
 			output: "generateDailyDataSet",
 			beginAtZero: false,
 			chartLabelType: "money",
 		},
 		mortgageRate: {
 			dataSource: "splitDailyDates",
-			types: ["Mortgage Rate"],
+			categories: ["Mortgage Rate"],
 			output: "generateDailyDataSet",
 			beginAtZero: true,
 			chartLabelType: "percent",
 		},
 		dividend: {
 			dataSource: "splitByYearMonth",
-			types: ["Dividend", "Cotisation"],
+			categories: ["Dividend", "Cotisation"],
 			output: "generateSumDataSetPerTypes",
 			beginAtZero: true,
 			chartLabelType: "money",
 		},
 		portfolioReport: {
 			dataSource: "splitByYearMonth",
-			types: [
+			categories: [
 				"Portfolio",
 				"Income",
 				"Cotisation",
@@ -137,7 +137,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 		},
 		cumulativeSum: {
 			dataSource: "splitByYearMonth",
-			types: [
+			categories: [
 				"Portfolio",
 				"Income",
 				"Cotisation",
@@ -151,7 +151,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 		},
 		cumulativeSumPerTypes: {
 			dataSource: "splitByYearMonth",
-			types: [
+			categories: [
 				"Portfolio",
 				"Income",
 				"Cotisation",

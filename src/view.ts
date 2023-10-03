@@ -36,7 +36,7 @@ export class CSVView extends TextFileView {
 			dropdown.setAttribute("value", dropdown.value);
 		};
 
-		this.plugin.settings.types.forEach((option: string) => {
+		this.plugin.settings.categories.forEach((option: string) => {
 			const opt = this.contentEl.createEl("option");
 			opt.value = option;
 			opt.id = id + option.replace(" ", "_");
@@ -249,7 +249,7 @@ export class CSVView extends TextFileView {
 				);
 			} else {
 				this.addLine([
-					this.plugin.settings.types[0],
+					this.plugin.settings.categories[0],
 					"",
 					"0",
 					getToday(),
@@ -389,7 +389,7 @@ export class CSVView extends TextFileView {
 							// Select (Dropdown)
 							return (
 								i.split('value="')[1].split('"')[0] ||
-								this.plugin.settings.types[0]
+								this.plugin.settings.categories[0]
 							);
 						} else if (
 							idx === 1 &&

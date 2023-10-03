@@ -15,7 +15,7 @@ function reporting(
 	const model = models[modelToGenerate];
 
 	const output: IReportData = functions[model.output]({
-		typeToSelect: model.types,
+		typeToSelect: model.categories,
 		input: functions[model.dataSource](json),
 		date,
 	});

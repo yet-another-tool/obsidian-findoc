@@ -48,17 +48,17 @@ export const functions: { [key: string]: any } = {
 		typeToSelect,
 		input,
 		labels,
-		types,
+		categories,
 		colors,
 	}: {
 		typeToSelect: string[];
 		input: { [key: string]: IInput[] };
 		labels: string[];
-		types: string[];
+		categories: string[];
 		colors: string[];
 	}): IDataset => {
 		const usableColors = [...colors];
-		const datasets = types.map((type) => {
+		const datasets = categories.map((type) => {
 			const color = usableColors[0];
 			usableColors.shift();
 
@@ -80,13 +80,13 @@ export const functions: { [key: string]: any } = {
 							)
 							.reduce(
 								(
-									types: { [key: string]: number },
+									categories: { [key: string]: number },
 									current: IInput
 								) => {
-									if (!types[current.id])
-										types[current.id] = 0;
-									types[current.id] += current.value;
-									return types;
+									if (!categories[current.id])
+										categories[current.id] = 0;
+									categories[current.id] += current.value;
+									return categories;
 								},
 								{}
 							);
@@ -108,18 +108,18 @@ export const functions: { [key: string]: any } = {
 		typeToSelect,
 		input,
 		labels,
-		types,
+		categories,
 		colors,
 	}: {
 		typeToSelect: string[];
 		input: { [key: string]: IInput[] };
 		labels: string[];
-		types: string[];
+		categories: string[];
 		colors: string[];
 	}): IDataset => {
 		const nonEmptyLabels: string[] = [];
 		const usableColors = [...colors];
-		const datasets = types.map((type) => {
+		const datasets = categories.map((type) => {
 			const color = usableColors[0];
 			usableColors.shift();
 			return {
@@ -134,29 +134,29 @@ export const functions: { [key: string]: any } = {
 				},
 				data: labels
 					.map((label: string) => {
-						const typesFound = input[label]
+						const categoriesFound = input[label]
 							.filter((i: IInput) =>
 								typeToSelect.includes(i.type)
 							)
 							.reduce(
 								(
-									types: { [key: string]: number },
+									categories: { [key: string]: number },
 									current: IInput
 								) => {
-									if (!types[current.id])
-										types[current.id] = 0;
-									types[current.id] = current.value;
-									return types;
+									if (!categories[current.id])
+										categories[current.id] = 0;
+									categories[current.id] = current.value;
+									return categories;
 								},
 								{}
 							);
 						if (
-							Object.keys(typesFound).length > 0 &&
+							Object.keys(categoriesFound).length > 0 &&
 							!nonEmptyLabels.includes(label)
 						)
 							nonEmptyLabels.push(label);
 
-						return typesFound;
+						return categoriesFound;
 					})
 					.filter((current) => {
 						let total = 0;
@@ -272,17 +272,17 @@ export const functions: { [key: string]: any } = {
 		typeToSelect,
 		input,
 		labels,
-		types,
+		categories,
 		colors,
 	}: {
 		typeToSelect: string[];
 		input: { [key: string]: IInput[] };
 		labels: string[];
-		types: string[];
+		categories: string[];
 		colors: string[];
 	}): IDataset => {
 		const usableColors = [...colors];
-		const datasets = types.map((type) => {
+		const datasets = categories.map((type) => {
 			const color = usableColors[0];
 			usableColors.shift();
 
@@ -306,13 +306,13 @@ export const functions: { [key: string]: any } = {
 							)
 							.reduce(
 								(
-									types: { [key: string]: number },
+									categories: { [key: string]: number },
 									current: IInput
 								) => {
-									if (!types[current.id])
-										types[current.id] = 0;
-									types[current.id] += current.value;
-									return types;
+									if (!categories[current.id])
+										categories[current.id] = 0;
+									categories[current.id] += current.value;
+									return categories;
 								},
 								{}
 							);
@@ -324,7 +324,7 @@ export const functions: { [key: string]: any } = {
 					}, [])
 					// Cumulative Sum
 					.map(
-						(value, index, array) =>
+						(value: number, index: number, array: number[]) =>
 							value +
 							array
 								.slice(0, index) // take previous value
