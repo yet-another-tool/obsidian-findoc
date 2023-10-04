@@ -77,7 +77,12 @@ export default class FinDocPlugin extends Plugin {
 						if (filenames && filenames.length > 0) {
 							const data = await loadCSVData(vault, filenames);
 
-							if (content.type === "chart" || !content.type) {
+							// TODO: replace to view instead of type
+							if (
+								content.view === "view" ||
+								content.type === "chart" || // DEPRECATED
+								!content.type
+							) {
 								const chartData = processing(
 									data,
 									content.model,
@@ -96,7 +101,10 @@ export default class FinDocPlugin extends Plugin {
 											el
 										)
 									);
-							} else if (content.type === "report") {
+							} else if (
+								content.type === "report" || // DEPRECATED
+								content.view === "report"
+							) {
 								const reportData: IReportData = reporting(
 									data,
 									content.model,

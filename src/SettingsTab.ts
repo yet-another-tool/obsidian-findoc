@@ -25,11 +25,11 @@ export default class SettingsTab extends PluginSettingTab {
 		return btn;
 	}
 
-	createNewTypeBtn(): HTMLElement {
+	createNewCategoryBtn(): HTMLElement {
 		const btn = this.containerEl.createEl("button");
 		btn.classList.add("findoc-btn-margin-bottom");
 		btn.id = "newType";
-		btn.innerText = "Add New Type";
+		btn.innerText = "Add New Category";
 		btn.onClickEvent(() => {
 			this.plugin.settings.categories.unshift("");
 			this.display();
@@ -37,7 +37,7 @@ export default class SettingsTab extends PluginSettingTab {
 		return btn;
 	}
 
-	getType() {
+	getCategories() {
 		return this.plugin.settings.categories;
 	}
 
@@ -167,23 +167,23 @@ export default class SettingsTab extends PluginSettingTab {
 			});
 
 		//
-		//  categories / AKA Categories
+		//  CATEGORIES
 		//
 
 		new Setting(containerEl)
 			.setName("categories")
 			.setDesc(
-				"Deleting Existing Type might break the workflow, be sure to dissociate the type from everywhere."
+				"Deleting Existing Category might break the workflow, be sure to dissociate the category from everywhere."
 			);
 		const typesSection = containerEl.createDiv();
-		typesSection.appendChild(this.createNewTypeBtn());
+		typesSection.appendChild(this.createNewCategoryBtn());
 		typesSection.classList.add("findoc-type-section");
 
-		this.plugin.settings.categories.forEach((type, key) => {
+		this.plugin.settings.categories.forEach((category, key) => {
 			new Setting(typesSection)
-				.setName(`Type`)
+				.setName(`Category`)
 				.addText(async (text) => {
-					text.setValue(type);
+					text.setValue(category);
 					text.onChange(
 						debounce(async (value: string) => {
 							this.plugin.settings.categories = Object.assign(
@@ -191,7 +191,7 @@ export default class SettingsTab extends PluginSettingTab {
 								{ [key]: value }
 							);
 							await this.plugin.saveSettings();
-							new Notice("Type Updated !");
+							new Notice("Category Updated !");
 						}, 1000)
 					);
 					text.inputEl.onblur = () => {
@@ -199,12 +199,12 @@ export default class SettingsTab extends PluginSettingTab {
 					};
 				})
 				.addExtraButton((btn) => {
-					btn.setTooltip("Delete Type");
+					btn.setTooltip("Delete Category");
 					btn.setIcon("trash");
 					btn.onClick(async () => {
 						this.plugin.settings.categories.splice(key, 1);
 						await this.plugin.saveSettings();
-						new Notice("Type Deleted !");
+						new Notice("Category Deleted !");
 						this.display();
 					});
 				});
@@ -262,7 +262,7 @@ export default class SettingsTab extends PluginSettingTab {
 					);
 					dropdown.addOption(
 						"generateSumDataSetPerTypes",
-						"Generate Sum Dataset Per categories"
+						"Generate Sum Dataset Per Categories"
 					);
 					dropdown.addOption(
 						"generateCumulativeSumDataSet",
@@ -270,12 +270,12 @@ export default class SettingsTab extends PluginSettingTab {
 					);
 					dropdown.addOption(
 						"generateCumulativeSumDataSetPerTypes",
-						"Generate Cumulative Sum Dataset Per categories"
+						"Generate Cumulative Sum Dataset Per Categories"
 					);
 
 					dropdown.addOption(
 						"getLastValuePerTypeForCurrentMonth",
-						"Get Last Value Per Type For Current Month"
+						"Get Last Value Per Category For Current Month"
 					);
 
 					dropdown.setValue(this.plugin.settings.models[key].output);
@@ -350,7 +350,7 @@ export default class SettingsTab extends PluginSettingTab {
 				.setDisabled(model.chartLabelType !== "custom")
 				.setName("Suffix")
 				.setDesc(
-					`Optional Suffix, only used when the type is set to "custom"`
+					`Optional Suffix, only used when the chart label type is set to "custom"`
 				)
 				.addText((text) => {
 					text.setValue(model.suffix);
@@ -367,7 +367,7 @@ export default class SettingsTab extends PluginSettingTab {
 			// categories
 			//
 			const h2 = modelSection.createEl("h2");
-			h2.innerText = `categories for ${name}`;
+			h2.innerText = `Categories for ${name}`;
 
 			const wrapper = modelSection.createDiv();
 			wrapper.classList.add("findoc-model-section-wrapper");
@@ -388,15 +388,15 @@ export default class SettingsTab extends PluginSettingTab {
 				}
 				model.categories = selected;
 				await this.plugin.saveSettings();
-				new Notice("categories Updated !");
+				new Notice("Categories Updated !");
 			};
 
-			this.getType().forEach((type: string) => {
+			this.getCategories().forEach((category: string) => {
 				const opt = select.createEl("option");
-				opt.id = type;
-				opt.value = type;
-				opt.innerText = type;
-				opt.selected = model.categories.includes(type);
+				opt.id = category;
+				opt.value = category;
+				opt.innerText = category;
+				opt.selected = model.categories.includes(category);
 			});
 
 			modelSection.createEl("hr");

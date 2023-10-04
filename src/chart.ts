@@ -1,26 +1,26 @@
 import { IChartLabelTypes, IChartLine, IDataset, ITooltip } from "types";
 
 function getLabel(
-	type: IChartLabelTypes,
+	chartLabelType: IChartLabelTypes,
 	label: string,
 	value: number,
 	suffix: string
 ) {
 	let updatedLabel = label;
-	if (type === "money")
+	if (chartLabelType === "money")
 		updatedLabel += new Intl.NumberFormat("en-US", {
 			style: "currency",
 			currency: "USD",
 		}).format(value);
-	else if (type === "percent") updatedLabel += `${value}%`;
-	else if (type === "generic") updatedLabel += `${value}`;
-	else if (type === "custom") updatedLabel += `${value}${suffix}`;
+	else if (chartLabelType === "percent") updatedLabel += `${value}%`;
+	else if (chartLabelType === "generic") updatedLabel += `${value}`;
+	else if (chartLabelType === "custom") updatedLabel += `${value}${suffix}`;
 	return updatedLabel;
 }
 
 export function chartLine(
 	data: IDataset,
-	type: IChartLabelTypes,
+	chartLabelType: IChartLabelTypes,
 	suffix = "",
 	beginAtZero = true
 ): IChartLine {
@@ -51,7 +51,7 @@ export function chartLine(
 							}
 							if (context.parsed.y !== null) {
 								label = getLabel(
-									type,
+									chartLabelType,
 									label,
 									context.parsed.y,
 									suffix

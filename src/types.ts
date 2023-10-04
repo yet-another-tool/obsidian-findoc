@@ -1,6 +1,6 @@
 export type IInput = {
-	type: string;
-	id: string;
+	category: string; // Entry category
+	subcategory: string; // Entry subcategory
 	value: number;
 	timestamp: Date;
 	extra: string;
@@ -50,7 +50,7 @@ export type IChartLabelTypes = "money" | "percent" | "generic" | "custom";
 
 export type IModel = {
 	dataSource: string;
-	categories: string[];
+	categories: string[]; // categories to include in the model
 	output: string;
 	beginAtZero: boolean;
 	chartLabelType: IChartLabelTypes;

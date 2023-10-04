@@ -9,8 +9,8 @@ export function getData(csv: string, separator = ","): Array<IInput> {
 		)
 		.map((line) => {
 			return {
-				type: line.split(separator)[0],
-				id: line.split(separator)[1],
+				category: line.split(separator)[0],
+				subcategory: line.split(separator)[1],
 				value:
 					parseFloat(line.split(separator)[2]) !== 0
 						? parseFloat(line.split(separator)[2])

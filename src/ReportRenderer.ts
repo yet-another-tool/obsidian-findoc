@@ -27,10 +27,10 @@ export default class ReportRenderer extends MarkdownRenderChild {
 		this.containerEl.createEl("hr");
 
 		this.data.datasets.forEach((entry: IReportEntry) => {
-			const type = this.containerEl.createEl("div");
+			const chartLabelType = this.containerEl.createEl("div");
 
 			// TODO: implement chart label types as well.
-			type.createEl("span", {
+			chartLabelType.createEl("span", {
 				text: `${entry.label}: ${entry.data.toLocaleString("en-US", {
 					style: "currency",
 					currency: "USD",

@@ -16,7 +16,7 @@ export class CSVView extends TextFileView {
 	parent: HTMLElement;
 	table: HTMLElement;
 
-	autocompleteData: { type: string; id: string }[]; // store entries for local autocomplete
+	autocompleteData: { category: string; subcategory: string }[]; // store entries for local autocomplete
 
 	constructor(leaf: WorkspaceLeaf, plugin: FinDocPlugin) {
 		super(leaf);
@@ -50,10 +50,10 @@ export class CSVView extends TextFileView {
 
 	match(
 		term: string,
-		inputs: { type: string; id: string }[]
-	): { type: string; id: string }[] {
-		return inputs.filter((input: { type: string; id: string }) =>
-			input.id.toLowerCase().includes(term.toLowerCase())
+		inputs: { category: string; subcategory: string }[]
+	): { category: string; subcategory: string }[] {
+		return inputs.filter((input: { category: string; subcategory: string }) =>
+			input.subcategory.toLowerCase().includes(term.toLowerCase())
 		);
 	}
 
@@ -87,10 +87,10 @@ export class CSVView extends TextFileView {
 
 				list.forEach((listItem) => {
 					const li = ul.createEl("li");
-					li.innerText = `${listItem.id} (${listItem.type})`;
+					li.innerText = `${listItem.subcategory} (${listItem.category})`;
 					li.onClickEvent((ev: MouseEvent) => {
-						input.innerText = listItem.id;
-						this.updateSelectValue(tr, listItem.type);
+						input.innerText = listItem.subcategory;
+						this.updateSelectValue(tr, listItem.category);
 						ul.empty();
 						ul.removeClasses(["findoc-autocomplete-list-opened"]);
 						this.saveData();
@@ -277,12 +277,14 @@ export class CSVView extends TextFileView {
 		this.autocompleteData = [
 			...new Map(
 				this.tableData
-					.map((id) => ({
-						type: id.split(this.plugin.settings.csvSeparator)[0],
-						id: id.split(this.plugin.settings.csvSeparator)[1],
+					.map((subcategory) => ({
+						category: subcategory.split(
+							this.plugin.settings.csvSeparator
+						)[0],
+						subcategory: subcategory.split(this.plugin.settings.csvSeparator)[1],
 					}))
-					.map((item: { id: string; type: string }) => [
-						item["id"],
+					.map((item: { subcategory: string; category: string }) => [
+						item["subcategory"],
 						item,
 					])
 			).values(),
@@ -349,14 +351,14 @@ export class CSVView extends TextFileView {
 				...new Map(
 					data
 						.split("\n")
-						.map((id) => ({
-							type: id.split(
+						.map((subcategory) => ({
+							category: subcategory.split(
 								this.plugin.settings.csvSeparator
 							)[0],
-							id: id.split(this.plugin.settings.csvSeparator)[1],
+							subcategory: subcategory.split(this.plugin.settings.csvSeparator)[1],
 						}))
-						.map((item: { id: string; type: string }) => [
-							item["id"],
+						.map((item: { subcategory: string; category: string }) => [
+							item["subcategory"],
 							item,
 						])
 				).values(),
