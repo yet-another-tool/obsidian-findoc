@@ -47,9 +47,16 @@ export type IPluginSettings = {
 };
 
 export type IChartLabelTypes = "money" | "percent" | "generic" | "custom";
+export type IDataSourceKeys =
+	| "timestamp"
+	| "category"
+	| "subcategory"
+	| "value"
+	| "extra";
 
 export type IModel = {
 	dataSource: string;
+	dataSourceKey: IDataSourceKeys;
 	categories: string[]; // categories to include in the model
 	output: string;
 	beginAtZero: boolean;

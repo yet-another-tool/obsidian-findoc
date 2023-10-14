@@ -23,6 +23,11 @@
 	background-color: transparent !important;
 }
 
+.findoc-documentation-btn {
+	box-shadow: none !important;
+	background-color: transparent !important;
+}
+
 .findoc-models-container {
 	border: 2px solid grey;
 	border-radius: 5px;
@@ -37,6 +42,7 @@
 .findoc-model-section-wrapper {
 	display: flex;
 	justify-content: end;
+	margin-bottom: 10px;
 }
 
 .findoc-select {

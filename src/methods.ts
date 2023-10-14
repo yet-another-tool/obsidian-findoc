@@ -2,12 +2,18 @@
  *	Functions to process the data
  */
 
-import { IInput, IDataset, IContext, IReportData } from "types";
+import {
+	IInput,
+	IDataset,
+	IContext,
+	IReportData,
+	IDataSourceKeys,
+} from "types";
 import { getDate, getMonth, skipped } from "utils";
 
 export const functions: { [key: string]: any } = {
 	// SPLIT DATA (PREPARATION)
-	splitBy: (input: Array<IInput | any>, key: string) => {
+	splitBy: (input: Array<IInput | any>, key: IDataSourceKeys) => {
 		return input.reduce((acc, current) => {
 			if (!acc[current[key]]) {
 				acc[current[key]] = [];
@@ -17,38 +23,40 @@ export const functions: { [key: string]: any } = {
 		}, {});
 	},
 
-	splitByYear: (input: Array<IInput | any>) => {
+	splitByYear: (input: Array<IInput | any>, key: IDataSourceKeys) => {
 		return input.reduce((acc, current) => {
-			const d = new Date(current.timestamp);
-			const key = `${d.getUTCFullYear()}`;
-			if (!acc[key]) {
-				acc[key] = [];
+			const d = new Date(current[key]);
+			const timestamp = `${d.getUTCFullYear()}`;
+			if (!acc[timestamp]) {
+				acc[timestamp] = [];
 			}
-			acc[key].push(current);
+			acc[timestamp].push(current);
 			return acc;
 		}, {});
 	},
 
-	splitByYearMonth: (input: Array<IInput | any>) => {
+	splitByYearMonth: (input: Array<IInput | any>, key: IDataSourceKeys) => {
 		return input.reduce((acc, current) => {
-			const d = new Date(current.timestamp);
-			const key = `${d.getUTCFullYear()}-${getMonth(d)}`;
-			if (!acc[key]) {
-				acc[key] = [];
+			const d = new Date(current[key]);
+			const timestamp = `${d.getUTCFullYear()}-${getMonth(d)}`;
+			if (!acc[timestamp]) {
+				acc[timestamp] = [];
 			}
-			acc[key].push(current);
+			acc[timestamp].push(current);
 			return acc;
 		}, {});
 	},
 
-	splitDailyDates: (input: Array<IInput | any>) => {
+	splitDailyDates: (input: Array<IInput | any>, key: IDataSourceKeys) => {
 		return input.reduce((acc, current) => {
-			const d = new Date(current.timestamp);
-			const key = `${d.getUTCFullYear()}-${getMonth(d)}-${getDate(d)}`;
-			if (!acc[key]) {
-				acc[key] = [];
+			const d = new Date(current[key]);
+			const timestamp = `${d.getUTCFullYear()}-${getMonth(d)}-${getDate(
+				d
+			)}`;
+			if (!acc[timestamp]) {
+				acc[timestamp] = [];
 			}
-			acc[key].push(current);
+			acc[timestamp].push(current);
 			return acc;
 		}, {});
 	},

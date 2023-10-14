@@ -1,6 +1,6 @@
 import { IChartLabelTypes, IChartLine, IDataset, ITooltip } from "types";
 
-function getLabel(
+function getChartLabelType(
 	chartLabelType: IChartLabelTypes,
 	label: string,
 	value: number,
@@ -50,7 +50,7 @@ export function chartLine(
 								label += ": ";
 							}
 							if (context.parsed.y !== null) {
-								label = getLabel(
+								label = getChartLabelType(
 									chartLabelType,
 									label,
 									context.parsed.y,

@@ -55,6 +55,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			output: "generateDailyDataSet",
 			beginAtZero: true,
 			chartLabelType: "money",
+			dataSourceKey: "timestamp",
 		},
 		expensesMonthly: {
 			dataSource: "splitByYearMonth",
@@ -62,6 +63,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			output: "generateSumDataSet",
 			beginAtZero: true,
 			chartLabelType: "money",
+			dataSourceKey: "timestamp",
 		},
 		portfolio: {
 			dataSource: "splitDailyDates",
@@ -69,6 +71,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			output: "generateDailyDataSet",
 			beginAtZero: false,
 			chartLabelType: "money",
+			dataSourceKey: "timestamp",
 		},
 		incomeYearly: {
 			dataSource: "splitByYear",
@@ -76,6 +79,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			output: "generateSumDataSet",
 			beginAtZero: true,
 			chartLabelType: "money",
+			dataSourceKey: "timestamp",
 		},
 		income: {
 			dataSource: "splitDailyDates",
@@ -83,6 +87,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			output: "generateDailyDataSet",
 			beginAtZero: true,
 			chartLabelType: "money",
+			dataSourceKey: "timestamp",
 		},
 		all: {
 			dataSource: "splitDailyDates",
@@ -99,6 +104,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			output: "generateDailyDataSet",
 			beginAtZero: true,
 			chartLabelType: "money",
+			dataSourceKey: "timestamp",
 		},
 		mortgage: {
 			dataSource: "splitDailyDates",
@@ -106,6 +112,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			output: "generateDailyDataSet",
 			beginAtZero: false,
 			chartLabelType: "money",
+			dataSourceKey: "timestamp",
 		},
 		mortgageRate: {
 			dataSource: "splitDailyDates",
@@ -113,6 +120,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			output: "generateDailyDataSet",
 			beginAtZero: true,
 			chartLabelType: "percent",
+			dataSourceKey: "timestamp",
 		},
 		dividend: {
 			dataSource: "splitByYearMonth",
@@ -120,6 +128,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			output: "generateSumDataSetPerTypes",
 			beginAtZero: true,
 			chartLabelType: "money",
+			dataSourceKey: "timestamp",
 		},
 		portfolioReport: {
 			dataSource: "splitByYearMonth",
@@ -134,6 +143,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			output: "getLastValuePerTypeForCurrentMonth",
 			beginAtZero: false,
 			chartLabelType: "money",
+			dataSourceKey: "timestamp",
 		},
 		cumulativeSum: {
 			dataSource: "splitByYearMonth",
@@ -148,6 +158,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			output: "generateCumulativeSumDataSet",
 			beginAtZero: true,
 			chartLabelType: "money",
+			dataSourceKey: "timestamp",
 		},
 		cumulativeSumPerTypes: {
 			dataSource: "splitByYearMonth",
@@ -162,6 +173,17 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			output: "generateCumulativeSumDataSetPerTypes",
 			beginAtZero: true,
 			chartLabelType: "money",
+			dataSourceKey: "timestamp",
+		},
+		cumulativeSumForCotisationSplitByExtra: {
+			dataSource: "splitBy",
+			categories: [
+				"Cotisation",
+			],
+			output: "generateCumulativeSumDataSetPerTypes",
+			beginAtZero: true,
+			chartLabelType: "money",
+			dataSourceKey: "extra",
 		},
 	},
 	colors: COLORS,

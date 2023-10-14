@@ -2,6 +2,7 @@ import { App, Notice, PluginSettingTab, Setting, debounce } from "obsidian";
 import FinDocPlugin from "main";
 import { idToText } from "utils";
 import loadIcons from "loadIcons";
+import { IDataSourceKeys } from "types";
 
 export default class SettingsTab extends PluginSettingTab {
 	plugin: FinDocPlugin;
@@ -57,6 +58,18 @@ export default class SettingsTab extends PluginSettingTab {
 				"<a style='margin: 0 auto;' href='https://www.buymeacoffee.com/studiowebux'><img width='109px' alt='Buy me a Coffee' src='https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png'/></a>";
 			button.buttonEl.classList.add("findoc-support-btn");
 		});
+
+		//
+		// DOCUMENTATION
+		//
+
+		new Setting(containerEl)
+			.setName("Documentation")
+			.addButton((button) => {
+				button.buttonEl.innerHTML =
+					"<a style='margin: 0 auto;' href='https://studiowebux.github.io/obsidian-plugins-docs/docs/category/plugin-financial-doc/'>Link to Documentation</a>";
+				button.buttonEl.classList.add("findoc-documentation-btn");
+			});
 
 		//
 		// CSV SAVE DEBOUNCE
@@ -142,7 +155,7 @@ export default class SettingsTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("Minimum characters to Match")
 			.setDesc(
-				"The minimum amount of characters to open the autocomplete window"
+				"The minimum amount of characters to open the autocomplete popup"
 			)
 			.addText((text) => {
 				text.setValue(this.plugin.settings.minCharsToMatch.toString());
@@ -173,7 +186,7 @@ export default class SettingsTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("categories")
 			.setDesc(
-				"Deleting Existing Category might break the workflow, be sure to dissociate the category from everywhere."
+				"NOTE: Deleting Existing Category might break the workflow, be sure to dissociate the category from everywhere."
 			);
 		const typesSection = containerEl.createDiv();
 		typesSection.appendChild(this.createNewCategoryBtn());
@@ -227,8 +240,10 @@ export default class SettingsTab extends PluginSettingTab {
 			el.innerText = name;
 			modelSection.classList.add("findoc-model-section");
 
+			// PREPARATION
 			new Setting(modelSection)
 				.setName(`Data Source for ${name}`)
+				.setDesc("Method used to prepare the raw data.")
 				.addDropdown((dropdown) => {
 					dropdown.addOption(
 						"splitDailyDates",
@@ -239,6 +254,7 @@ export default class SettingsTab extends PluginSettingTab {
 						"Split By Year & Month"
 					);
 					dropdown.addOption("splitByYear", "Split By Year");
+					dropdown.addOption("splitBy", "Split By"); // TODO: need to implement
 					dropdown.setValue(
 						this.plugin.settings.models[key].dataSource
 					);
@@ -249,8 +265,35 @@ export default class SettingsTab extends PluginSettingTab {
 						new Notice("Data Source Updated !");
 					});
 				});
+
+			// Custom key `splitBy`
+			new Setting(modelSection)
+				.setName(`Data Source key for ${name}`)
+				.setDesc(
+					"Column to use when preparing the raw data. Modify this value exclusively when employing the `Split By` method for the data source."
+				)
+				.addDropdown((dropdown) => {
+					dropdown.addOption("category", "Category");
+					dropdown.addOption("subcategory", "SubCategory");
+					dropdown.addOption("value", "Value");
+					dropdown.addOption("timestamp", "Timestamp");
+					dropdown.addOption("extra", "Extra");
+
+					dropdown.setValue(
+						this.plugin.settings.models[key].dataSourceKey
+					);
+
+					dropdown.onChange(async (value: IDataSourceKeys) => {
+						this.plugin.settings.models[key].dataSourceKey = value;
+						await this.plugin.saveSettings();
+						new Notice("Data Source Key Updated !");
+					});
+				});
+
+			// OUTPUT
 			new Setting(modelSection)
 				.setName(`Output Function for ${name}`)
+				.setDesc("Method used to show the data in chart or table.")
 				.addDropdown((dropdown) => {
 					dropdown.addOption(
 						"generateSumDataSet",
@@ -272,7 +315,6 @@ export default class SettingsTab extends PluginSettingTab {
 						"generateCumulativeSumDataSetPerTypes",
 						"Generate Cumulative Sum Dataset Per Categories"
 					);
-
 					dropdown.addOption(
 						"getLastValuePerTypeForCurrentMonth",
 						"Get Last Value Per Category For Current Month"
@@ -304,7 +346,7 @@ export default class SettingsTab extends PluginSettingTab {
 				});
 
 			//
-			// CHART LABEL TYPES MONEY, PERCENT, GENERIC, CUSTOM
+			// CHART LABEL TYPES; MONEY, PERCENT, GENERIC, CUSTOM
 			//
 			const h2ChartType = modelSection.createEl("h2");
 			h2ChartType.innerText = `Chart Label Type for ${name}`;
