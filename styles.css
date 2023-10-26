@@ -35,8 +35,10 @@
 }
 
 .findoc-model-section {
-	padding: 10px;
-	margin-bottom: 20px;
+	padding: 30px;
+	margin-bottom: 30px;
+	border: 3px solid grey;
+	border-radius: 5px;
 }
 
 .findoc-model-section-wrapper {

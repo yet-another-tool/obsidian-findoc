@@ -307,8 +307,6 @@ export const functions: { [key: string]: any } = {
 			const color = usableColors[0];
 			usableColors.shift();
 
-			console.debug(labels);
-
 			return {
 				label: category,
 				borderColor: color,
@@ -404,6 +402,60 @@ export const functions: { [key: string]: any } = {
 					),
 			};
 		});
+
+		return {
+			labels,
+			datasets,
+		};
+	},
+
+	generateDifference: ({
+		categoriesToSelect,
+		input,
+		labels,
+		colors,
+		values,
+	}: {
+		categoriesToSelect: string[];
+		input: { [key: string]: IInput[] };
+		labels: string[];
+		colors: string[];
+		values: string[]; // Example: [Income, Expenses]
+	}): IDataset => {
+		const usableColors = [...colors];
+		const dataToProcess: { [key: string]: number[] } = {};
+
+		categoriesToSelect.forEach((category) => {
+			dataToProcess[category] = Object.values(input).map((i) => {
+				return i
+					.filter((entry) => entry.category === category)
+					.reduce((acc, current) => {
+						acc += current.value;
+						return acc;
+					}, 0);
+			});
+		});
+
+		const color = usableColors[0];
+		usableColors.shift();
+
+		const datasets = [
+			{
+				label: `${values[0]} - ${values[1]}`,
+				borderColor: color,
+				fill: false,
+				tension: 0.2,
+				spanGaps: true,
+				segment: {
+					borderColor: (ctx: IContext) => skipped(ctx, color),
+					borderDash: (ctx: IContext) => skipped(ctx, [3, 3]),
+				},
+				data: dataToProcess[values[0]].map(
+					(n: number, idx: number) =>
+						n - dataToProcess[values[1]][idx]
+				),
+			},
+		];
 
 		return {
 			labels,

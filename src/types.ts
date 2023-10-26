@@ -63,6 +63,7 @@ export type IModel = {
 	chartLabelType: IChartLabelTypes;
 	suffix?: string;
 	date?: string;
+	values: string;
 };
 
 export type IEvent = {

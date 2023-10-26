@@ -236,8 +236,8 @@ export default class SettingsTab extends PluginSettingTab {
 		Object.entries(this.plugin.settings.models).forEach(([key, model]) => {
 			const name = idToText(key);
 			const modelSection = div.createDiv();
-			const el = modelSection.createEl("h2");
-			el.innerText = name;
+			const el = modelSection.createEl("h1");
+			el.innerText = "Model: " + name;
 			modelSection.classList.add("findoc-model-section");
 
 			// PREPARATION
@@ -318,6 +318,10 @@ export default class SettingsTab extends PluginSettingTab {
 					dropdown.addOption(
 						"getLastValuePerTypeForCurrentMonth",
 						"Get Last Value Per Category For Current Month"
+					);
+					dropdown.addOption(
+						"generateDifference",
+						"Minus(Category1 - Category2)"
 					);
 
 					dropdown.setValue(this.plugin.settings.models[key].output);
@@ -441,6 +445,25 @@ export default class SettingsTab extends PluginSettingTab {
 				opt.selected = model.categories.includes(category);
 			});
 
+			//
+			// VALUES (Comma delimited list to specify the values to substract)
+			//
+			new Setting(modelSection)
+				.setDisabled(model.output !== "generateDifference")
+				.setName("Values")
+				.setDesc(
+					`Comma delimited list of two values.\nOnly used when the output is set to "generateDifference".\nExample: "Income, Expenses" will produce: Income - Expenses`
+				)
+				.addText((text) => {
+					text.setValue(model.values);
+					text.onChange(
+						debounce(async (value: string) => {
+							model.values = value || "";
+							await this.plugin.saveSettings();
+							new Notice("Values Updated !");
+						}, 500)
+					);
+				});
 			modelSection.createEl("hr");
 		});
 
