@@ -196,7 +196,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			dataSourceKey: "extra",
 			values: "",
 		},
-		IncomeMinusExpensesByYearMonth: {
+		incomeMinusExpensesByYearMonth: {
 			dataSource: "splitByYearMonth",
 			categories: ["Income", "Expenses"],
 			output: "generateDifference",

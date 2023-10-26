@@ -422,6 +422,7 @@ export const functions: { [key: string]: any } = {
 		colors: string[];
 		values: string[]; // Example: [Income, Expenses]
 	}): IDataset => {
+		console.debug("Values", values);
 		const usableColors = [...colors];
 		const dataToProcess: { [key: string]: number[] } = {};
 
@@ -439,6 +440,9 @@ export const functions: { [key: string]: any } = {
 		const color = usableColors[0];
 		usableColors.shift();
 
+		console.debug(dataToProcess);
+		console.debug(dataToProcess[values[0].trim()]);
+		console.debug(dataToProcess[values[1].trim()]);
 		const datasets = [
 			{
 				label: `${values[0]} - ${values[1]}`,
@@ -450,9 +454,9 @@ export const functions: { [key: string]: any } = {
 					borderColor: (ctx: IContext) => skipped(ctx, color),
 					borderDash: (ctx: IContext) => skipped(ctx, [3, 3]),
 				},
-				data: dataToProcess[values[0]].map(
+				data: dataToProcess[values[0].trim()].map(
 					(n: number, idx: number) =>
-						n - dataToProcess[values[1]][idx]
+						n - dataToProcess[values[1].trim()][idx]
 				),
 			},
 		];

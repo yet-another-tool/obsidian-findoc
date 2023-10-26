@@ -37,7 +37,7 @@ function processing(
 	const labels = Object.keys(
 		functions[model.dataSource](json, model.dataSourceKey)
 	).map((label) => (label && label !== "" ? label : "_NO_LABEL_"));
-	
+
 	// For each entry, we keep only the one required by the model. It is filtered by the category.
 	const categories = getCategories(model.categories, json);
 	// Generator function
@@ -47,6 +47,7 @@ function processing(
 		labels,
 		categories,
 		colors,
+		values: model.values ? model.values.split(",") : [],
 	});
 
 	return chartLine(

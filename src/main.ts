@@ -83,24 +83,34 @@ export default class FinDocPlugin extends Plugin {
 								content.type === "chart" || // DEPRECATED
 								!content.type
 							) {
-								const chartData = processing(
-									data,
-									content.model,
-									this.settings.models,
-									this.settings.colors,
-									this.settings.csvSeparator
-								);
-								if (chartData)
-									ctx.addChild(
-										new ChartRenderer(
-											this.settings.models[content.model],
-											chartData,
-											content.model,
-											content.title,
-											filenames,
-											el
-										)
+								try {
+									const chartData = processing(
+										data,
+										content.model,
+										this.settings.models,
+										this.settings.colors,
+										this.settings.csvSeparator
 									);
+									if (chartData)
+										ctx.addChild(
+											new ChartRenderer(
+												this.settings.models[
+													content.model
+												],
+												chartData,
+												content.model,
+												content.title,
+												filenames,
+												el
+											)
+										);
+								} catch (e) {
+									new Notice(
+										`An error occured while processing ${content.model}, ${content.title}`,
+										30000
+									);
+									throw e;
+								}
 							} else if (
 								content.type === "report" || // DEPRECATED
 								content.view === "report"
