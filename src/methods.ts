@@ -8,6 +8,8 @@ import {
 	IContext,
 	IReportData,
 	IDataSourceKeys,
+	IReportEntries,
+	IReportMultiData,
 } from "types";
 import { getDate, getMonth, skipped } from "utils";
 
@@ -513,6 +515,78 @@ export const functions: { [key: string]: any } = {
 
 		return {
 			labels,
+			datasets,
+		};
+	},
+
+	reportDifference: ({
+		categoriesToSelect,
+		input,
+		values,
+	}: {
+		categoriesToSelect: string[];
+		input: { [key: string]: IInput[] };
+		values: string[]; // Example: [Income, Expenses]
+	}): IReportMultiData => {
+		const dataToProcess: { [key: string]: number[] } = {};
+
+		categoriesToSelect.forEach((category) => {
+			dataToProcess[category] = Object.values(input).map((i) => {
+				return i
+					.filter((entry) => entry.category === category)
+					.reduce((acc, current) => {
+						acc += current.value;
+						return acc;
+					}, 0);
+			});
+		});
+
+		const datasets: IReportEntries = {
+			label: `${values[0]} - ${values[1]}`,
+			data: dataToProcess[values[0].trim()].map(
+				(n: number, idx: number) =>
+					n - dataToProcess[values[1].trim()][idx]
+			),
+			labels: Object.keys(input),
+		};
+
+		return {
+			datasets,
+		};
+	},
+
+	reportSum: ({
+		categoriesToSelect,
+		input,
+		values,
+	}: {
+		categoriesToSelect: string[];
+		input: { [key: string]: IInput[] };
+		values: string[]; // Example: [Income, Expenses]
+	}): IReportMultiData => {
+		const dataToProcess: { [key: string]: number[] } = {};
+
+		categoriesToSelect.forEach((category) => {
+			dataToProcess[category] = Object.values(input).map((i) => {
+				return i
+					.filter((entry) => entry.category === category)
+					.reduce((acc, current) => {
+						acc += current.value;
+						return acc;
+					}, 0);
+			});
+		});
+
+		const datasets: IReportEntries = {
+			label: `${values[0]} + ${values[1]}`,
+			data: dataToProcess[values[0].trim()].map(
+				(n: number, idx: number) =>
+					n + dataToProcess[values[1].trim()][idx]
+			),
+			labels: Object.keys(input),
+		};
+
+		return {
 			datasets,
 		};
 	},

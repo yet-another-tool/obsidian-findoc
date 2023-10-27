@@ -23,6 +23,7 @@ function reporting(
 		categoriesToSelect: model.categories,
 		input: functions[model.dataSource](json, model.dataSourceKey),
 		date,
+		values: model.values ? model.values.split(",") : [],
 	});
 
 	return output;

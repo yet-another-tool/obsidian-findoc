@@ -327,6 +327,14 @@ export default class SettingsTab extends PluginSettingTab {
 						"generateSum",
 						"Sum(Category1 + Category2)"
 					);
+					dropdown.addOption(
+						"reportDifference",
+						"Report: Minus(Category1 - Category2)"
+					);
+					dropdown.addOption(
+						"reportSum",
+						"Report: Sum(Category1 + Category2)"
+					);
 
 					dropdown.setValue(this.plugin.settings.models[key].output);
 
