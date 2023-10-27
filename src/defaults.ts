@@ -205,6 +205,15 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			dataSourceKey: "timestamp",
 			values: "Income, Expenses", // Yield: Income - Expenses
 		},
+		expensesPlusHouseExpensesByYearMonth: {
+			dataSource: "splitByYearMonth",
+			categories: ["Expenses", "House Expenses"],
+			output: "generateSum",
+			beginAtZero: true,
+			chartLabelType: "money",
+			dataSourceKey: "timestamp",
+			values: "Expenses, House Expenses", // Yield: Expenses + House Expenses
+		},
 	},
 	colors: COLORS,
 	debounce: "1000",

@@ -81,7 +81,7 @@ export default class FinDocPlugin extends Plugin {
 							if (
 								content.view === "view" ||
 								content.type === "chart" || // DEPRECATED
-								!content.type
+								(!content.type && !content.view)
 							) {
 								try {
 									const chartData = processing(

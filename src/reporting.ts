@@ -14,9 +14,14 @@ function reporting(
 	const json = getData(csvRawData, separator);
 	const model = models[modelToGenerate];
 
+	if (!model || !functions[model.dataSource])
+		throw new Error(
+			`The specified model : "${modelToGenerate}" does not exists. Model names are available in the Documentation.`
+		);
+
 	const output: IReportData = functions[model.output]({
 		categoriesToSelect: model.categories,
-		input: functions[model.dataSource](json),
+		input: functions[model.dataSource](json, model.dataSourceKey),
 		date,
 	});
 
