@@ -1,4 +1,15 @@
-### V0.5.3 - Beta POC - 2023-09-27
+### V0.5.4 - Beta - 2023-09-28
+
+-   Added autocomplete for IDs (auto fill the type and the id when clicked)
+-   Allow to use the last row as a template when clicking Add New Row
+-   Added configuration to enable/disable the add new row template
+-   Added Button to duplicate an entry (it is appended at the end of the table)
+
+![New Interface](./docs/v0.5.4/new-interface.png)
+![Auto complete](./docs/v0.5.4/autocomplete.png)
+
+<details>
+  <summary>### V0.5.3 - Beta POC - 2023-09-27</summary>
 
 -   Optional Title for Charts
 -   Load multiple CSV Files
@@ -24,6 +35,7 @@ title: Chart Title
 ![Cumulative Sum Per Types](./docs/v0.5.3/cumulsumpertypes.png)
 ![Cumulative Sum Per Types with Multiple Inputs](./docs/v0.5.3/cumulsummulti.png)
 ![Reordering Rows](./docs/v0.5.3/rows.png)
+</details>
 
 <details>
   <summary>### V0.5.2 - Beta POC - 2023-05-31</summary>
