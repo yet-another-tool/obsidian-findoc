@@ -29,6 +29,8 @@
 
 ## Installation and Usage
 
+**V0.6.0 BREAKING CHANGES**: Configurations have been updated massively to reflect all the changes. Please follow the documentation to update the default configuration: https://studiowebux.github.io/obsidian-plugins-docs/docs/findoc/defaultConfigurations/
+
 Documentation is available here: https://studiowebux.github.io/obsidian-plugins-docs/docs/category/plugin-financial-doc
 
 ### Releases and Github Actions
