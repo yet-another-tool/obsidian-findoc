@@ -2,67 +2,89 @@
  *	Functions to process the data
  */
 
+import {
+	IInput,
+	IDataset,
+	IContext,
+	IReportData,
+	IDataSourceKeys,
+	IReportEntries,
+	IReportMultiData,
+} from "types";
 import { getDate, getMonth, skipped } from "utils";
 
 export const functions: { [key: string]: any } = {
-	splitByYear: (input: Array<IInput | any>) => {
-		console.log(input);
+	// SPLIT DATA (PREPARATION)
+	splitBy: (input: Array<IInput | any>, key: IDataSourceKeys) => {
 		return input.reduce((acc, current) => {
-			const d = new Date(current.timestamp);
-			if (!acc[`${d.getUTCFullYear()}`]) {
-				acc[`${d.getUTCFullYear()}`] = [];
+			if (!acc[current[key]]) {
+				acc[current[key]] = [];
 			}
-			acc[`${d.getUTCFullYear()}`].push(current);
+			acc[current[key]].push(current);
 			return acc;
 		}, {});
 	},
 
-	splitByYearMonth: (input: Array<IInput | any>) => {
+	splitByYear: (input: Array<IInput | any>, key: IDataSourceKeys) => {
 		return input.reduce((acc, current) => {
-			const d = new Date(current.timestamp);
-			if (!acc[`${d.getUTCFullYear()}-${getMonth(d)}`]) {
-				acc[`${d.getUTCFullYear()}-${getMonth(d)}`] = [];
+			const d = new Date(current[key]);
+			const timestamp = `${d.getUTCFullYear()}`;
+			if (!acc[timestamp]) {
+				acc[timestamp] = [];
 			}
-			acc[`${d.getUTCFullYear()}-${getMonth(d)}`].push(current);
+			acc[timestamp].push(current);
 			return acc;
 		}, {});
 	},
 
-	splitDailyDates: (input: Array<IInput | any>) => {
+	splitByYearMonth: (input: Array<IInput | any>, key: IDataSourceKeys) => {
 		return input.reduce((acc, current) => {
-			const d = new Date(current.timestamp);
-			const dateStr = `${d.getUTCFullYear()}-${getMonth(d)}-${getDate(
+			const d = new Date(current[key]);
+			const timestamp = `${d.getUTCFullYear()}-${getMonth(d)}`;
+			if (!acc[timestamp]) {
+				acc[timestamp] = [];
+			}
+			acc[timestamp].push(current);
+			return acc;
+		}, {});
+	},
+
+	splitDailyDates: (input: Array<IInput | any>, key: IDataSourceKeys) => {
+		return input.reduce((acc, current) => {
+			const d = new Date(current[key]);
+			const timestamp = `${d.getUTCFullYear()}-${getMonth(d)}-${getDate(
 				d
 			)}`;
-
-			if (!acc[dateStr]) {
-				acc[dateStr] = [];
+			if (!acc[timestamp]) {
+				acc[timestamp] = [];
 			}
-			acc[dateStr].push(current);
+			acc[timestamp].push(current);
 			return acc;
 		}, {});
 	},
 
+	// GENERATORS
+
 	generateSumDataSet: ({
-		typeToSelect,
+		categoriesToSelect,
 		input,
 		labels,
-		types,
+		categories,
 		colors,
 	}: {
-		typeToSelect: string[];
+		categoriesToSelect: string[];
 		input: { [key: string]: IInput[] };
 		labels: string[];
-		types: string[];
+		categories: string[];
 		colors: string[];
 	}): IDataset => {
 		const usableColors = [...colors];
-		const datasets = types.map((type) => {
+		const datasets = categories.map((category) => {
 			const color = usableColors[0];
 			usableColors.shift();
 
 			return {
-				label: type,
+				label: category,
 				borderColor: color,
 				fill: false,
 				tension: 0.2,
@@ -75,23 +97,24 @@ export const functions: { [key: string]: any } = {
 					.map((label: string) => {
 						return input[label]
 							.filter((i: IInput) =>
-								typeToSelect.includes(i.type)
+								categoriesToSelect.includes(i.category)
 							)
 							.reduce(
 								(
-									types: { [key: string]: number },
+									categories: { [key: string]: number },
 									current: IInput
 								) => {
-									if (!types[current.id])
-										types[current.id] = 0;
-									types[current.id] += current.value;
-									return types;
+									if (!categories[current.subcategory])
+										categories[current.subcategory] = 0;
+									categories[current.subcategory] +=
+										current.value;
+									return categories;
 								},
 								{}
 							);
 					})
 					.reduce((typeSum, current) => {
-						if (current[type]) typeSum.push(current[type]);
+						if (current[category]) typeSum.push(current[category]);
 						else typeSum.push(0);
 						return typeSum;
 					}, []),
@@ -104,25 +127,25 @@ export const functions: { [key: string]: any } = {
 	},
 
 	generateDailyDataSet: ({
-		typeToSelect,
+		categoriesToSelect,
 		input,
 		labels,
-		types,
+		categories,
 		colors,
 	}: {
-		typeToSelect: string[];
+		categoriesToSelect: string[];
 		input: { [key: string]: IInput[] };
 		labels: string[];
-		types: string[];
+		categories: string[];
 		colors: string[];
 	}): IDataset => {
 		const nonEmptyLabels: string[] = [];
 		const usableColors = [...colors];
-		const datasets = types.map((type) => {
+		const datasets = categories.map((category) => {
 			const color = usableColors[0];
 			usableColors.shift();
 			return {
-				label: type,
+				label: category,
 				borderColor: color,
 				fill: false,
 				tension: 0.2,
@@ -133,29 +156,30 @@ export const functions: { [key: string]: any } = {
 				},
 				data: labels
 					.map((label: string) => {
-						const typesFound = input[label]
+						const categoriesFound = input[label]
 							.filter((i: IInput) =>
-								typeToSelect.includes(i.type)
+								categoriesToSelect.includes(i.category)
 							)
 							.reduce(
 								(
-									types: { [key: string]: number },
+									categories: { [key: string]: number },
 									current: IInput
 								) => {
-									if (!types[current.id])
-										types[current.id] = 0;
-									types[current.id] = current.value;
-									return types;
+									if (!categories[current.subcategory])
+										categories[current.subcategory] = 0;
+									categories[current.subcategory] =
+										current.value;
+									return categories;
 								},
 								{}
 							);
 						if (
-							Object.keys(typesFound).length > 0 &&
+							Object.keys(categoriesFound).length > 0 &&
 							!nonEmptyLabels.includes(label)
 						)
 							nonEmptyLabels.push(label);
 
-						return typesFound;
+						return categoriesFound;
 					})
 					.filter((current) => {
 						let total = 0;
@@ -167,7 +191,7 @@ export const functions: { [key: string]: any } = {
 						return current;
 					})
 					.reduce((typeSum, current) => {
-						if (current[type]) typeSum.push(current[type]);
+						if (current[category]) typeSum.push(current[category]);
 						else typeSum.push(NaN);
 						return typeSum;
 					}, []),
@@ -181,22 +205,22 @@ export const functions: { [key: string]: any } = {
 	},
 
 	generateSumDataSetPerTypes: ({
-		typeToSelect,
+		categoriesToSelect,
 		input,
 		labels,
 		colors,
 	}: {
-		typeToSelect: string[];
+		categoriesToSelect: string[];
 		input: { [key: string]: IInput[] };
 		labels: string[];
 		colors: string[];
 	}): IDataset => {
 		const usableColors = [...colors];
-		const datasets = typeToSelect.map((type) => {
+		const datasets = categoriesToSelect.map((category) => {
 			const color = usableColors[0];
 			usableColors.shift();
 			return {
-				label: type,
+				label: category,
 				borderColor: color,
 				fill: false,
 				tension: 0.2,
@@ -207,7 +231,7 @@ export const functions: { [key: string]: any } = {
 				},
 				data: Object.values(input).map((i) => {
 					return i
-						.filter((entry) => entry.type === type)
+						.filter((entry) => entry.category === category)
 						.reduce((acc, current) => {
 							acc += current.value;
 							return acc;
@@ -223,11 +247,11 @@ export const functions: { [key: string]: any } = {
 	},
 
 	getLastValuePerTypeForCurrentMonth: ({
-		typeToSelect,
+		categoriesToSelect,
 		input,
 		date = undefined,
 	}: {
-		typeToSelect: string[];
+		categoriesToSelect: string[];
 		input: { [key: string]: IInput[] };
 		date: string | undefined;
 	}): IReportData => {
@@ -236,24 +260,24 @@ export const functions: { [key: string]: any } = {
 		if (date) d = new Date(date);
 
 		// Select current month dataset
-		const lastInput = input[`${d.getUTCFullYear()}-${getMonth(d)}`];
+		const lastInput = input[`${d.getUTCFullYear()}-${getMonth(d)}`] || [];
 		// TECH. DEBT !
 		// Keeping only last reference for a month.
-		// When this is : Portfolio type.
+		// When this is : Portfolio category.
 		const _lastInput: IInput[] = [];
 		lastInput.reverse().forEach((li) => {
-			if (li.type !== "Portfolio") _lastInput.push(li);
-			if (_lastInput.every((_li) => _li.id !== li.id))
+			if (li.category !== "Portfolio") _lastInput.push(li);
+			if (_lastInput.every((_li) => _li.subcategory !== li.subcategory))
 				_lastInput.push(li);
 		});
 
-		const datasets = typeToSelect.map((type) => {
+		const datasets = categoriesToSelect.map((category) => {
 			// Get Last item from our input array
 			return {
-				label: type,
-				// Get the sum of all data for the specified type
+				label: category,
+				// Get the sum of all data for the specified category
 				data: _lastInput
-					.filter((entry) => entry.type === type)
+					.filter((entry) => entry.category === category)
 					.reduce((acc, current) => {
 						acc += current.value;
 						return acc;
@@ -268,27 +292,25 @@ export const functions: { [key: string]: any } = {
 	},
 
 	generateCumulativeSumDataSet: ({
-		typeToSelect,
+		categoriesToSelect,
 		input,
 		labels,
-		types,
+		categories,
 		colors,
 	}: {
-		typeToSelect: string[];
+		categoriesToSelect: string[];
 		input: { [key: string]: IInput[] };
 		labels: string[];
-		types: string[];
+		categories: string[];
 		colors: string[];
 	}): IDataset => {
 		const usableColors = [...colors];
-		const datasets = types.map((type) => {
+		const datasets = categories.map((category) => {
 			const color = usableColors[0];
 			usableColors.shift();
 
-			console.debug(labels);
-
 			return {
-				label: type,
+				label: category,
 				borderColor: color,
 				fill: false,
 				tension: 0.2,
@@ -301,29 +323,30 @@ export const functions: { [key: string]: any } = {
 					.map((label: string) => {
 						return input[label]
 							.filter((i: IInput) =>
-								typeToSelect.includes(i.type)
+								categoriesToSelect.includes(i.category)
 							)
 							.reduce(
 								(
-									types: { [key: string]: number },
+									categories: { [key: string]: number },
 									current: IInput
 								) => {
-									if (!types[current.id])
-										types[current.id] = 0;
-									types[current.id] += current.value;
-									return types;
+									if (!categories[current.subcategory])
+										categories[current.subcategory] = 0;
+									categories[current.subcategory] +=
+										current.value;
+									return categories;
 								},
 								{}
 							);
 					})
 					.reduce((typeSum, current) => {
-						if (current[type]) typeSum.push(current[type]);
+						if (current[category]) typeSum.push(current[category]);
 						else typeSum.push(0);
 						return typeSum;
 					}, [])
 					// Cumulative Sum
 					.map(
-						(value, index, array) =>
+						(value: number, index: number, array: number[]) =>
 							value +
 							array
 								.slice(0, index) // take previous value
@@ -338,22 +361,22 @@ export const functions: { [key: string]: any } = {
 	},
 
 	generateCumulativeSumDataSetPerTypes: ({
-		typeToSelect,
+		categoriesToSelect,
 		input,
 		labels,
 		colors,
 	}: {
-		typeToSelect: string[];
+		categoriesToSelect: string[];
 		input: { [key: string]: IInput[] };
 		labels: string[];
 		colors: string[];
 	}): IDataset => {
 		const usableColors = [...colors];
-		const datasets = typeToSelect.map((type) => {
+		const datasets = categoriesToSelect.map((category) => {
 			const color = usableColors[0];
 			usableColors.shift();
 			return {
-				label: type,
+				label: category,
 				borderColor: color,
 				fill: false,
 				tension: 0.2,
@@ -365,7 +388,7 @@ export const functions: { [key: string]: any } = {
 				data: Object.values(input)
 					.map((i) => {
 						return i
-							.filter((entry) => entry.type === type)
+							.filter((entry) => entry.category === category)
 							.reduce((acc, current) => {
 								acc += current.value;
 								return acc;
@@ -384,6 +407,186 @@ export const functions: { [key: string]: any } = {
 
 		return {
 			labels,
+			datasets,
+		};
+	},
+
+	generateDifference: ({
+		categoriesToSelect,
+		input,
+		labels,
+		colors,
+		values,
+	}: {
+		categoriesToSelect: string[];
+		input: { [key: string]: IInput[] };
+		labels: string[];
+		colors: string[];
+		values: string[]; // Example: [Income, Expenses]
+	}): IDataset => {
+		const usableColors = [...colors];
+		const color = usableColors[0];
+		usableColors.shift();
+
+		const dataToProcess: { [key: string]: number[] } = {};
+
+		categoriesToSelect.forEach((category) => {
+			dataToProcess[category] = Object.values(input).map((i) => {
+				return i
+					.filter((entry) => entry.category === category)
+					.reduce((acc, current) => {
+						acc += current.value;
+						return acc;
+					}, 0);
+			});
+		});
+
+		const datasets = [
+			{
+				label: `${values[0]} - ${values[1]}`,
+				borderColor: color,
+				fill: false,
+				tension: 0.2,
+				spanGaps: true,
+				segment: {
+					borderColor: (ctx: IContext) => skipped(ctx, color),
+					borderDash: (ctx: IContext) => skipped(ctx, [3, 3]),
+				},
+				data: dataToProcess[values[0].trim()].map(
+					(n: number, idx: number) =>
+						n - dataToProcess[values[1].trim()][idx]
+				),
+			},
+		];
+
+		return {
+			labels,
+			datasets,
+		};
+	},
+
+	generateSum: ({
+		categoriesToSelect,
+		input,
+		labels,
+		colors,
+		values,
+	}: {
+		categoriesToSelect: string[];
+		input: { [key: string]: IInput[] };
+		labels: string[];
+		colors: string[];
+		values: string[]; // Example: [House Expenses, Expenses]
+	}): IDataset => {
+		const usableColors = [...colors];
+		const color = usableColors[0];
+		usableColors.shift();
+
+		const dataToProcess: { [key: string]: number[] } = {};
+
+		categoriesToSelect.forEach((category) => {
+			dataToProcess[category] = Object.values(input).map((i) => {
+				return i
+					.filter((entry) => entry.category === category)
+					.reduce((acc, current) => {
+						acc += current.value;
+						return acc;
+					}, 0);
+			});
+		});
+
+		const datasets = [
+			{
+				label: `${values[0]} + ${values[1]}`,
+				borderColor: color,
+				fill: false,
+				tension: 0.2,
+				spanGaps: true,
+				segment: {
+					borderColor: (ctx: IContext) => skipped(ctx, color),
+					borderDash: (ctx: IContext) => skipped(ctx, [3, 3]),
+				},
+				data: dataToProcess[values[0].trim()].map(
+					(n: number, idx: number) =>
+						n + dataToProcess[values[1].trim()][idx]
+				),
+			},
+		];
+
+		return {
+			labels,
+			datasets,
+		};
+	},
+
+	reportDifference: ({
+		categoriesToSelect,
+		input,
+		values,
+	}: {
+		categoriesToSelect: string[];
+		input: { [key: string]: IInput[] };
+		values: string[]; // Example: [Income, Expenses]
+	}): IReportMultiData => {
+		const dataToProcess: { [key: string]: number[] } = {};
+
+		categoriesToSelect.forEach((category) => {
+			dataToProcess[category] = Object.values(input).map((i) => {
+				return i
+					.filter((entry) => entry.category === category)
+					.reduce((acc, current) => {
+						acc += current.value;
+						return acc;
+					}, 0);
+			});
+		});
+
+		const datasets: IReportEntries = {
+			label: `${values[0]} - ${values[1]}`,
+			data: dataToProcess[values[0].trim()].map(
+				(n: number, idx: number) =>
+					n - dataToProcess[values[1].trim()][idx]
+			),
+			labels: Object.keys(input),
+		};
+
+		return {
+			datasets,
+		};
+	},
+
+	reportSum: ({
+		categoriesToSelect,
+		input,
+		values,
+	}: {
+		categoriesToSelect: string[];
+		input: { [key: string]: IInput[] };
+		values: string[]; // Example: [Income, Expenses]
+	}): IReportMultiData => {
+		const dataToProcess: { [key: string]: number[] } = {};
+
+		categoriesToSelect.forEach((category) => {
+			dataToProcess[category] = Object.values(input).map((i) => {
+				return i
+					.filter((entry) => entry.category === category)
+					.reduce((acc, current) => {
+						acc += current.value;
+						return acc;
+					}, 0);
+			});
+		});
+
+		const datasets: IReportEntries = {
+			label: `${values[0]} + ${values[1]}`,
+			data: dataToProcess[values[0].trim()].map(
+				(n: number, idx: number) =>
+					n + dataToProcess[values[1].trim()][idx]
+			),
+			labels: Object.keys(input),
+		};
+
+		return {
 			datasets,
 		};
 	},

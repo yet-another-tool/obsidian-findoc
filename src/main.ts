@@ -15,6 +15,7 @@ import ChartRenderer from "./ChartRenderer";
 import ReportRenderer from "ReportRenderer";
 import reporting from "reporting";
 import { loadCSVData } from "data";
+import { IPluginSettings, IReportData } from "types";
 
 export default class FinDocPlugin extends Plugin {
 	settings: IPluginSettings;
@@ -76,28 +77,44 @@ export default class FinDocPlugin extends Plugin {
 						if (filenames && filenames.length > 0) {
 							const data = await loadCSVData(vault, filenames);
 
-							console.debug(data)
-
-							if (content.type === "chart" || !content.type) {
-								const chartData = processing(
-									data,
-									content.model,
-									this.settings.models,
-									this.settings.colors,
-									this.settings.csvSeparator
-								);
-								if (chartData)
-									ctx.addChild(
-										new ChartRenderer(
-											this.settings.models[content.model],
-											chartData,
-											content.model,
-											content.title,
-											filenames,
-											el
-										)
+							// TODO: replace to view instead of type
+							if (
+								content.view === "view" ||
+								content.type === "chart" || // DEPRECATED
+								(!content.type && !content.view)
+							) {
+								try {
+									const chartData = processing(
+										data,
+										content.model,
+										this.settings.models,
+										this.settings.colors,
+										this.settings.csvSeparator
 									);
-							} else if (content.type === "report") {
+									if (chartData)
+										ctx.addChild(
+											new ChartRenderer(
+												this.settings.models[
+													content.model
+												],
+												chartData,
+												content.model,
+												content.title,
+												filenames,
+												el
+											)
+										);
+								} catch (e) {
+									new Notice(
+										`An error occured while processing ${content.model}, ${content.title}`,
+										30000
+									);
+									throw e;
+								}
+							} else if (
+								content.type === "report" || // DEPRECATED
+								content.view === "report"
+							) {
 								const reportData: IReportData = reporting(
 									data,
 									content.model,

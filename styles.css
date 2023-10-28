@@ -23,6 +23,11 @@
 	background-color: transparent !important;
 }
 
+.findoc-documentation-btn {
+	box-shadow: none !important;
+	background-color: transparent !important;
+}
+
 .findoc-models-container {
 	border: 2px solid grey;
 	border-radius: 5px;
@@ -30,13 +35,16 @@
 }
 
 .findoc-model-section {
-	padding: 10px;
-	margin-bottom: 20px;
+	padding: 30px;
+	margin-bottom: 30px;
+	border: 3px solid grey;
+	border-radius: 5px;
 }
 
 .findoc-model-section-wrapper {
 	display: flex;
 	justify-content: end;
+	margin-bottom: 10px;
 }
 
 .findoc-select {
@@ -93,4 +101,17 @@
 .findoc-autocomplete-container {
 	position: relative;
 	width: 100%;
+}
+
+/* COLLAPSE */
+.collapse {
+	display: block;
+	max-height: 0px;
+	overflow: hidden;
+	transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+}
+
+.collapse.show {
+	max-height: 99em;
+	transition: max-height 0.5s ease-in-out;
 }

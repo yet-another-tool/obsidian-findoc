@@ -16,25 +16,6 @@
 
 ---
 
-<details open="open">
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about">About</a>
-    </li>
-    <li><a href="#installation">Installation</a></li>
-    <li>
-      <a href="#usage">Usage</a>
-    </li>
-    <li><a href="#changelog">Changelog</a></li>
-    <li><a href="#screenshots">Screenshots</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ol>
-</details>
----
-
 ## About
 
 -   Open and Edit CSV Files in Obsidian
@@ -46,18 +27,9 @@
 
 ---
 
-## Installation
+## Installation and Usage
 
-It is now in Beta, you can download a release and install it in your local obsidian plugin.
-
-> As soon as the CSV aspect is stable, I will open a PR in the Obsidian Plugin registry.
-
-```bash
-npm install
-npm run build
-```
-
-Move the `main.js` and `manifest.json` to your plugins directory in a directory named `findoc`.
+Documentation is available here: https://studiowebux.github.io/obsidian-plugins-docs/docs/category/plugin-financial-doc
 
 ### Releases and Github Actions
 
@@ -65,89 +37,6 @@ Move the `main.js` and `manifest.json` to your plugins directory in a directory 
 git tag -a X.Y.Z -m "Version X.Y.Z"
 git push origin tags/X.Y.Z
 ```
-
----
-
-## Usage
-
-### Models
-
--   **expenses**
--   **expensesMonthly**
--   **portfolio**
--   **incomeYearly**
--   **income**
--   **all**
--   **mortgage**
--   **mortgageRate**
--   **dividend**
--   **cumulativeSum**
--   **cumulativeSumPerTypes**
-
-Create a PR to create new one.  
-You can edit those directly in the setting tab.
-
-### Code Block
-
-You can define this code block directly in your notes.
-
-<pre>
-```findoc
-filename: finance.csv, finance_2.csv
-model: portfolio
-type: chart OR report
-date: YYYY-MM-DD (Only used when type is set to report)
-title: Chart Title
-```
-</pre>
-
-> When you do not specify the `type`, it will generate a chart by default.
-> When you do specify the `type`, you can set the `date` to gather the data for a specific month. (This feature is still a proof of concept)
-
-**Information**
-
--   **_Filename_**: it can be a single file, or multiple. You must use a comma `,` to split each file, the data will be loaded in the same order.
--   **_Title_**: Optional, by default it uses the `model` name.
-
-> See above for all available models.
-
-Once the code block is defined, the hook will try to generate a chart by reading the csv file.
-
-### Types (For the code block section only)
-
--   **chart**: Generate a chartJS
--   **report**: Generate simple HTML Output (Proof of concept)
-
-### The CSV File
-
-The CSV Header is :
-
-```csv
-Type,Id,Value,TimeStamp,Extra
-```
-
-Where **Type** is one of:
-
--   **Portfolio**
--   **Income**
--   **Mortgage**
--   **Mortgage Rate**
--   **Cotisation**
--   **Dividend**
--   **House Expenses**
--   **Expenses**
-
-The **Id** is preferably _Unique for a group_, otherwise you will have weird behaviour and wrong grouping.
-
-The **Value** must be a **Number**
-
-The **Timestamp** is only a _Date_ using this format: `'YYYY-MM-DD'`
-
-The **Extra** is not used.
-
-**Can I use any software and export a CSV File**: Yes.
-
-**What is a category?**: This is the _Id_, for example, you can have an `House Expenses` (<-Type) about the `Tax` (<-Category)
 
 ---
 

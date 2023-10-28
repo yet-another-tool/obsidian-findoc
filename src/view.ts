@@ -1,7 +1,6 @@
 import FinDocPlugin from "main";
 import { Notice, TextFileView, WorkspaceLeaf, debounce } from "obsidian";
 import { getToday } from "utils";
-import { MIN_CHARS_TO_MATCH, types } from "./constants";
 import up from "icons/up";
 import down from "icons/down";
 import remove from "icons/remove";
@@ -17,7 +16,7 @@ export class CSVView extends TextFileView {
 	parent: HTMLElement;
 	table: HTMLElement;
 
-	autocompleteData: { type: string; id: string }[]; // store entries for local autocomplete
+	autocompleteData: { category: string; subcategory: string }[]; // store entries for local autocomplete
 
 	constructor(leaf: WorkspaceLeaf, plugin: FinDocPlugin) {
 		super(leaf);
@@ -37,7 +36,7 @@ export class CSVView extends TextFileView {
 			dropdown.setAttribute("value", dropdown.value);
 		};
 
-		types.forEach((option: string) => {
+		this.plugin.settings.categories.forEach((option: string) => {
 			const opt = this.contentEl.createEl("option");
 			opt.value = option;
 			opt.id = id + option.replace(" ", "_");
@@ -51,10 +50,10 @@ export class CSVView extends TextFileView {
 
 	match(
 		term: string,
-		inputs: { type: string; id: string }[]
-	): { type: string; id: string }[] {
-		return inputs.filter((input: { type: string; id: string }) =>
-			input.id.toLowerCase().includes(term.toLowerCase())
+		inputs: { category: string; subcategory: string }[]
+	): { category: string; subcategory: string }[] {
+		return inputs.filter((input: { category: string; subcategory: string }) =>
+			input.subcategory.toLowerCase().includes(term.toLowerCase())
 		);
 	}
 
@@ -76,7 +75,7 @@ export class CSVView extends TextFileView {
 			ul.empty();
 			const val = (ev.target as HTMLElement).innerText;
 
-			if (val.length > MIN_CHARS_TO_MATCH) {
+			if (val.length >= this.plugin.settings.minCharsToMatch) {
 				const list = this.match(val, this.autocompleteData);
 
 				if (list?.length > 0) {
@@ -88,10 +87,10 @@ export class CSVView extends TextFileView {
 
 				list.forEach((listItem) => {
 					const li = ul.createEl("li");
-					li.innerText = `${listItem.id} (${listItem.type})`;
+					li.innerText = `${listItem.subcategory} (${listItem.category})`;
 					li.onClickEvent((ev: MouseEvent) => {
-						input.innerText = listItem.id;
-						this.updateSelectValue(tr, listItem.type);
+						input.innerText = listItem.subcategory;
+						this.updateSelectValue(tr, listItem.category);
 						ul.empty();
 						ul.removeClasses(["findoc-autocomplete-list-opened"]);
 						this.saveData();
@@ -101,7 +100,7 @@ export class CSVView extends TextFileView {
 			}
 		};
 
-		// FIXME: Not super clean.
+		// FIXME: Not super clean. need to detect if at least a changes as been made.
 		input.onblur = (ev: FocusEvent) => {
 			if (!ev.relatedTarget) return;
 			ul.empty();
@@ -147,7 +146,7 @@ export class CSVView extends TextFileView {
 				if (idx === 0) {
 					// DROPDOWN Column
 					td.appendChild(this.dropdown(el));
-				} else if (idx === 1) {
+				} else if (idx === 1 && this.plugin.settings.useAutocomplete) {
 					// AUTOCOMPLETE Column
 					td.appendChild(this.autocomplete(el, trContent));
 				} else if (idx === lineData.length - 1) {
@@ -171,7 +170,9 @@ export class CSVView extends TextFileView {
 		this.parent.appendChild(this.table);
 
 		this.createBtnAddLine();
-		this.createBtnRefreshAutocomplete();
+		if (this.plugin.settings.useAutocomplete) {
+			this.createBtnRefreshAutocomplete();
+		}
 	}
 
 	createBtnRemoveLine(el: HTMLElement): HTMLElement {
@@ -247,7 +248,14 @@ export class CSVView extends TextFileView {
 					this.getLine(this.table.lastChild as HTMLTableRowElement)
 				);
 			} else {
-				this.addLine([types[0], "", "0", getToday(), "", "ACTION"]);
+				this.addLine([
+					this.plugin.settings.categories[0],
+					"",
+					"0",
+					getToday(),
+					"",
+					"ACTION",
+				]);
 			}
 		});
 		this.parent.appendChild(btn);
@@ -269,12 +277,14 @@ export class CSVView extends TextFileView {
 		this.autocompleteData = [
 			...new Map(
 				this.tableData
-					.map((id) => ({
-						type: id.split(this.plugin.settings.csvSeparator)[0],
-						id: id.split(this.plugin.settings.csvSeparator)[1],
+					.map((subcategory) => ({
+						category: subcategory.split(
+							this.plugin.settings.csvSeparator
+						)[0],
+						subcategory: subcategory.split(this.plugin.settings.csvSeparator)[1],
 					}))
-					.map((item: { id: string; type: string }) => [
-						item["id"],
+					.map((item: { subcategory: string; category: string }) => [
+						item["subcategory"],
 						item,
 					])
 			).values(),
@@ -314,7 +324,7 @@ export class CSVView extends TextFileView {
 			if (idx === 0) {
 				// DROPDOWN Column
 				td.appendChild(this.dropdown(el));
-			} else if (idx === 1) {
+			} else if (idx === 1 && this.plugin.settings.useAutocomplete) {
 				// AUTOCOMPLETE Column
 				td.appendChild(this.autocomplete(el, trContent));
 			} else if (idx === lineData.length - 1) {
@@ -334,21 +344,26 @@ export class CSVView extends TextFileView {
 	setViewData(data: string, clear: boolean) {
 		if (clear) this.clear();
 		this.tableData = data.split("\n");
-		// Extract Autocomplete Data
-		this.autocompleteData = [
-			...new Map(
-				data
-					.split("\n")
-					.map((id) => ({
-						type: id.split(this.plugin.settings.csvSeparator)[0],
-						id: id.split(this.plugin.settings.csvSeparator)[1],
-					}))
-					.map((item: { id: string; type: string }) => [
-						item["id"],
-						item,
-					])
-			).values(),
-		];
+
+		if (this.plugin.settings.useAutocomplete) {
+			// Extract Autocomplete Data
+			this.autocompleteData = [
+				...new Map(
+					data
+						.split("\n")
+						.map((subcategory) => ({
+							category: subcategory.split(
+								this.plugin.settings.csvSeparator
+							)[0],
+							subcategory: subcategory.split(this.plugin.settings.csvSeparator)[1],
+						}))
+						.map((item: { subcategory: string; category: string }) => [
+							item["subcategory"],
+							item,
+						])
+				).values(),
+			];
+		}
 		this.parent = this.contentEl.createDiv();
 		this.createTable(this.tableData);
 
@@ -375,9 +390,13 @@ export class CSVView extends TextFileView {
 						if (idx === 0) {
 							// Select (Dropdown)
 							return (
-								i.split('value="')[1].split('"')[0] || types[0]
+								i.split('value="')[1].split('"')[0] ||
+								this.plugin.settings.categories[0]
 							);
-						} else if (idx === 1) {
+						} else if (
+							idx === 1 &&
+							this.plugin.settings.useAutocomplete
+						) {
 							// autocomplete
 							return i
 								.split(/<div/)[2]

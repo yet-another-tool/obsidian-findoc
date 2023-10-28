@@ -2,7 +2,7 @@ import { App, Notice, PluginSettingTab, Setting, debounce } from "obsidian";
 import FinDocPlugin from "main";
 import { idToText } from "utils";
 import loadIcons from "loadIcons";
-import { types } from "./constants";
+import { IDataSourceKeys } from "types";
 
 export default class SettingsTab extends PluginSettingTab {
 	plugin: FinDocPlugin;
@@ -21,10 +21,25 @@ export default class SettingsTab extends PluginSettingTab {
 		btn.innerText = "Add New Color";
 		btn.onClickEvent(() => {
 			this.plugin.settings.colors.unshift("#ffffff");
-			console.debug(this.plugin.settings.colors);
 			this.display();
 		});
 		return btn;
+	}
+
+	createNewCategoryBtn(): HTMLElement {
+		const btn = this.containerEl.createEl("button");
+		btn.classList.add("findoc-btn-margin-bottom");
+		btn.id = "newType";
+		btn.innerText = "Add New Category";
+		btn.onClickEvent(() => {
+			this.plugin.settings.categories.unshift("");
+			this.display();
+		});
+		return btn;
+	}
+
+	getCategories() {
+		return this.plugin.settings.categories;
 	}
 
 	display(): void {
@@ -43,6 +58,18 @@ export default class SettingsTab extends PluginSettingTab {
 				"<a style='margin: 0 auto;' href='https://www.buymeacoffee.com/studiowebux'><img width='109px' alt='Buy me a Coffee' src='https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png'/></a>";
 			button.buttonEl.classList.add("findoc-support-btn");
 		});
+
+		//
+		// DOCUMENTATION
+		//
+
+		new Setting(containerEl)
+			.setName("Documentation")
+			.addButton((button) => {
+				button.buttonEl.innerHTML =
+					"<a style='margin: 0 auto;' href='https://studiowebux.github.io/obsidian-plugins-docs/docs/category/plugin-financial-doc/'>Link to Documentation</a>";
+				button.buttonEl.classList.add("findoc-documentation-btn");
+			});
 
 		//
 		// CSV SAVE DEBOUNCE
@@ -105,6 +132,98 @@ export default class SettingsTab extends PluginSettingTab {
 			});
 
 		//
+		// TOGGLE AUTOCOMPLETE
+		//
+
+		new Setting(containerEl)
+			.setName("Use Autocomplete")
+			.addToggle((toggle) => {
+				toggle.setValue(this.plugin.settings.useAutocomplete);
+				toggle.onChange(
+					debounce(async (value: boolean) => {
+						this.plugin.settings.useAutocomplete = value;
+						await this.plugin.saveSettings();
+						new Notice("Use autocomplete Updated !");
+					}, 500)
+				);
+			});
+
+		//
+		// MIN CHARS TO MATCH
+		//
+
+		new Setting(containerEl)
+			.setName("Minimum characters to Match")
+			.setDesc(
+				"The minimum amount of characters to open the autocomplete popup"
+			)
+			.addText((text) => {
+				text.setValue(this.plugin.settings.minCharsToMatch.toString());
+				text.onChange(
+					debounce(async (value: string) => {
+						if (!value || value === "") return;
+						if (
+							isNaN(parseInt(value)) ||
+							parseInt(value) < 1 ||
+							parseInt(value) >= 10
+						) {
+							new Notice(
+								"Invalid amount, must be between 1 and 9"
+							);
+							return;
+						}
+						this.plugin.settings.minCharsToMatch = parseInt(value);
+						await this.plugin.saveSettings();
+						new Notice("Minimum characters to Match Updated !");
+					}, 500)
+				);
+			});
+
+		//
+		//  CATEGORIES
+		//
+
+		new Setting(containerEl)
+			.setName("categories")
+			.setDesc(
+				"NOTE: Deleting Existing Category might break the workflow, be sure to dissociate the category from everywhere."
+			);
+		const typesSection = containerEl.createDiv();
+		typesSection.appendChild(this.createNewCategoryBtn());
+		typesSection.classList.add("findoc-type-section");
+
+		this.plugin.settings.categories.forEach((category, key) => {
+			new Setting(typesSection)
+				.setName(`Category`)
+				.addText(async (text) => {
+					text.setValue(category);
+					text.onChange(
+						debounce(async (value: string) => {
+							this.plugin.settings.categories = Object.assign(
+								this.plugin.settings.categories,
+								{ [key]: value }
+							);
+							await this.plugin.saveSettings();
+							new Notice("Category Updated !");
+						}, 1000)
+					);
+					text.inputEl.onblur = () => {
+						this.display(); // Force refresh.
+					};
+				})
+				.addExtraButton((btn) => {
+					btn.setTooltip("Delete Category");
+					btn.setIcon("trash");
+					btn.onClick(async () => {
+						this.plugin.settings.categories.splice(key, 1);
+						await this.plugin.saveSettings();
+						new Notice("Category Deleted !");
+						this.display();
+					});
+				});
+		});
+
+		//
 		// MODELS
 		//
 
@@ -117,12 +236,14 @@ export default class SettingsTab extends PluginSettingTab {
 		Object.entries(this.plugin.settings.models).forEach(([key, model]) => {
 			const name = idToText(key);
 			const modelSection = div.createDiv();
-			const el = modelSection.createEl("h2");
-			el.innerText = name;
+			const el = modelSection.createEl("h1");
+			el.innerText = "Model: " + name;
 			modelSection.classList.add("findoc-model-section");
 
+			// PREPARATION
 			new Setting(modelSection)
 				.setName(`Data Source for ${name}`)
+				.setDesc("Method used to prepare the raw data.")
 				.addDropdown((dropdown) => {
 					dropdown.addOption(
 						"splitDailyDates",
@@ -133,6 +254,7 @@ export default class SettingsTab extends PluginSettingTab {
 						"Split By Year & Month"
 					);
 					dropdown.addOption("splitByYear", "Split By Year");
+					dropdown.addOption("splitBy", "Split By"); // TODO: need to implement
 					dropdown.setValue(
 						this.plugin.settings.models[key].dataSource
 					);
@@ -143,8 +265,35 @@ export default class SettingsTab extends PluginSettingTab {
 						new Notice("Data Source Updated !");
 					});
 				});
+
+			// Custom key `splitBy`
+			new Setting(modelSection)
+				.setName(`Data Source key for ${name}`)
+				.setDesc(
+					"Column to use when preparing the raw data. Modify this value exclusively when employing the `Split By` method for the data source."
+				)
+				.addDropdown((dropdown) => {
+					dropdown.addOption("category", "Category");
+					dropdown.addOption("subcategory", "SubCategory");
+					dropdown.addOption("value", "Value");
+					dropdown.addOption("timestamp", "Timestamp");
+					dropdown.addOption("extra", "Extra");
+
+					dropdown.setValue(
+						this.plugin.settings.models[key].dataSourceKey
+					);
+
+					dropdown.onChange(async (value: IDataSourceKeys) => {
+						this.plugin.settings.models[key].dataSourceKey = value;
+						await this.plugin.saveSettings();
+						new Notice("Data Source Key Updated !");
+					});
+				});
+
+			// OUTPUT
 			new Setting(modelSection)
 				.setName(`Output Function for ${name}`)
+				.setDesc("Method used to show the data in chart or table.")
 				.addDropdown((dropdown) => {
 					dropdown.addOption(
 						"generateSumDataSet",
@@ -156,7 +305,7 @@ export default class SettingsTab extends PluginSettingTab {
 					);
 					dropdown.addOption(
 						"generateSumDataSetPerTypes",
-						"Generate Sum Dataset Per Types"
+						"Generate Sum Dataset Per Categories"
 					);
 					dropdown.addOption(
 						"generateCumulativeSumDataSet",
@@ -164,12 +313,27 @@ export default class SettingsTab extends PluginSettingTab {
 					);
 					dropdown.addOption(
 						"generateCumulativeSumDataSetPerTypes",
-						"Generate Cumulative Sum Dataset Per Types"
+						"Generate Cumulative Sum Dataset Per Categories"
 					);
-
 					dropdown.addOption(
 						"getLastValuePerTypeForCurrentMonth",
-						"Get Last Value Per Type For Current Month"
+						"Get Last Value Per Category For Current Month"
+					);
+					dropdown.addOption(
+						"generateDifference",
+						"Minus(Category1 - Category2)"
+					);
+					dropdown.addOption(
+						"generateSum",
+						"Sum(Category1 + Category2)"
+					);
+					dropdown.addOption(
+						"reportDifference",
+						"Report: Minus(Category1 - Category2)"
+					);
+					dropdown.addOption(
+						"reportSum",
+						"Report: Sum(Category1 + Category2)"
 					);
 
 					dropdown.setValue(this.plugin.settings.models[key].output);
@@ -181,6 +345,9 @@ export default class SettingsTab extends PluginSettingTab {
 					});
 				});
 
+			//
+			// BEGIN AT ZERO
+			//
 			new Setting(modelSection)
 				.setName(`Begin at Zero for ${name}`)
 				.addToggle((toggle) => {
@@ -194,8 +361,71 @@ export default class SettingsTab extends PluginSettingTab {
 					});
 				});
 
+			//
+			// CHART LABEL TYPES; MONEY, PERCENT, GENERIC, CUSTOM
+			//
+			const h2ChartType = modelSection.createEl("h2");
+			h2ChartType.innerText = `Chart Label Type for ${name}`;
+
+			const wrapperChartType = modelSection.createDiv();
+			wrapperChartType.classList.add("findoc-model-section-wrapper");
+
+			const chartLabelType = wrapperChartType.createEl("select");
+			chartLabelType.id = `chart-label-type-${key}`;
+			chartLabelType.multiple = false;
+			chartLabelType.classList.add("findoc-select-one");
+
+			chartLabelType.setAttribute("value", model.chartLabelType);
+			chartLabelType.onchange = async () => {
+				const selected = [];
+				for (const option of (
+					document.getElementById(
+						`chart-label-type-${key}`
+					) as HTMLSelectElement
+				).options as any) {
+					if (option.selected) {
+						selected.push(option.value);
+					}
+				}
+				model.chartLabelType = selected[0];
+				await this.plugin.saveSettings();
+				new Notice("Label Type Updated !");
+			};
+			this.plugin.settings.chartLabelTypes.forEach(
+				(labelType: string) => {
+					const opt = chartLabelType.createEl("option");
+					opt.id = labelType;
+					opt.value = labelType;
+					opt.innerText = labelType;
+					opt.selected = model.chartLabelType === labelType;
+				}
+			);
+
+			//
+			// SUFFIX
+			//
+			new Setting(modelSection)
+				.setDisabled(model.chartLabelType !== "custom")
+				.setName("Suffix")
+				.setDesc(
+					`Optional Suffix, only used when the chart label type is set to "custom"`
+				)
+				.addText((text) => {
+					text.setValue(model.suffix);
+					text.onChange(
+						debounce(async (value: string) => {
+							model.suffix = value || "";
+							await this.plugin.saveSettings();
+							new Notice("Suffix Updated !");
+						}, 500)
+					);
+				});
+
+			//
+			// categories
+			//
 			const h2 = modelSection.createEl("h2");
-			h2.innerText = `Types for ${name}`;
+			h2.innerText = `Categories for ${name}`;
 
 			const wrapper = modelSection.createDiv();
 			wrapper.classList.add("findoc-model-section-wrapper");
@@ -205,8 +435,7 @@ export default class SettingsTab extends PluginSettingTab {
 			select.multiple = true;
 			select.classList.add("findoc-select");
 
-			select.setAttribute("value", model.types.join(","));
-
+			select.setAttribute("value", model.categories.join(","));
 			select.onchange = async () => {
 				const selected = [];
 				// @ts-ignore
@@ -215,20 +444,38 @@ export default class SettingsTab extends PluginSettingTab {
 						selected.push(option.value);
 					}
 				}
-				// select.value = selected.join(",");
-				model.types = selected;
+				model.categories = selected;
 				await this.plugin.saveSettings();
-				new Notice("Types Updated !");
+				new Notice("Categories Updated !");
 			};
 
-			types.forEach((type: string) => {
+			this.getCategories().forEach((category: string) => {
 				const opt = select.createEl("option");
-				opt.id = type;
-				opt.value = type;
-				opt.innerText = type;
-				opt.selected = model.types.includes(type);
+				opt.id = category;
+				opt.value = category;
+				opt.innerText = category;
+				opt.selected = model.categories.includes(category);
 			});
 
+			//
+			// VALUES (Comma delimited list to specify the values to substract)
+			//
+			new Setting(modelSection)
+				.setDisabled(model.output !== "generateDifference")
+				.setName("Values")
+				.setDesc(
+					`Comma delimited list of two values.\nOnly used when the output is set to "generateDifference".\nExample: "Income, Expenses" will produce: Income - Expenses`
+				)
+				.addText((text) => {
+					text.setValue(model.values);
+					text.onChange(
+						debounce(async (value: string) => {
+							model.values = value || "";
+							await this.plugin.saveSettings();
+							new Notice("Values Updated !");
+						}, 500)
+					);
+				});
 			modelSection.createEl("hr");
 		});
 

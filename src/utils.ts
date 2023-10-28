@@ -1,3 +1,5 @@
+import { IContext } from "types";
+
 /* Date */
 export function getMonth(d: Date): string | number {
 	if (d.getUTCMonth() + 1 < 10) return "0" + (d.getUTCMonth() + 1);
