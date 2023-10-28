@@ -58,21 +58,29 @@ git push origin tags/X.Y.Z
 -   [-] Copy paste is broken while editing a CSV File (not able to reproduce)
 -   [] Improve the setting tab (edit, add and remove models)
 -   [] Add more functions to process and analyze the data
--   [] Write better documentation
 -   [] Add more Chart types, currently only line chart is supported
 -   [] Add reports using pie chart or something like that
 -   [POC] Add reports in table view
--   [] configurable autocomplete (toggle on/off)
 
-### V0.5.4 - Beta - 2023-09-28
+### V0.6.0 - Beta - 2023-10-28
 
--   Added autocomplete for IDs (auto fill the type and the id when clicked)
--   Allow to use the last row as a template when clicking Add New Row
--   Added configuration to enable/disable the add new row template
--   Added Button to duplicate an entry (it is appended at the end of the table)
+New documentation Link: https://studiowebux.github.io/obsidian-plugins-docs/docs/category/plugin-financial-doc
 
-![New Interface](./docs/v0.5.4/new-interface.png)
-![Auto complete](./docs/v0.5.4/autocomplete.png)
+- Changed naming:
+  - Types => Categories
+  - Id => Subcategory
+  - Types => View (to use : chart or report in the snippet)
+- Moved documentation to an external page with screenshot and examples and etc.
+- Added toggle button to show/hide extra information about a chart
+- Added new reports (difference and sum, this is still under heavy development, I still want to improve that part, but I need to merge.)
+- Improved settings, added new options (see documentation for all information about it)
+- Added Chart type and configuration (not locked to money anymore)
+- CSV Header should be change to Category and Subcategory (see documentation)
+- **BREAKING CHANGES:** the default.json has been updated massively to reflect all the changes. (Documentation with updated default configuration: https://studiowebux.github.io/obsidian-plugins-docs/docs/findoc/defaultConfigurations/)
+- Added new methods (sum, difference, splitBy, code cleanup and renaming to match new implementation) still a lot of work to do in that file but I want to merge the current state.
+- Improved Error handling for few cases. (still working on that one as well)
+- Updated CSS a little bit...
+- Added test data and two file with a bunch of tests and commands, my goal is to improve the model and make it easy to build new models.
 
 See [CHANGELOG](./CHANGELOG)
 
