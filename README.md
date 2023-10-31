@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./docs/findoc-logo-256.png" alt="Findoc Logo" width="256">
+<img src="./docs/findoc-256.png" alt="Findoc Logo" width="256">
 
 <h2>Yet Another Tool - Fin Doc</h2>
 
@@ -20,6 +20,7 @@
 
 -   Open and Edit CSV Files in Obsidian
 -   Generate Charts using the CSV File directly in Obsidian and a Custom Code Block
+- Generate Report using the CSV data.
 -   Configurable using Few Settings
 -   Support Desktop and Mobile (tested on Windows, MacOS and Iphone)
 -   Using [Chart.js](https://www.chartjs.org)
@@ -29,27 +30,15 @@
 
 ## Installation and Usage
 
-**V0.6.0 BREAKING CHANGES**: Configurations have been updated massively to reflect all the changes. Please follow the documentation to update the default configuration: https://studiowebux.github.io/obsidian-plugins-docs/docs/findoc/defaultConfigurations/
+**V0.6.0 BREAKING CHANGES**: Configurations have been updated massively to reflect all the changes. Please follow the documentation to update [the default configuration](https://studiowebux.github.io/obsidian-plugins-docs/docs/findoc/defaultConfigurations/)
 
-Documentation is available here: https://studiowebux.github.io/obsidian-plugins-docs/docs/category/plugin-financial-doc
-
-### Releases and Github Actions
-
-```bash
-git tag -a X.Y.Z -m "Version X.Y.Z"
-git push origin tags/X.Y.Z
-```
+[Full Documentation is available here](https://studiowebux.github.io/obsidian-plugins-docs/docs/category/plugin-financial-doc)
 
 ---
 
 ## Screenshots
 
-![Dividend Chart](./docs/DividendChart.png)
-![Income Chart with Missing Datapoints](./docs/IncomeChartMissingData.png)
-![Income Snippet](./docs/IncomeSnippet.png)
-![Select Categories in Settings](./docs/V0.5.0/categories-settings.png)
-![New Interface](./docs/v0.5.4/new-interface.png)
-![Auto complete](./docs/v0.5.4/autocomplete.png)
+[See Screenshots here](https://studiowebux.github.io/obsidian-plugins-docs/docs/findoc/screenshots/Demo)
 
 ---
 
@@ -68,23 +57,32 @@ git push origin tags/X.Y.Z
 
 New documentation Link: https://studiowebux.github.io/obsidian-plugins-docs/docs/category/plugin-financial-doc
 
-- Changed naming:
-  - Types => Categories
-  - Id => Subcategory
-  - Types => View (to use : chart or report in the snippet)
-- Moved documentation to an external page with screenshot and examples and etc.
-- Added toggle button to show/hide extra information about a chart
-- Added new reports (difference and sum, this is still under heavy development, I still want to improve that part, but I need to merge.)
-- Improved settings, added new options (see documentation for all information about it)
-- Added Chart type and configuration (not locked to money anymore)
-- CSV Header should be change to Category and Subcategory (see documentation)
-- **BREAKING CHANGES:** the default.json has been updated massively to reflect all the changes. (Documentation with updated default configuration: https://studiowebux.github.io/obsidian-plugins-docs/docs/findoc/defaultConfigurations/)
-- Added new methods (sum, difference, splitBy, code cleanup and renaming to match new implementation) still a lot of work to do in that file but I want to merge the current state.
-- Improved Error handling for few cases. (still working on that one as well)
-- Updated CSS a little bit...
-- Added test data and two file with a bunch of tests and commands, my goal is to improve the model and make it easy to build new models.
+-   Changed naming:
+    -   Types => Categories
+    -   Id => Subcategory
+    -   Types => View (to use : chart or report in the snippet)
+-   Moved documentation to an external page with screenshot and examples and etc.
+-   Added toggle button to show/hide extra information about a chart
+-   Added new reports (difference and sum, this is still under heavy development, I still want to improve that part, but I need to merge.)
+-   Improved settings, added new options (see documentation for all information about it)
+-   Added Chart type and configuration (not locked to money anymore)
+-   CSV Header should be change to Category and Subcategory (see documentation)
+-   **BREAKING CHANGES:** the default.json has been updated massively to reflect all the changes. (Documentation with updated default configuration: https://studiowebux.github.io/obsidian-plugins-docs/docs/findoc/defaultConfigurations/)
+-   Added new methods (sum, difference, splitBy, code cleanup and renaming to match new implementation) still a lot of work to do in that file but I want to merge the current state.
+-   Improved Error handling for few cases. (still working on that one as well)
+-   Updated CSS a little bit...
+-   Added test data and two file with a bunch of tests and commands, my goal is to improve the model and make it easy to build new models.
 
 See [CHANGELOG](./CHANGELOG)
+
+---
+
+### Releases and Github Actions
+
+```bash
+git tag -a X.Y.Z -m "Version X.Y.Z"
+git push origin tags/X.Y.Z
+```
 
 ---
 
