@@ -232,6 +232,15 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 			dataSourceKey: "timestamp",
 			values: "Expenses, House Expenses", // Yield: Expenses + House Expenses
 		},
+		incomeMinusExpensesByDaily: {
+			dataSource: "splitDailyDates",
+			categories: ["Income", "Expenses"],
+			output: "generateCumulativeDifference",
+			beginAtZero: true,
+			chartLabelType: "money",
+			dataSourceKey: "timestamp",
+			values: "Income, Expenses", // Yield: Income - Expenses
+		},
 	},
 	colors: COLORS,
 	debounce: "1000",
