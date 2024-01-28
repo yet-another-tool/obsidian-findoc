@@ -3,6 +3,7 @@ import FinDocPlugin from "main";
 import { idToText } from "utils";
 import loadIcons from "loadIcons";
 import { IDataSourceKeys } from "types";
+import { reloadDefaultConfiguration } from "configuration";
 
 export default class SettingsTab extends PluginSettingTab {
 	plugin: FinDocPlugin;
@@ -33,6 +34,19 @@ export default class SettingsTab extends PluginSettingTab {
 		btn.innerText = "Add New Category";
 		btn.onClickEvent(() => {
 			this.plugin.settings.categories.unshift("");
+			this.display();
+		});
+		return btn;
+	}
+
+	createReloadModelsBtn(): HTMLElement {
+		const btn = this.containerEl.createEl("button");
+		btn.classList.add("findoc-btn-margin-bottom");
+		btn.id = "reloadModels";
+		btn.innerText = "Load Default Models (clears custom models)";
+		btn.onClickEvent(async () => {
+			await reloadDefaultConfiguration(this.plugin.settings, this.plugin);
+			new Notice("All Models have been refreshed");
 			this.display();
 		});
 		return btn;
@@ -230,6 +244,8 @@ export default class SettingsTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("Models")
 			.setDesc("Models available (It must be a JSON.stringify version)");
+		this.createReloadModelsBtn();
+
 		const div = containerEl.createDiv();
 		div.classList.add("findoc-models-container");
 
