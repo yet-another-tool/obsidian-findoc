@@ -465,6 +465,60 @@ export const functions: { [key: string]: any } = {
 		};
 	},
 
+	generateCumulativeDifference: ({
+		categoriesToSelect,
+		input,
+		labels,
+		colors,
+		values,
+	}: {
+		categoriesToSelect: string[];
+		input: { [key: string]: IInput[] };
+		labels: string[];
+		colors: string[];
+		values: string[]; // Example: [Income, Expenses]
+	}): IDataset => {
+		const usableColors = [...colors];
+		const color = usableColors[0];
+		usableColors.shift();
+
+		const dataToProcess: { [key: string]: number[] } = {};
+
+		categoriesToSelect.forEach((category) => {
+			dataToProcess[category] = Object.values(input).map((i) => {
+				return i
+					.filter((entry) => entry.category === category)
+					.reduce((acc, current) => {
+						acc += current.value;
+						return acc;
+					}, 0);
+			});
+		});
+
+		const datasets = [
+			{
+				label: `${values[0]} - ${values[1]}`,
+				borderColor: color,
+				fill: false,
+				tension: 0.2,
+				spanGaps: true,
+				segment: {
+					borderColor: (ctx: IContext) => skipped(ctx, color),
+					borderDash: (ctx: IContext) => skipped(ctx, [3, 3]),
+				},
+				data: dataToProcess[values[0].trim()].map(
+					(n: number, idx: number) =>
+						n - dataToProcess[values[1].trim()][idx]
+				),
+			},
+		];
+
+		return {
+			labels,
+			datasets,
+		};
+	},
+
 	generateSum: ({
 		categoriesToSelect,
 		input,
