@@ -2,6 +2,7 @@
  *	Functions to process the data
  */
 
+import { generatorFunc, splitFunc } from "type.methods";
 import {
 	IInput,
 	IDataset,
@@ -13,7 +14,9 @@ import {
 } from "types";
 import { getDate, getMonth, skipped } from "utils";
 
-export const functions: { [key: string]: { help: string; exec: any } } = {
+export const functions: {
+	[key: string]: { help: string; exec: splitFunc | generatorFunc };
+} = {
 	// SPLIT DATA (PREPARATION)
 	splitBy: {
 		help: "",
