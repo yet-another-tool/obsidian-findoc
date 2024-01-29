@@ -31,7 +31,7 @@ export type generatorFuncParams4 = {
 	colors: string[];
 };
 
-// TODO: Need refactor to implement correctly.
+// TODO: determine the output of the split function. 
 export type splitFunc = (input: Array<IInput | any>, key: IDataSourceKeys) => any;
 export type generatorFunc = (
 	params:

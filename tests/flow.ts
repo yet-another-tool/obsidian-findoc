@@ -2,7 +2,7 @@
 import path from "node:path";
 import { difference, loadCSV, sum } from "./operations";
 import { getData } from "csv";
-import { functions } from "methods";
+import { functions, splitBy } from "methods";
 import { getCategories } from "processing";
 import { IInput } from "types";
 
@@ -18,7 +18,7 @@ const json = getData(rawData, ",");
 // console.debug(dataSplitByYear);
 
 const dataSplitByYearMonth: { [key: string]: IInput[] } =
-	functions.splitByYearMonth.exec(json, "timestamp");
+	splitBy.splitByYearMonth.exec(json, "timestamp");
 // console.debug(dataSplitByYearMonth);
 
 // const dataSplitDaily = functions.splitDailyDates.exec(json, "timestamp");
