@@ -1,7 +1,10 @@
 import {
 	MarkdownPostProcessorContext,
+	Menu,
+	MenuItem,
 	Notice,
 	Plugin,
+	TFile,
 	WorkspaceLeaf,
 	normalizePath,
 	parseYaml,
@@ -9,7 +12,7 @@ import {
 
 import { CSVView, VIEW_TYPE_CSV } from "./view";
 import processing from "./processing";
-import { DEFAULT_SETTINGS } from "./defaults";
+import { DEFAULT_SETTINGS, HEADER } from "./defaults";
 import SettingsTab from "./SettingsTab";
 import ChartRenderer from "./ChartRenderer";
 import ReportRenderer from "ReportRenderer";
@@ -19,6 +22,21 @@ import { IPluginSettings, IReportData } from "types";
 
 export default class FinDocPlugin extends Plugin {
 	settings: IPluginSettings;
+
+	async createCSVFile(parent = "") {
+		const filename = normalizePath(
+			`/${parent}/findoc_${new Date()
+				.toISOString()
+				.replace(/[:|.]/g, "_")}.csv`
+		);
+		const exists = await this.app.vault.adapter.exists(filename, true);
+
+		if (exists) {
+			new Notice("File already exist.");
+		} else {
+			await this.app.vault.create(filename, HEADER);
+		}
+	}
 
 	async loadSettings() {
 		this.settings = Object.assign(
@@ -138,6 +156,21 @@ export default class FinDocPlugin extends Plugin {
 						throw e;
 					}
 				}
+			);
+
+			this.addRibbonIcon("table", "Create CSV File", async (e) => {
+				this.createCSVFile();
+			});
+			const menuCreateCSVFile = (menu: Menu, file: TFile) => {
+				menu.addItem((item: MenuItem) => {
+					item.setTitle("Create CSV File").onClick(() => {
+						this.createCSVFile(file.path);
+					});
+				});
+			};
+
+			this.registerEvent(
+				this.app.workspace.on("file-menu", menuCreateCSVFile)
 			);
 		} catch (e) {
 			new Notice(e.message, 10000);

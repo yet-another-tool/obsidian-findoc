@@ -1,5 +1,7 @@
 import { IPluginSettings } from "types";
 
+export const HEADER = "Category,Subcategory,Value,TimeStamp,Extra";
+
 export const COLORS: string[] = [
 	"#1ac18f",
 	"#EAE2B7",
