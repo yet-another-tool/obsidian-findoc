@@ -10,12 +10,12 @@
 import path from "node:path";
 import { loadCSV } from "./operations";
 import { getData } from "csv";
-import { functions } from "methods";
+import { functions, splitBy } from "methods";
 import { getCategories } from "processing";
 
 const rawData = loadCSV([path.join(__dirname, "24.csv")]);
 const json = getData(rawData, ",");
-const dataSplitDaily = functions.splitDailyDates.exec(json, "timestamp");
+const dataSplitDaily = splitBy.splitDailyDates.exec(json, "timestamp");
 
 // Income: [
 //     0, 30, 10,  0, 10, 10, 10, 40,

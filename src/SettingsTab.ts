@@ -4,7 +4,7 @@ import { idToText } from "utils";
 import loadIcons from "loadIcons";
 import { IDataSourceKeys } from "types";
 import { reloadDefaultConfiguration } from "configuration";
-import { functions } from "methods";
+import { functions, splitBy } from "methods";
 
 export default class SettingsTab extends PluginSettingTab {
 	plugin: FinDocPlugin;
@@ -262,17 +262,14 @@ export default class SettingsTab extends PluginSettingTab {
 				.setName(`Data Source for ${name}`)
 				.setDesc("Method used to prepare the raw data.")
 				.addDropdown((dropdown) => {
-					// TODO: need refactor to split from generator.
-					dropdown.addOption(
-						"splitDailyDates",
-						"Split By Daily Dates"
-					);
-					dropdown.addOption(
-						"splitByYearMonth",
-						"Split By Year & Month"
-					);
-					dropdown.addOption("splitByYear", "Split By Year");
-					dropdown.addOption("splitBy", "Split By");
+					Object.keys(splitBy)
+						.map((key, idx) =>
+							splitBy[key].help
+								? dropdown.addOption(key, splitBy[key].help)
+								: null
+						)
+						.filter((v) => v != null);
+
 					dropdown.setValue(
 						this.plugin.settings.models[key].dataSource
 					);

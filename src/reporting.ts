@@ -1,5 +1,5 @@
 import { getData } from "csv";
-import { functions } from "methods";
+import { functions, splitBy } from "methods";
 import { IModel, IReportData } from "types";
 
 function reporting(
@@ -14,17 +14,17 @@ function reporting(
 	const json = getData(csvRawData, separator);
 	const model = models[modelToGenerate];
 
-	if (!model || !functions[model.dataSource])
+	if (!model || !splitBy[model.dataSource] || !functions[model.output])
 		throw new Error(
-			`The specified model : "${modelToGenerate}" does not exists. Model names are available in the Documentation.`
+			`The specified model : "${modelToGenerate}" does not exist or the split function "${model.dataSource}" does not exist. Model names are available in the Documentation.`
 		);
 
 	const output: IReportData = functions[model.output].exec({
 		categoriesToSelect: model.categories,
-		input: functions[model.dataSource].exec(json, model.dataSourceKey),
+		input: splitBy[model.dataSource].exec(json, model.dataSourceKey),
 		date,
 		values: model.values ? model.values.split(",") : [],
-	});
+	}) as IReportData;
 
 	return output;
 }

@@ -2,6 +2,7 @@
  *	Functions to process the data
  */
 
+import { generatorFunc, splitFunc } from "type.methods";
 import {
 	IInput,
 	IDataset,
@@ -13,12 +14,10 @@ import {
 } from "types";
 import { getDate, getMonth, skipped } from "utils";
 
-export const functions: {
-	[key: string]: { help: string; exec: any };
-} = {
+export const splitBy: { [key: string]: { help: string; exec: splitFunc } } = {
 	// SPLIT DATA (PREPARATION)
 	splitBy: {
-		help: "",
+		help: "Split by custom key",
 		exec: (input: Array<IInput | any>, key: IDataSourceKeys) => {
 			return input.reduce((acc, current) => {
 				if (!acc[current[key]]) {
@@ -31,7 +30,7 @@ export const functions: {
 	},
 
 	splitByYear: {
-		help: "",
+		help: "Split by year",
 		exec: (input: Array<IInput | any>, key: IDataSourceKeys) => {
 			return input.reduce((acc, current) => {
 				const d = new Date(current[key]);
@@ -46,7 +45,7 @@ export const functions: {
 	},
 
 	splitByYearMonth: {
-		help: "",
+		help: "Split by year/month",
 		exec: (input: Array<IInput | any>, key: IDataSourceKeys) => {
 			return input.reduce((acc, current) => {
 				const d = new Date(current[key]);
@@ -61,7 +60,7 @@ export const functions: {
 	},
 
 	splitDailyDates: {
-		help: "",
+		help: "Split by daily",
 		exec: (input: Array<IInput | any>, key: IDataSourceKeys) => {
 			return input.reduce((acc, current) => {
 				const d = new Date(current[key]);
@@ -76,7 +75,11 @@ export const functions: {
 			}, {});
 		},
 	},
+};
 
+export const functions: {
+	[key: string]: { help: string; exec: generatorFunc };
+} = {
 	// GENERATORS
 
 	generateSumDataSet: {
