@@ -19,9 +19,9 @@ function reporting(
 			`The specified model : "${modelToGenerate}" does not exists. Model names are available in the Documentation.`
 		);
 
-	const output: IReportData = functions[model.output]({
+	const output: IReportData = functions[model.output].exec({
 		categoriesToSelect: model.categories,
-		input: functions[model.dataSource](json, model.dataSourceKey),
+		input: functions[model.dataSource].exec(json, model.dataSourceKey),
 		date,
 		values: model.values ? model.values.split(",") : [],
 	});

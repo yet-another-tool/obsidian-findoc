@@ -15,7 +15,7 @@ import { getCategories } from "processing";
 
 const rawData = loadCSV([path.join(__dirname, "24.csv")]);
 const json = getData(rawData, ",");
-const dataSplitDaily = functions.splitDailyDates(json, "timestamp");
+const dataSplitDaily = functions.splitDailyDates.exec(json, "timestamp");
 
 // Income: [
 //     0, 30, 10,  0, 10, 10, 10, 40,
@@ -35,7 +35,7 @@ const dataSplitDaily = functions.splitDailyDates(json, "timestamp");
 // 	10, 10, 20, 80, 20, 20, 20, 20,
 // ];
 
-const chartDataCumulativeDifference = functions.generateCumulativeDifference({
+const chartDataCumulativeDifference = functions.generateCumulativeDifference.exec({
 	categoriesToSelect: ["Income", "Expenses"],
 	input: dataSplitDaily,
 	labels: Object.keys(dataSplitDaily),

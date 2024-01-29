@@ -4,6 +4,7 @@ import { idToText } from "utils";
 import loadIcons from "loadIcons";
 import { IDataSourceKeys } from "types";
 import { reloadDefaultConfiguration } from "configuration";
+import { functions } from "methods";
 
 export default class SettingsTab extends PluginSettingTab {
 	plugin: FinDocPlugin;
@@ -311,46 +312,13 @@ export default class SettingsTab extends PluginSettingTab {
 				.setName(`Output Function for ${name}`)
 				.setDesc("Method used to show the data in chart or table.")
 				.addDropdown((dropdown) => {
-					dropdown.addOption(
-						"generateSumDataSet",
-						"Generate Sum Dataset"
-					);
-					dropdown.addOption(
-						"generateDailyDataSet",
-						"Generate Daily Dataset"
-					);
-					dropdown.addOption(
-						"generateSumDataSetPerTypes",
-						"Generate Sum Dataset Per Categories"
-					);
-					dropdown.addOption(
-						"generateCumulativeSumDataSet",
-						"Generate Cumulative Sum Dataset"
-					);
-					dropdown.addOption(
-						"generateCumulativeSumDataSetPerTypes",
-						"Generate Cumulative Sum Dataset Per Categories"
-					);
-					dropdown.addOption(
-						"getLastValuePerTypeForCurrentMonth",
-						"Get Last Value Per Category For Current Month"
-					);
-					dropdown.addOption(
-						"generateDifference",
-						"Minus(Category1 - Category2)"
-					);
-					dropdown.addOption(
-						"generateSum",
-						"Sum(Category1 + Category2)"
-					);
-					dropdown.addOption(
-						"reportDifference",
-						"Report: Minus(Category1 - Category2)"
-					);
-					dropdown.addOption(
-						"reportSum",
-						"Report: Sum(Category1 + Category2)"
-					);
+					Object.keys(functions)
+						.map((key, idx) =>
+							functions[key].help
+								? dropdown.addOption(key, functions[key].help)
+								: null
+						)
+						.filter((v) => v != null);
 
 					dropdown.setValue(this.plugin.settings.models[key].output);
 

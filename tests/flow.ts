@@ -14,63 +14,63 @@ const json = getData(rawData, ",");
 
 // SPLIT DATA
 
-const dataSplitByYear = functions.splitByYear(json, "timestamp");
+// const dataSplitByYear = functions.splitByYear.exec(json, "timestamp");
 // console.debug(dataSplitByYear);
 
 const dataSplitByYearMonth: { [key: string]: IInput[] } =
-	functions.splitByYearMonth(json, "timestamp");
+	functions.splitByYearMonth.exec(json, "timestamp");
 // console.debug(dataSplitByYearMonth);
 
-const dataSplitDaily = functions.splitDailyDates(json, "timestamp");
+// const dataSplitDaily = functions.splitDailyDates.exec(json, "timestamp");
 // console.debug(dataSplitDaily);
 
 // Allow to use other keys or strategy to split the json
-const dataSplitByKeyExtra = functions.splitBy(json, "extra");
+// const dataSplitByKeyExtra = functions.splitBy.exec(json, "extra");
 // console.debug(dataSplitByKeyExtra);
 
 // Allow to use other keys or strategy to split the json
-const dataSplitByKeyValue = functions.splitBy(json, "value");
+// const dataSplitByKeyValue = functions.splitBy.exec(json, "value");
 // console.debug(dataSplitByKeyValue);
 
 // GENERATORS (dataSource)
 
-const chartDataSplitByYearMonth = functions.generateSumDataSet({
-	categoriesToSelect: ["Income", "Portfolio"],
-	input: dataSplitByYearMonth,
-	labels: Object.keys(dataSplitByYearMonth),
-	categories: getCategories(["Income", "Portfolio"], json),
-	colors: [
-		"#1ac18f",
-		"#EAE2B7",
-		"#8ecae6",
-		"#219ebc",
-		"#026597",
-		"#be37a5",
-		"#fb8500",
-		"#ffbe0b",
-		"#fff5b8",
-		"#ff006e",
-		"#8338ec",
-		"#3a86ff",
-		"#390099",
-		"#9e0059",
-		"#8c3b56",
-		"#ff5400",
-		"#ffbd00",
-		"#619b8a",
-		"#7678ed",
-		"#c2e83b",
-		"#33658a",
-		"#ce6a85",
-		"#985277",
-		"#5c374c",
-		"#ba66ff",
-		"#2176ff",
-		"#33a1fd",
-		"#7cd671",
-		"#22def7",
-	],
-});
+// const chartDataSplitByYearMonth = functions.generateSumDataSet.exec({
+// 	categoriesToSelect: ["Income", "Portfolio"],
+// 	input: dataSplitByYearMonth,
+// 	labels: Object.keys(dataSplitByYearMonth),
+// 	categories: getCategories(["Income", "Portfolio"], json),
+// 	colors: [
+// 		"#1ac18f",
+// 		"#EAE2B7",
+// 		"#8ecae6",
+// 		"#219ebc",
+// 		"#026597",
+// 		"#be37a5",
+// 		"#fb8500",
+// 		"#ffbe0b",
+// 		"#fff5b8",
+// 		"#ff006e",
+// 		"#8338ec",
+// 		"#3a86ff",
+// 		"#390099",
+// 		"#9e0059",
+// 		"#8c3b56",
+// 		"#ff5400",
+// 		"#ffbd00",
+// 		"#619b8a",
+// 		"#7678ed",
+// 		"#c2e83b",
+// 		"#33658a",
+// 		"#ce6a85",
+// 		"#985277",
+// 		"#5c374c",
+// 		"#ba66ff",
+// 		"#2176ff",
+// 		"#33a1fd",
+// 		"#7cd671",
+// 		"#22def7",
+// 	],
+// });
 // console.debug(chartDataSplitByYearMonth);
 
 // const chartDataSplitByExtraKey = functions.generateSumDataSet({
@@ -187,7 +187,7 @@ console.log(sum2);
 // ]
 
 // ---
-const chartDataDifference = functions.generateDifference({
+const chartDataDifference = functions.generateDifference.exec({
 	categoriesToSelect: ["Income", "Expenses"],
 	input: dataSplitByYearMonth,
 	labels: Object.keys(dataSplitByYearMonth),
