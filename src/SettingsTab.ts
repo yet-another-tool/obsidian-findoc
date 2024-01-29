@@ -262,6 +262,7 @@ export default class SettingsTab extends PluginSettingTab {
 				.setName(`Data Source for ${name}`)
 				.setDesc("Method used to prepare the raw data.")
 				.addDropdown((dropdown) => {
+					// TODO: need refactor to split from generator.
 					dropdown.addOption(
 						"splitDailyDates",
 						"Split By Daily Dates"
@@ -271,7 +272,7 @@ export default class SettingsTab extends PluginSettingTab {
 						"Split By Year & Month"
 					);
 					dropdown.addOption("splitByYear", "Split By Year");
-					dropdown.addOption("splitBy", "Split By"); // TODO: need to implement
+					dropdown.addOption("splitBy", "Split By");
 					dropdown.setValue(
 						this.plugin.settings.models[key].dataSource
 					);
