@@ -95,10 +95,11 @@ export default class FinDocPlugin extends Plugin {
 						if (filenames && filenames.length > 0) {
 							const data = await loadCSVData(vault, filenames);
 
-							// TODO: replace to view instead of type
 							if (
 								content.view === "view" ||
+								content.view === "line" ||
 								content.type === "chart" || // DEPRECATED
+								content.type === "line" || // DEPRECATED
 								(!content.type && !content.view)
 							) {
 								try {
@@ -159,6 +160,39 @@ export default class FinDocPlugin extends Plugin {
 										this.settings.models,
 										this.settings.colors,
 										"pie",
+										this.settings.csvSeparator
+									);
+									if (chartData)
+										ctx.addChild(
+											new ChartRenderer(
+												this.settings.models[
+													content.model
+												],
+												chartData,
+												content.model,
+												content.title,
+												filenames,
+												el
+											)
+										);
+								} catch (e) {
+									new Notice(
+										`An error occured while processing ${content.model}, ${content.title}`,
+										30000
+									);
+									throw e;
+								}
+							} else if (
+								content.view === "radar" ||
+								content.type === "radar"
+							) {
+								try {
+									const chartData = processing(
+										data,
+										content.model,
+										this.settings.models,
+										this.settings.colors,
+										"radar",
 										this.settings.csvSeparator
 									);
 									if (chartData)

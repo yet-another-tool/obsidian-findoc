@@ -54,10 +54,9 @@
 -   [-] Add reports using pie chart or something like that
 -   [POC] Add reports in table view
 
-### Version 0.6.6 - Beta - 2024-02-23
+### Version 0.6.7 - Beta - 2024-02-23
 
--   Added **Pie Chart** Support
--   Tested only the model `incomesExpensesYearly`
+-   Added **Radar Chart** Support
 
 See [CHANGELOG](./CHANGELOG)
 

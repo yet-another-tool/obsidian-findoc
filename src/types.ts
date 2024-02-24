@@ -29,6 +29,15 @@ export type IPieDataset = {
 	}[];
 };
 
+export type IRadarDataset = {
+	labels: string[];
+	datasets: {
+		label: string;
+		data: number[];
+		fill: boolean;
+	}[];
+};
+
 export type ITooltip = {
 	dataset: {
 		label: string;
@@ -105,6 +114,11 @@ export type IChartLine = {
 export type IChartPie = {
 	type: "pie";
 	data: IPieDataset;
+};
+
+export type IChartRadar = {
+	type: "radar";
+	data: IRadarDataset;
 };
 
 export type IContext = {

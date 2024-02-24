@@ -1,3 +1,8 @@
+### Version 0.6.6 - Beta - 2024-02-23
+
+-   Added **Pie Chart** Support
+-   Tested only the model `incomesExpensesYearly`
+
 ### V0.6.0 - Beta - 2023-10-28
 
 New documentation Link: https://studiowebux.github.io/obsidian-plugins-docs/docs/category/plugin-financial-doc

@@ -2,8 +2,10 @@ import {
 	IChartLabelTypes,
 	IChartLine,
 	IChartPie,
+	IChartRadar,
 	IDataset,
 	IPieDataset,
+	IRadarDataset,
 	ITooltip,
 } from "types";
 
@@ -144,6 +146,13 @@ export function chartLine(
 export function chartPie(data: IPieDataset): IChartPie {
 	return {
 		type: "pie",
+		data,
+	};
+}
+
+export function chartRadar(data: IRadarDataset): IChartRadar {
+	return {
+		type: "radar",
 		data,
 	};
 }
