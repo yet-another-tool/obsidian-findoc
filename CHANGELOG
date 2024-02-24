@@ -1,3 +1,23 @@
+### V0.6.0 - Beta - 2023-10-28
+
+New documentation Link: https://studiowebux.github.io/obsidian-plugins-docs/docs/category/plugin-financial-doc
+
+-   Changed naming:
+    -   Types => Categories
+    -   Id => Subcategory
+    -   Types => View (to use : chart or report in the snippet)
+-   Moved documentation to an external page with screenshot and examples and etc.
+-   Added toggle button to show/hide extra information about a chart
+-   Added new reports (difference and sum, this is still under heavy development, I still want to improve that part, but I need to merge.)
+-   Improved settings, added new options (see documentation for all information about it)
+-   Added Chart type and configuration (not locked to money anymore)
+-   CSV Header should be change to Category and Subcategory (see documentation)
+-   **BREAKING CHANGES:** the default.json has been updated massively to reflect all the changes. (Documentation with updated default configuration: https://studiowebux.github.io/obsidian-plugins-docs/docs/findoc/defaultConfigurations/)
+-   Added new methods (sum, difference, splitBy, code cleanup and renaming to match new implementation) still a lot of work to do in that file but I want to merge the current state.
+-   Improved Error handling for few cases. (still working on that one as well)
+-   Updated CSS a little bit...
+-   Added test data and two file with a bunch of tests and commands, my goal is to improve the model and make it easy to build new models.
+
 ### V0.5.4 - Beta - 2023-09-28
 
 -   Added autocomplete for IDs (auto fill the type and the id when clicked)
@@ -35,6 +55,7 @@ title: Chart Title
 ![Cumulative Sum Per Types](./docs/v0.5.3/cumulsumpertypes.png)
 ![Cumulative Sum Per Types with Multiple Inputs](./docs/v0.5.3/cumulsummulti.png)
 ![Reordering Rows](./docs/v0.5.3/rows.png)
+
 </details>
 
 <details>

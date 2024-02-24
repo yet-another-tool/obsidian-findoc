@@ -20,11 +20,12 @@
 
 -   Open and Edit CSV Files in Obsidian
 -   Generate Charts using the CSV File directly in Obsidian and a Custom Code Block
-- Generate Report using the CSV data.
+-   Generate Report using the CSV data.
 -   Configurable using Few Settings
 -   Support Desktop and Mobile (tested on Windows, MacOS and Iphone)
 -   Using [Chart.js](https://www.chartjs.org)
 -   Plugin for [Obsidian.md](https://obsidian.md)
+-   Line Chart and Pie Chart
 
 ---
 
@@ -49,29 +50,14 @@
 -   [-] Copy paste is broken while editing a CSV File (not able to reproduce)
 -   [] Improve the setting tab (edit, add and remove models)
 -   [] Add more functions to process and analyze the data
--   [] Add more Chart types, currently only line chart is supported
--   [] Add reports using pie chart or something like that
+-   [-] Add more Chart types, currently only line chart is supported
+-   [-] Add reports using pie chart or something like that
 -   [POC] Add reports in table view
 
-### V0.6.0 - Beta - 2023-10-28
+### Version 0.6.6 - Beta - 2024-02-23
 
-New documentation Link: https://studiowebux.github.io/obsidian-plugins-docs/docs/category/plugin-financial-doc
-
--   Changed naming:
-    -   Types => Categories
-    -   Id => Subcategory
-    -   Types => View (to use : chart or report in the snippet)
--   Moved documentation to an external page with screenshot and examples and etc.
--   Added toggle button to show/hide extra information about a chart
--   Added new reports (difference and sum, this is still under heavy development, I still want to improve that part, but I need to merge.)
--   Improved settings, added new options (see documentation for all information about it)
--   Added Chart type and configuration (not locked to money anymore)
--   CSV Header should be change to Category and Subcategory (see documentation)
--   **BREAKING CHANGES:** the default.json has been updated massively to reflect all the changes. (Documentation with updated default configuration: https://studiowebux.github.io/obsidian-plugins-docs/docs/findoc/defaultConfigurations/)
--   Added new methods (sum, difference, splitBy, code cleanup and renaming to match new implementation) still a lot of work to do in that file but I want to merge the current state.
--   Improved Error handling for few cases. (still working on that one as well)
--   Updated CSS a little bit...
--   Added test data and two file with a bunch of tests and commands, my goal is to improve the model and make it easy to build new models.
+-   Added **Pie Chart** Support
+-   Tested only the model `incomesExpensesYearly`
 
 See [CHANGELOG](./CHANGELOG)
 
