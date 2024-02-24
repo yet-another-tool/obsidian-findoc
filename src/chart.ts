@@ -1,4 +1,11 @@
-import { IChartLabelTypes, IChartLine, IDataset, ITooltip } from "types";
+import {
+	IChartLabelTypes,
+	IChartLine,
+	IChartPie,
+	IDataset,
+	IPieDataset,
+	ITooltip,
+} from "types";
 
 function getChartLabelType(
 	chartLabelType: IChartLabelTypes,
@@ -131,5 +138,12 @@ export function chartLine(
 				},
 			},
 		},
+	};
+}
+
+export function chartPie(data: IPieDataset): IChartPie {
+	return {
+		type: "pie",
+		data,
 	};
 }

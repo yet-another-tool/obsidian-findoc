@@ -1,7 +1,7 @@
 import { MarkdownRenderChild } from "obsidian";
 import Chart, { ChartConfiguration } from "chart.js/auto";
 import { idToText } from "utils";
-import { IChartLine, IModel } from "types";
+import { IChartLine, IModel, IChartPie } from "types";
 
 const generateId = () => {
 	const array = new Uint32Array(10);
@@ -9,7 +9,7 @@ const generateId = () => {
 };
 
 export default class ChartRenderer extends MarkdownRenderChild {
-	private data: IChartLine;
+	private data: IChartLine | IChartPie;
 	private modelInfo: IModel;
 	private model: string;
 	private title: string;
@@ -18,7 +18,7 @@ export default class ChartRenderer extends MarkdownRenderChild {
 
 	constructor(
 		modelInfo: IModel,
-		data: IChartLine,
+		data: IChartLine | IChartPie,
 		model: string,
 		title: string,
 		filenames: string[],
