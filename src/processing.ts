@@ -1,6 +1,6 @@
-import { chartLine, chartPie } from "chart";
+import { chartLine, chartPie, chartRadar } from "chart";
 import { getData } from "csv";
-import { convert_to_pie_chart } from "data_conversion";
+import { convert_to_pie_chart, convert_to_radar_chart } from "data_conversion";
 import { functions, splitBy } from "methods";
 import { IInput, IModel, IDataset } from "types";
 
@@ -24,7 +24,7 @@ function processing(
 		[key: string]: IModel;
 	},
 	colors: string[],
-	chartType: "line" | "pie" = "line",
+	chartType: "line" | "pie" | "radar" = "line",
 	separator = ","
 ) {
 	// Convert the RAW CSV DATA to JSON format
@@ -63,6 +63,8 @@ function processing(
 		);
 	} else if (chartType === "pie") {
 		return chartPie(convert_to_pie_chart(output));
+	} else if (chartType === "radar") {
+		return chartRadar(convert_to_radar_chart(output));
 	}
 }
 
