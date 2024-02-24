@@ -1,5 +1,6 @@
-import { chartLine } from "chart";
+import { chartLine, chartPie } from "chart";
 import { getData } from "csv";
+import { convert_to_pie_chart } from "data_conversion";
 import { functions, splitBy } from "methods";
 import { IInput, IModel, IDataset } from "types";
 
@@ -23,6 +24,7 @@ function processing(
 		[key: string]: IModel;
 	},
 	colors: string[],
+	chartType: "line" | "pie" = "line",
 	separator = ","
 ) {
 	// Convert the RAW CSV DATA to JSON format
@@ -52,12 +54,16 @@ function processing(
 		values: model.values ? model.values.split(",") : [],
 	}) as IDataset;
 
-	return chartLine(
-		output,
-		model.chartLabelType,
-		model.suffix,
-		model.beginAtZero
-	);
+	if (chartType === "line") {
+		return chartLine(
+			output,
+			model.chartLabelType,
+			model.suffix,
+			model.beginAtZero
+		);
+	} else if (chartType === "pie") {
+		return chartPie(convert_to_pie_chart(output));
+	}
 }
 
 export default processing;

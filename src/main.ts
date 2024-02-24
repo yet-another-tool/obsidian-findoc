@@ -107,6 +107,7 @@ export default class FinDocPlugin extends Plugin {
 										content.model,
 										this.settings.models,
 										this.settings.colors,
+										"line",
 										this.settings.csvSeparator
 									);
 									if (chartData)
@@ -147,6 +148,39 @@ export default class FinDocPlugin extends Plugin {
 										el
 									)
 								);
+							} else if (
+								content.view === "pie" ||
+								content.type === "pie"
+							) {
+								try {
+									const chartData = processing(
+										data,
+										content.model,
+										this.settings.models,
+										this.settings.colors,
+										"pie",
+										this.settings.csvSeparator
+									);
+									if (chartData)
+										ctx.addChild(
+											new ChartRenderer(
+												this.settings.models[
+													content.model
+												],
+												chartData,
+												content.model,
+												content.title,
+												filenames,
+												el
+											)
+										);
+								} catch (e) {
+									new Notice(
+										`An error occured while processing ${content.model}, ${content.title}`,
+										30000
+									);
+									throw e;
+								}
 							} else {
 								new Notice("Unable to generate chart", 10000);
 							}

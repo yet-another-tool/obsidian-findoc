@@ -21,6 +21,14 @@ export type IDataset = {
 	}[];
 };
 
+export type IPieDataset = {
+	labels: string[];
+	datasets: {
+		label: string;
+		data: number[];
+	}[];
+};
+
 export type ITooltip = {
 	dataset: {
 		label: string;
@@ -92,6 +100,11 @@ export type IChartLine = {
 			};
 		};
 	};
+};
+
+export type IChartPie = {
+	type: "pie";
+	data: IPieDataset;
 };
 
 export type IContext = {
