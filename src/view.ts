@@ -188,9 +188,12 @@ export class CSVView extends TextFileView {
 		this.parent.appendChild(this.table);
 
 		this.createBtnAddLine();
+		this.createBtnSort();
 		if (this.plugin.settings.useAutocomplete) {
 			this.createBtnRefreshAutocomplete();
 		}
+
+		this.createSectionInformation();
 	}
 
 	createBtnRemoveLine(el: HTMLElement): HTMLElement {
@@ -257,7 +260,7 @@ export class CSVView extends TextFileView {
 
 	createBtnAddLine() {
 		const btn = this.contentEl.createEl("button");
-		btn.classList.add("findoc-btn-margin-top");
+		btn.classList.add("findoc-btn-margin-top", "findoc-btn-margin-right");
 		btn.id = "newRow";
 		btn.innerText = "Add New Row";
 		btn.onClickEvent(() => {
@@ -277,6 +280,120 @@ export class CSVView extends TextFileView {
 			}
 		});
 		this.parent.appendChild(btn);
+	}
+
+	getTableData() {
+		const rows = this.table.innerHTML.split(new RegExp(/<tr.*?>/));
+		return rows.map((column) =>
+			column
+				.split(new RegExp(/<td.*?>/))
+				.slice(1)
+				.filter((i) => !new RegExp(/<button.*?>.*<.*?>/).test(i))
+
+				.map((i, idx) => {
+					if (idx === 0) {
+						// Select (Dropdown)
+						return (
+							i.split('value="')[1].split('"')[0] ||
+							this.plugin.settings.categories[0]
+						);
+					} else if (
+						idx === 1 &&
+						this.plugin.settings.useAutocomplete
+					) {
+						// autocomplete
+						return i
+							.split(/<div/)[2]
+							.replaceAll(/<.*?>/g, "")
+							.replaceAll(/(.*?)>/g, "") // unclosed html tag, due to the split
+							.replaceAll(
+								'&lt;br class="Apple-interchange-newline"&gt',
+								""
+							);
+					} else if (idx === 2) {
+						// Value column only.
+						const input = i
+							.replaceAll(/<.*?>/g, "")
+							.replaceAll(
+								'&lt;br class="Apple-interchange-newline"&gt',
+								""
+							);
+						try {
+							return evaluate(input);
+						} catch (_) {
+							return input;
+						}
+					} else {
+						// Input field
+						const input = i
+							.replaceAll(/<.*?>/g, "")
+							.replaceAll(
+								'&lt;br class="Apple-interchange-newline"&gt',
+								""
+							);
+						return input;
+					}
+				})
+				.join(this.plugin.settings.csvSeparator)
+		);
+	}
+
+	sortByDate(data: string[]) {
+		return data.sort(
+			(a, b) =>
+				// by date
+				new Date(
+					a.split(this.plugin.settings.csvSeparator)[3]
+				).getTime() -
+				new Date(
+					b.split(this.plugin.settings.csvSeparator)[3]
+				).getTime()
+		);
+	}
+
+	getMinMaxDate() {
+		const dates = this.tableData
+			.map((data) =>
+				new Date(
+					data.split(this.plugin.settings.csvSeparator)[3]
+				).getTime()
+			)
+			.filter((input) => !isNaN(input));
+
+		return {
+			min: new Date(Math.min(...dates)).toISOString().slice(0, 10),
+			max: new Date(Math.max(...dates)).toISOString().slice(0, 10),
+		};
+	}
+
+	createBtnSort() {
+		const btn = this.contentEl.createEl("button");
+		btn.classList.add("findoc-btn-margin-top", "findoc-btn-margin-right");
+		btn.id = "sortByDate";
+		btn.innerText = "Sort by Date";
+		btn.onClickEvent(() => {
+			this.tableData = this.sortByDate(this.getTableData()).filter(
+				(r) => r.length !== 0
+			); // Clear empty lines
+
+			this.tableData = [this.tableHeader, ...this.tableData];
+			this.setViewData(this.tableData.join("\n"), true);
+			this.saveData();
+		});
+		this.parent.appendChild(btn);
+	}
+
+	createSectionInformation() {
+		const div = this.contentEl.createEl("div");
+		div.classList.add("findoc-section-margin-top");
+		div.id = "information";
+
+		const p = div.createEl("p");
+		const dates = this.getMinMaxDate();
+		p.innerText = `Rows Count: ${this.tableData.length}\n Min Date: ${dates.min}\n Max Date: ${dates.max}`;
+		div.appendChild(p);
+
+		this.parent.appendChild(div);
 	}
 
 	createBtnRefreshAutocomplete() {
@@ -420,59 +537,7 @@ export class CSVView extends TextFileView {
 	}
 
 	saveData() {
-		const rows = this.table.innerHTML.split(new RegExp(/<tr.*?>/));
-		this.tableData = rows
-			.map((column) =>
-				column
-					.split(new RegExp(/<td.*?>/))
-					.slice(1)
-					.filter((i) => !new RegExp(/<button.*?>.*<.*?>/).test(i))
-					.map((i, idx) => {
-						if (idx === 0) {
-							// Select (Dropdown)
-							return (
-								i.split('value="')[1].split('"')[0] ||
-								this.plugin.settings.categories[0]
-							);
-						} else if (
-							idx === 1 &&
-							this.plugin.settings.useAutocomplete
-						) {
-							// autocomplete
-							return i
-								.split(/<div/)[2]
-								.replaceAll(/<.*?>/g, "")
-								.replaceAll(/(.*?)>/g, "") // unclosed html tag, due to the split
-								.replaceAll(
-									'&lt;br class="Apple-interchange-newline"&gt',
-									""
-								);
-						} else if (idx === 2) {
-							// Value column only.
-							const input = i
-								.replaceAll(/<.*?>/g, "")
-								.replaceAll(
-									'&lt;br class="Apple-interchange-newline"&gt',
-									""
-								);
-							try {
-								return evaluate(input);
-							} catch (_) {
-								return input;
-							}
-						} else {
-							// Input field
-							const input = i
-								.replaceAll(/<.*?>/g, "")
-								.replaceAll(
-									'&lt;br class="Apple-interchange-newline"&gt',
-									""
-								);
-							return input;
-						}
-					})
-					.join(this.plugin.settings.csvSeparator)
-			)
+		this.tableData = this.getTableData()
 			// Clear empty lines
 			.filter((r) => r.length !== 0);
 
@@ -482,9 +547,9 @@ export class CSVView extends TextFileView {
 		// TODO: Replace this timeout with the proper and recommended way.
 		new Notice("Saving in progress...", 2005);
 		this.refreshAutocomplete();
-		debounce(() => {
-			new Notice("File Saved !", 600);
-		}, 2005);
+
+		document.getElementById("information").remove();
+		this.createSectionInformation();
 	}
 
 	clear() {
