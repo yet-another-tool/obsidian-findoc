@@ -5,6 +5,7 @@ import up from "icons/up";
 import down from "icons/down";
 import remove from "icons/remove";
 import duplicate from "icons/duplicate";
+import { evaluate } from "mathjs";
 
 export const VIEW_TYPE_CSV = "csv-view";
 
@@ -52,8 +53,9 @@ export class CSVView extends TextFileView {
 		term: string,
 		inputs: { category: string; subcategory: string }[]
 	): { category: string; subcategory: string }[] {
-		return inputs.filter((input: { category: string; subcategory: string }) =>
-			input.subcategory.toLowerCase().includes(term.toLowerCase())
+		return inputs.filter(
+			(input: { category: string; subcategory: string }) =>
+				input.subcategory.toLowerCase().includes(term.toLowerCase())
 		);
 	}
 
@@ -149,6 +151,23 @@ export class CSVView extends TextFileView {
 				} else if (idx === 1 && this.plugin.settings.useAutocomplete) {
 					// AUTOCOMPLETE Column
 					td.appendChild(this.autocomplete(el, trContent));
+				} else if (idx === 2) {
+					// VALUE Column
+					td.innerText = el;
+					td.contentEditable = "true";
+					td.onblur = (_) => {
+						const input = td.innerText
+							.replaceAll(/<.*?>/g, "")
+							.replaceAll(
+								'&lt;br class="Apple-interchange-newline"&gt',
+								""
+							);
+						try {
+							td.innerText = evaluate(input);
+						} catch (_) {
+							td.innerText = input;
+						}
+					};
 				} else if (idx === lineData.length - 1) {
 					// ACTIONS Column
 					td.appendChild(this.createBtnRemoveLine(trContent));
@@ -156,7 +175,6 @@ export class CSVView extends TextFileView {
 					td.appendChild(this.createBtnMoveDown(trContent));
 					td.appendChild(this.createBtnDuplicate(trContent));
 				} else {
-					//
 					td.innerText = el;
 					td.contentEditable = "true";
 				}
@@ -281,7 +299,9 @@ export class CSVView extends TextFileView {
 						category: subcategory.split(
 							this.plugin.settings.csvSeparator
 						)[0],
-						subcategory: subcategory.split(this.plugin.settings.csvSeparator)[1],
+						subcategory: subcategory.split(
+							this.plugin.settings.csvSeparator
+						)[1],
 					}))
 					.map((item: { subcategory: string; category: string }) => [
 						item["subcategory"],
@@ -327,6 +347,23 @@ export class CSVView extends TextFileView {
 			} else if (idx === 1 && this.plugin.settings.useAutocomplete) {
 				// AUTOCOMPLETE Column
 				td.appendChild(this.autocomplete(el, trContent));
+			} else if (idx === 2) {
+				// VALUE Column
+				td.innerText = el;
+				td.contentEditable = "true";
+				td.onblur = (_) => {
+					const input = td.innerText
+						.replaceAll(/<.*?>/g, "")
+						.replaceAll(
+							'&lt;br class="Apple-interchange-newline"&gt',
+							""
+						);
+					try {
+						td.innerText = evaluate(input);
+					} catch (_) {
+						td.innerText = input;
+					}
+				};
 			} else if (idx === lineData.length - 1) {
 				td.appendChild(this.createBtnRemoveLine(trContent));
 				td.appendChild(this.createBtnMoveUp(trContent));
@@ -355,12 +392,16 @@ export class CSVView extends TextFileView {
 							category: subcategory.split(
 								this.plugin.settings.csvSeparator
 							)[0],
-							subcategory: subcategory.split(this.plugin.settings.csvSeparator)[1],
+							subcategory: subcategory.split(
+								this.plugin.settings.csvSeparator
+							)[1],
 						}))
-						.map((item: { subcategory: string; category: string }) => [
-							item["subcategory"],
-							item,
-						])
+						.map(
+							(item: {
+								subcategory: string;
+								category: string;
+							}) => [item["subcategory"], item]
+						)
 				).values(),
 			];
 		}
@@ -406,14 +447,28 @@ export class CSVView extends TextFileView {
 									'&lt;br class="Apple-interchange-newline"&gt',
 									""
 								);
-						} else {
-							// Input field
-							return i
+						} else if (idx === 2) {
+							// Value column only.
+							const input = i
 								.replaceAll(/<.*?>/g, "")
 								.replaceAll(
 									'&lt;br class="Apple-interchange-newline"&gt',
 									""
 								);
+							try {
+								return evaluate(input);
+							} catch (_) {
+								return input;
+							}
+						} else {
+							// Input field
+							const input = i
+								.replaceAll(/<.*?>/g, "")
+								.replaceAll(
+									'&lt;br class="Apple-interchange-newline"&gt',
+									""
+								);
+							return input;
 						}
 					})
 					.join(this.plugin.settings.csvSeparator)
