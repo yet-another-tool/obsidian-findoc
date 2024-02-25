@@ -119,3 +119,10 @@
 	max-height: 99em;
 	transition: max-height 0.5s ease-in-out;
 }
+
+/** Canvas */
+.chart-container {
+	position: relative;
+	height: 40vh;
+	width: 80vw;
+}

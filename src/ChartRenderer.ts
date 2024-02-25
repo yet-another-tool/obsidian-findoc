@@ -51,7 +51,10 @@ export default class ChartRenderer extends MarkdownRenderChild {
 				}
 
 				// Chart
-				this.containerEl.append(this.canvases[this.model]);
+				const canvasDiv = this.containerEl.createEl("div");
+				canvasDiv.addClass("chart-container");
+				canvasDiv.append(this.canvases[this.model]);
+				this.containerEl.append(canvasDiv);
 
 				// Footer
 				/// Button to toggle footer

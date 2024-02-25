@@ -51,10 +51,9 @@
 -   [] Add more functions to process and analyze the data
 -   [POC] Add reports in table view
 
-### V0.7.1 - Beta - 2024-02-25
+### V0.7.2 - Beta - 2024-02-25
 
-- Added `Sort by Date` button
-- Added table information at bottom (row count, min date and max date)
+- Fixed chart size, configurable in the `style.css`
 
 See [CHANGELOG](./CHANGELOG)
 
