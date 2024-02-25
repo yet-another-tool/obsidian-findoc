@@ -24,14 +24,13 @@
 -   Configurable using Few Settings
 -   Support Desktop and Mobile (tested on Windows, MacOS and Iphone)
 -   Using [Chart.js](https://www.chartjs.org)
+-   Line chart, Pie chart and Radar chart
 -   Plugin for [Obsidian.md](https://obsidian.md)
--   Line Chart and Pie Chart
+-   Evaluate mathematic expressions directly in the _value_ column, powered by [mathjs](https://mathjs.org)
 
 ---
 
 ## Installation and Usage
-
-**V0.6.0 BREAKING CHANGES**: Configurations have been updated massively to reflect all the changes. Please follow the documentation to update [the default configuration](https://studiowebux.github.io/obsidian-plugins-docs/docs/findoc/defaultConfigurations/)
 
 [Full Documentation is available here](https://studiowebux.github.io/obsidian-plugins-docs/docs/category/plugin-financial-doc)
 
@@ -50,13 +49,12 @@
 -   [-] Copy paste is broken while editing a CSV File (not able to reproduce)
 -   [] Improve the setting tab (edit, add and remove models)
 -   [] Add more functions to process and analyze the data
--   [-] Add more Chart types, currently only line chart is supported
--   [-] Add reports using pie chart or something like that
 -   [POC] Add reports in table view
 
-### Version 0.6.7 - Beta - 2024-02-23
+### V0.7.0 - Beta - 2024-02-25
 
--   Added **Radar Chart** Support
+-   Added **mathjs** module to use the `expression` function, it lets you do stuff like this in the **value** column: `100+50`, `1200/100`, `20*12` and so on.
+-   More information available here : https://mathjs.org
 
 See [CHANGELOG](./CHANGELOG)
 
