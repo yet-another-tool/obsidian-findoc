@@ -51,10 +51,10 @@
 -   [] Add more functions to process and analyze the data
 -   [POC] Add reports in table view
 
-### V0.7.0 - Beta - 2024-02-25
+### V0.7.1 - Beta - 2024-02-25
 
--   Added **mathjs** module to use the `expression` function, it lets you do stuff like this in the **value** column: `100+50`, `1200/100`, `20*12` and so on.
--   More information available here : https://mathjs.org
+- Added `Sort by Date` button
+- Added table information at bottom (row count, min date and max date)
 
 See [CHANGELOG](./CHANGELOG)
 

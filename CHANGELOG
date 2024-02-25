@@ -1,3 +1,8 @@
+### V0.7.0 - Beta - 2024-02-25
+
+-   Added **mathjs** module to use the `expression` function, it lets you do stuff like this in the **value** column: `100+50`, `1200/100`, `20*12` and so on.
+-   More information available here : https://mathjs.org
+
 ### Version 0.6.7 - Beta - 2024-02-23
 
 -   Added **Radar Chart** Support
